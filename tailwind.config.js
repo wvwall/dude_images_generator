@@ -8,7 +8,7 @@ export default {
         "friends-yellow": "#F4C430",
         "friends-red": "#E74C3C",
         "friends-blue": "#3498DB",
-        "friends-cream": "#FFFBF0",
+        "friends-purple-light": "#B3A6E6",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

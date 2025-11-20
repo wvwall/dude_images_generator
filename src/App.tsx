@@ -71,7 +71,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-friends-cream pb-12 font-sans">
+    <div className="min-h-screen bg-friends-purple-light pb-12 font-sans">
       <Header />
 
       <main className="pt-10 px-6 max-w-7xl mx-auto">

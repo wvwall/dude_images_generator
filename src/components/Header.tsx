@@ -17,7 +17,7 @@ const Header: React.FC = () => {
             E
           </h1>
           <span className="text-xs font-bold tracking-widest text-friends-purple uppercase">
-            Creative Studio
+            Central Perk Studio
           </span>
         </div>
       </div>
