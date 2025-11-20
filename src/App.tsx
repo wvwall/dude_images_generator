@@ -1,9 +1,10 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import Header from "./components/Header";
 import AspectRatioSelector from "./components/AspectRatioSelector";
 import ImageHistory from "./components/ImageHistory";
 import { generateImage } from "./services/geminiService";
 import { AspectRatio, GeneratedImage } from "./types";
+import * as sqliteService from "./services/sqliteService";
 import {
   Wand2,
   Loader2,
@@ -40,6 +41,13 @@ const App: React.FC = () => {
         aspectRatio: aspectRatio,
       };
 
+      // Persist to sqlite-backed storage and update UI
+      try {
+        await sqliteService.addImage(newImage);
+      } catch (dbErr) {
+        console.warn("Failed to persist image to local sqlite DB", dbErr);
+      }
+
       setCurrentImage(newImage);
       setHistory((prev) => [newImage, ...prev]);
     } catch (err) {
@@ -51,7 +59,13 @@ const App: React.FC = () => {
   };
 
   const handleDelete = useCallback(
-    (id: string) => {
+    async (id: string) => {
+      try {
+        await sqliteService.deleteImage(id);
+      } catch (dbErr) {
+        console.warn("Failed to delete image from local sqlite DB", dbErr);
+      }
+
       setHistory((prev) => prev.filter((img) => img.id !== id));
       if (currentImage?.id === id) {
         setCurrentImage(null);
@@ -59,6 +73,19 @@ const App: React.FC = () => {
     },
     [currentImage]
   );
+
+  useEffect(() => {
+    (async () => {
+      try {
+        await sqliteService.initDB();
+        const imgs = await sqliteService.getAllImages();
+        setHistory(imgs);
+        // if (imgs.length > 0) setCurrentImage(imgs[0]);
+      } catch (err) {
+        console.warn("Failed to load images from local sqlite DB", err);
+      }
+    })();
+  }, []);
 
   const handleDownloadCurrent = () => {
     if (!currentImage) return;
@@ -71,30 +98,30 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-friends-purple-light pb-12 font-sans">
+    <div className="min-h-screen pb-12 font-sans bg-friends-purple-light">
       <Header />
 
-      <main className="pt-10 px-6 max-w-7xl mx-auto">
-        <div className="flex flex-col lg:flex-row gap-8 items-stretch">
+      <main className="px-6 pt-10 mx-auto max-w-7xl">
+        <div className="flex flex-col items-stretch gap-8 lg:flex-row">
           {/* Input Panel */}
-          <div className="w-full lg:w-5/12 flex flex-col gap-6">
+          <div className="flex flex-col w-full gap-6 lg:w-5/12">
             <div className="mb-2">
-              <h2 className="text-4xl font-hand text-gray-800 mb-3 drop-shadow-sm">
+              <h2 className="mb-3 text-4xl text-gray-800 font-hand drop-shadow-sm">
                 How you doin'?
               </h2>
-              <p className="text-gray-600 font-medium">
+              <p className="font-medium text-gray-600">
                 Describe what you want to see, and we'll be there for you.
               </p>
             </div>
 
             <form
               onSubmit={handleGenerate}
-              className="flex-1 flex flex-col gap-6 bg-white border-2 border-gray-200 shadow-lg p-6 rounded-2xl relative overflow-hidden">
+              className="relative flex flex-col flex-1 gap-6 p-6 overflow-hidden bg-white border-2 border-gray-200 shadow-lg rounded-2xl">
               {/* Decorative yellow frame dots */}
               <div className="absolute top-0 left-0 w-full h-1 bg-friends-yellow"></div>
 
               <div className="space-y-3">
-                <label className="block text-sm font-bold text-gray-700 uppercase tracking-wide">
+                <label className="block text-sm font-bold tracking-wide text-gray-700 uppercase">
                   The Prompt
                 </label>
                 <div className="relative group">
@@ -105,14 +132,14 @@ const App: React.FC = () => {
                     className="w-full min-h-[140px] p-4 bg-gray-50 border-2 border-gray-200 rounded-xl text-gray-800 focus:border-friends-purple focus:bg-white focus:ring-0 transition-all outline-none resize-none placeholder:text-gray-400"
                     disabled={isGenerating}
                   />
-                  <div className="absolute bottom-3 right-3 text-xs font-bold text-gray-400 group-focus-within:text-friends-purple">
+                  <div className="absolute text-xs font-bold text-gray-400 bottom-3 right-3 group-focus-within:text-friends-purple">
                     {prompt.length} chars
                   </div>
                 </div>
               </div>
 
               <div className="space-y-3">
-                <label className="block text-sm font-bold text-gray-700 uppercase tracking-wide">
+                <label className="block text-sm font-bold tracking-wide text-gray-700 uppercase">
                   The Shape
                 </label>
                 <AspectRatioSelector
@@ -152,7 +179,7 @@ const App: React.FC = () => {
               </div>
 
               {error && (
-                <div className="p-4 bg-red-50 border-2 border-red-100 rounded-xl text-friends-red flex items-start gap-3 text-sm font-medium">
+                <div className="flex items-start gap-3 p-4 text-sm font-medium border-2 border-red-100 bg-red-50 rounded-xl text-friends-red">
                   <AlertCircle size={18} className="shrink-0 mt-0.5" />
                   <span>{error}</span>
                 </div>
@@ -173,33 +200,33 @@ const App: React.FC = () => {
             `}>
               {currentImage ? (
                 <div className="relative w-full h-full p-6 group bg-gray-50">
-                  <div className="w-full h-full border-8 border-white shadow-lg rounded-lg overflow-hidden relative">
+                  <div className="relative w-full h-full overflow-hidden border-8 border-white rounded-lg shadow-lg">
                     <img
                       src={currentImage.url}
                       alt="Generated result"
-                      className="w-full h-full object-contain bg-gray-200"
+                      className="object-contain w-full h-full bg-gray-200"
                     />
                   </div>
 
-                  <div className="absolute top-10 right-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <div className="absolute transition-opacity duration-300 opacity-0 top-10 right-10 group-hover:opacity-100">
                     <button
                       onClick={handleDownloadCurrent}
-                      className="bg-friends-purple text-white px-6 py-3 rounded-full font-bold text-sm hover:bg-purple-800 transition-colors flex items-center gap-2 shadow-lg border-2 border-white">
+                      className="flex items-center gap-2 px-6 py-3 text-sm font-bold text-white transition-colors border-2 border-white rounded-full shadow-lg bg-friends-purple hover:bg-purple-800">
                       <Save size={18} />
                       Save This
                     </button>
                   </div>
                 </div>
               ) : (
-                <div className="text-center p-12 space-y-6 max-w-sm mx-auto">
+                <div className="max-w-sm p-12 mx-auto space-y-6 text-center">
                   <div className="w-24 h-24 bg-friends-yellow rounded-full flex items-center justify-center mx-auto border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                     <Armchair size={40} className="text-black" />
                   </div>
                   <div>
-                    <h3 className="text-friends-purple font-hand text-2xl mb-2">
+                    <h3 className="mb-2 text-2xl text-friends-purple font-hand">
                       Oh. My. God.
                     </h3>
-                    <p className="text-gray-500 text-base font-medium">
+                    <p className="text-base font-medium text-gray-500">
                       It's empty in here! Enter a prompt to start creating.
                     </p>
                   </div>
