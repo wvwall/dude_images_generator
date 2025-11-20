@@ -1,5 +1,6 @@
 import React from "react";
 import { Coffee } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Header: React.FC = () => {
   return (
@@ -21,6 +22,18 @@ const Header: React.FC = () => {
           </span>
         </div>
       </div>
+      <nav className="flex items-center gap-4">
+        <Link
+          to="/"
+          className="text-sm font-bold text-friends-purple hover:underline">
+          Home
+        </Link>
+        <Link
+          to="/gallery"
+          className="text-sm font-bold text-friends-purple hover:underline">
+          Gallery
+        </Link>
+      </nav>
     </header>
   );
 };
