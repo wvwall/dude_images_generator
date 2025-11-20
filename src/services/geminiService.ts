@@ -1,49 +1,27 @@
-import { GoogleGenAI, Modality } from "@google/genai";
 import { AspectRatio } from "../types";
-
-const apiKey = process.env.GEMINI_API_KEY || "";
 
 export const generateImage = async (
   prompt: string,
   aspectRatio: AspectRatio
 ): Promise<string> => {
-  if (!apiKey) {
-    throw new Error(
-      "API Key is missing. Please check your environment configuration."
-    );
-  }
-
-  const ai = new GoogleGenAI({ apiKey });
-
   try {
-    // Nano Banana (gemini-2.5-flash-image) works best when aspect ratio instructions
-    // are part of the natural language prompt.
-    const finalPrompt = `${prompt}. Create this image with an aspect ratio of ${aspectRatio}.`;
-
-    // Using the Nano Banana model (Flash Image)
-    const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash-image",
-      contents: {
-        parts: [{ text: finalPrompt }],
-      },
-      config: {
-        responseModalities: [Modality.IMAGE],
-      },
+    const res = await fetch("/.netlify/functions/generate-image", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ prompt, aspectRatio }),
     });
 
-    const part = response.candidates?.[0]?.content?.parts?.[0];
-
-    if (!part || !part.inlineData || !part.inlineData.data) {
-      throw new Error("No image data returned from the API.");
+    if (!res.ok) {
+      const txt = await res.text();
+      throw new Error(`Server error: ${res.status} - ${txt}`);
     }
 
-    const base64ImageBytes = part.inlineData.data;
-    // Note: inlineData.mimeType is usually available, but we construct the header here
-    const mimeType = part.inlineData.mimeType || "image/png";
+    const json = await res.json();
+    if (!json || !json.image) throw new Error("No image in function response");
 
-    return `data:${mimeType};base64,${base64ImageBytes}`;
+    return json.image as string;
   } catch (error) {
-    console.error("Error generating image:", error);
+    console.error("Error generating image via function:", error);
     throw error;
   }
 };
