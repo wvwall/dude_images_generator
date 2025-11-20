@@ -11,4 +11,5 @@
   from = "/*"
   to = "/index.html"
   status = 200
-  force = true
+  # Removed `force = true` so Netlify will serve existing static files (assets)
+  # and only rewrite unknown routes to `index.html` for SPA fallback.
