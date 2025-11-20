@@ -95,7 +95,7 @@ const Home: React.FC = () => {
           {/* Input Panel */}
           <div className="flex flex-col w-full gap-6 lg:w-5/12">
             <div className="mb-2">
-              <h2 className="mb-3 text-4xl text-gray-800 font-hand drop-shadow-sm">
+              <h2 className="mb-3 text-5xl text-gray-800 font-hand drop-shadow-sm">
                 How you doin'?
               </h2>
               <p className="font-medium text-gray-600">
