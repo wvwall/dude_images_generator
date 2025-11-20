@@ -1,6 +1,6 @@
-import React from 'react';
-import { AspectRatio } from '../types';
-import { Square, Smartphone, Monitor, LayoutTemplate } from 'lucide-react';
+import React from "react";
+import { AspectRatio } from "../types";
+import { Square, Smartphone, Monitor, LayoutTemplate } from "lucide-react";
 
 interface AspectRatioSelectorProps {
   selected: AspectRatio;
@@ -8,13 +8,22 @@ interface AspectRatioSelectorProps {
   disabled?: boolean;
 }
 
-const AspectRatioSelector: React.FC<AspectRatioSelectorProps> = ({ selected, onSelect, disabled }) => {
-  const ratios: { value: AspectRatio; label: string; icon: React.ReactNode }[] = [
-    { value: '1:1', label: 'Square', icon: <Square size={18} /> },
-    { value: '3:4', label: 'Portrait', icon: <Smartphone size={18} className="rotate-0" /> },
-    { value: '4:3', label: 'Landscape', icon: <LayoutTemplate size={18} /> },
-    { value: '16:9', label: 'Wide', icon: <Monitor size={18} /> },
-  ];
+const AspectRatioSelector: React.FC<AspectRatioSelectorProps> = ({
+  selected,
+  onSelect,
+  disabled,
+}) => {
+  const ratios: { value: AspectRatio; label: string; icon: React.ReactNode }[] =
+    [
+      { value: "1:1", label: "Square", icon: <Square size={16} /> },
+      {
+        value: "3:4",
+        label: "Portrait",
+        icon: <Smartphone size={16} className="rotate-0" />,
+      },
+      { value: "4:3", label: "Landscape", icon: <LayoutTemplate size={16} /> },
+      { value: "16:9", label: "Wide", icon: <Monitor size={16} /> },
+    ];
 
   return (
     <div className="flex flex-wrap gap-3">
@@ -24,14 +33,14 @@ const AspectRatioSelector: React.FC<AspectRatioSelectorProps> = ({ selected, onS
           onClick={() => onSelect(ratio.value)}
           disabled={disabled}
           className={`
-            flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 border
-            ${selected === ratio.value
-              ? 'bg-primary-100 border-primary-500 text-primary-800 shadow-sm'
-              : 'bg-white border-slate-200 text-slate-600 hover:border-primary-300 hover:bg-slate-50'
+            flex items-center gap-2 px-4 py-2.5 text-sm font-bold rounded-lg transition-all duration-200 border-2
+            ${
+              selected === ratio.value
+                ? "bg-friends-purple text-white border-friends-purple shadow-[3px_3px_0px_0px_rgba(244,196,48,1)]"
+                : "bg-white text-gray-600 border-gray-200 hover:border-friends-purple hover:text-friends-purple"
             }
-            ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
-          `}
-        >
+            ${disabled ? "opacity-50 cursor-not-allowed" : ""}
+          `}>
           {ratio.icon}
           <span>{ratio.label}</span>
         </button>
