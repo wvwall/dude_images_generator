@@ -10,10 +10,8 @@ export default defineConfig(({ mode }) => {
       host: "0.0.0.0",
     },
     plugins: [react()],
-    define: {
-      "process.env.API_KEY": JSON.stringify(env.GEMINI_API_KEY),
-      "process.env.GEMINI_API_KEY": JSON.stringify(env.GEMINI_API_KEY),
-    },
+    // Do not inline secret environment variables into the client bundle.
+    // Secrets should be provided at runtime from server-side environment (Netlify env vars)
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "./src"),
