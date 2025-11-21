@@ -6,123 +6,114 @@ import type { SqlJsStatic, Database } from "sql.js";
 let SQL: SqlJsStatic | null = null;
 let db: Database | null = null;
 
+// Nome costante per lo store
+const DB_NAME = "dude_images_db";
+const STORE_NAME = "sqlite";
+const KEY_NAME = "dude_db";
+
 async function ensureDbInitialized() {
   if (db) return;
-  // Use Vite's URL import so the wasm is served with correct MIME type.
+
   SQL = await initSqlJs({ locateFile: () => wasmUrl });
 
-  const saved = localStorage.getItem("dude_db");
-  if (saved) {
-    // restore DB from base64
-    const binaryString = atob(saved);
-    const len = binaryString.length;
-    const bytes = new Uint8Array(len);
-    for (let i = 0; i < len; i++) bytes[i] = binaryString.charCodeAt(i);
-    db = new SQL.Database(bytes);
-  } else {
-    // Try IndexedDB fallback
-    try {
-      const u8 = await loadFromIndexedDB();
-      if (u8 && u8.length > 0) {
-        db = new SQL.Database(u8);
-        return;
-      }
-    } catch (e) {
-      console.warn("Failed reading DB from IndexedDB:", e);
+  // 1. Proviamo a caricare SOLO da IndexedDB
+  try {
+    const u8 = await loadFromIndexedDB();
+    if (u8 && u8.length > 0) {
+      db = new SQL.Database(u8);
+      // Pulizia opzionale: Rimuovi vecchi residui da localStorage per evitare confusioni future
+      localStorage.removeItem("dude_db");
+      return;
     }
-    db = new SQL.Database();
-    db.run(
-      "CREATE TABLE IF NOT EXISTS images (id TEXT PRIMARY KEY, url TEXT, prompt TEXT, timestamp INTEGER, aspectRatio TEXT)"
-    );
-    persist();
+  } catch (e) {
+    console.warn("Failed reading DB from IndexedDB, creating new:", e);
   }
+
+  // 2. Se non esiste, ne creiamo uno nuovo
+  db = new SQL.Database();
+  db.run(
+    "CREATE TABLE IF NOT EXISTS images (id TEXT PRIMARY KEY, url TEXT, prompt TEXT, timestamp INTEGER, aspectRatio TEXT)"
+  );
+  // Salviamo subito lo stato iniziale vuoto
+  await persist();
 }
 
-function persist() {
+// Funzione persist resa asincrona
+async function persist() {
+  if (!db) return;
   const binary: Uint8Array = db.export();
 
-  // Convert Uint8Array to base64 in chunks to avoid call-stack/argument limits
-  function uint8ToBase64(u8: Uint8Array) {
-    const CHUNK_SIZE = 0x8000; // 32KB
-    let result = "";
-    for (let i = 0; i < u8.length; i += CHUNK_SIZE) {
-      const chunk = u8.subarray(i, i + CHUNK_SIZE);
-      // convert chunk to regular array for apply
-      const arr = Array.prototype.slice.call(chunk) as number[];
-      result += String.fromCharCode.apply(null, arr as any);
-    }
-    return btoa(result);
-  }
-
-  const b64 = uint8ToBase64(binary);
+  // Salviamo direttamente il buffer binario su IndexedDB
+  // Non serve base64, non serve localStorage
   try {
-    localStorage.setItem("dude_db", b64);
-  } catch (err) {
-    console.error(
-      "Failed to persist DB to localStorage (quota?), falling back to IndexedDB:",
-      err
-    );
-    // Try IndexedDB fallback
-    try {
-      const buffer = binary.buffer.slice(
-        binary.byteOffset,
-        binary.byteOffset + binary.byteLength
-      );
-      persistToIndexedDB(buffer as ArrayBuffer).catch((e) =>
-        console.error("IndexedDB persist failed:", e)
-      );
-    } catch (e) {
-      console.error("Could not create buffer for IndexedDB persist:", e);
-    }
+    await persistToIndexedDB(binary);
+  } catch (e) {
+    console.error("IndexedDB persist failed:", e);
   }
 }
 
-async function persistToIndexedDB(arrayBuffer: ArrayBuffer) {
-  return new Promise<void>((resolve, reject) => {
-    const req = indexedDB.open("dude_images_db", 1);
+function persistToIndexedDB(data: Uint8Array): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(DB_NAME, 1);
+
     req.onupgradeneeded = () => {
       const db = req.result;
-      if (!db.objectStoreNames.contains("sqlite"))
-        db.createObjectStore("sqlite");
+      if (!db.objectStoreNames.contains(STORE_NAME)) {
+        db.createObjectStore(STORE_NAME);
+      }
     };
+
     req.onsuccess = () => {
       const idb = req.result;
-      const tx = idb.transaction("sqlite", "readwrite");
-      const store = tx.objectStore("sqlite");
-      const putReq = store.put(arrayBuffer, "dude_db");
-      putReq.onsuccess = () => {
-        resolve();
-      };
+      const tx = idb.transaction(STORE_NAME, "readwrite");
+      const store = tx.objectStore(STORE_NAME);
+      // IndexedDB gestisce nativamente Uint8Array/Blob
+      const putReq = store.put(data, KEY_NAME);
+
+      putReq.onsuccess = () => resolve();
       putReq.onerror = () => reject(putReq.error);
+
       tx.oncomplete = () => idb.close();
     };
+
     req.onerror = () => reject(req.error);
   });
 }
 
-async function loadFromIndexedDB(): Promise<Uint8Array | null> {
+function loadFromIndexedDB(): Promise<Uint8Array | null> {
   return new Promise((resolve, reject) => {
-    const req = indexedDB.open("dude_images_db", 1);
-    req.onupgradeneeded = () => req.result.createObjectStore("sqlite");
+    const req = indexedDB.open(DB_NAME, 1);
+
+    req.onupgradeneeded = () => {
+      const db = req.result;
+      db.createObjectStore(STORE_NAME);
+    };
+
     req.onsuccess = () => {
       const idb = req.result;
-      const tx = idb.transaction("sqlite", "readonly");
-      const store = tx.objectStore("sqlite");
-      const getReq = store.get("dude_db");
+      const tx = idb.transaction(STORE_NAME, "readonly");
+      const store = tx.objectStore(STORE_NAME);
+      const getReq = store.get(KEY_NAME);
+
       getReq.onsuccess = () => {
         const result = getReq.result;
         if (!result) {
           resolve(null);
-          idb.close();
-          return;
+        } else {
+          // Assicuriamoci che sia un Uint8Array
+          if (result instanceof Uint8Array) {
+            resolve(result);
+          } else {
+            // Fallback se salvato come ArrayBuffer
+            resolve(new Uint8Array(result));
+          }
         }
-        // result should be an ArrayBuffer
-        const u8 = new Uint8Array(result);
-        resolve(u8);
         idb.close();
       };
+
       getReq.onerror = () => reject(getReq.error);
     };
+
     req.onerror = () => reject(req.error);
   });
 }
@@ -133,43 +124,57 @@ export async function initDB() {
 
 export async function getAllImages(): Promise<GeneratedImage[]> {
   await ensureDbInitialized();
-  const res = db.exec(
-    "SELECT id, url, prompt, timestamp, aspectRatio FROM images ORDER BY timestamp DESC"
-  );
-  if (!res || res.length === 0) return [];
-  const cols = res[0].columns;
-  const values = res[0].values;
-  return values.map((row: any[]) => {
-    const obj: any = {};
-    row.forEach((val, idx) => {
-      obj[cols[idx]] = val;
+  if (!db) return [];
+  try {
+    const res = db.exec(
+      "SELECT id, url, prompt, timestamp, aspectRatio FROM images ORDER BY timestamp DESC"
+    );
+    if (!res || res.length === 0) return [];
+    const cols = res[0].columns;
+    const values = res[0].values;
+    return values.map((row: any[]) => {
+      const obj: any = {};
+      row.forEach((val: any, idx: number) => {
+        obj[cols[idx]] = val;
+      });
+      return obj as GeneratedImage;
     });
-    return obj as GeneratedImage;
-  });
+  } catch (e) {
+    console.error("Error fetching images", e);
+    return [];
+  }
 }
 
 export async function addImage(img: GeneratedImage) {
   await ensureDbInitialized();
+  if (!db) throw new Error("DB not initialized");
+
   const stmt = db.prepare(
     "INSERT OR REPLACE INTO images (id, url, prompt, timestamp, aspectRatio) VALUES (?, ?, ?, ?, ?)"
   );
   stmt.run([img.id, img.url, img.prompt, img.timestamp, img.aspectRatio]);
   stmt.free();
-  persist();
+
+  // Nota: persist ora è asincrono, ma possiamo lanciarlo senza await
+  // se non vogliamo bloccare l'UI, a patto di gestire gli errori internamente.
+  // Tuttavia è meglio un await se vogliamo essere sicuri che sia salvato.
+  await persist();
 }
 
 export async function deleteImage(id: string) {
   await ensureDbInitialized();
+  if (!db) return;
   const stmt = db.prepare("DELETE FROM images WHERE id = ?");
   stmt.run([id]);
   stmt.free();
-  persist();
+  await persist();
 }
 
 export async function clearAll() {
   await ensureDbInitialized();
+  if (!db) return;
   db.run("DELETE FROM images");
-  persist();
+  await persist();
 }
 
 export default {
