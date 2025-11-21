@@ -90,7 +90,7 @@ const Home: React.FC = () => {
 
   return (
     <div className="min-h-screen pb-12 font-sans bg-friends-purple-light">
-      <main className="px-6 pt-10 mx-auto max-w-7xl">
+      <main className="px-4 pt-10 mx-auto max-w-7xl">
         <div className="flex flex-col items-stretch gap-8 lg:flex-row">
           {/* Input Panel */}
           <div className="flex flex-col w-full gap-6 lg:w-5/12">
@@ -142,7 +142,7 @@ const Home: React.FC = () => {
                   type="submit"
                   disabled={isGenerating || !prompt.trim()}
                   className={`
-                    w-full py-4 px-6 rounded-xl font-bold text-base transition-all duration-200 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] border-2 border-black
+                    w-full py-4 px-4 rounded-xl font-bold text-base transition-all duration-200 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] border-2 border-black
                     ${
                       isGenerating
                         ? "bg-gray-100 text-gray-400 border-gray-300 shadow-none cursor-not-allowed"
@@ -176,7 +176,7 @@ const Home: React.FC = () => {
           </div>
 
           {/* Preview Panel */}
-          <div className="w-full lg:w-7/12 min-h-[500px]">
+          <div className="w-full lg:w-7/12 min-h[350px] sm:min-h-[500px]">
             <div
               className={`
               relative w-full h-full bg-white border-4 border-friends-purple rounded-2xl flex flex-col items-center justify-center overflow-hidden shadow-xl
@@ -199,7 +199,7 @@ const Home: React.FC = () => {
                   <div className="absolute transition-opacity duration-300 opacity-0 top-10 right-10 group-hover:opacity-100">
                     <button
                       onClick={handleDownloadCurrent}
-                      className="flex items-center gap-2 px-6 py-3 text-sm font-bold text-white transition-colors border-2 border-white rounded-full shadow-lg bg-friends-purple hover:bg-purple-800">
+                      className="flex items-center gap-2 px-4 py-3 text-sm font-bold text-white transition-colors border-2 border-white rounded-full shadow-lg bg-friends-purple hover:bg-purple-800">
                       <Save size={18} />
                       Save This
                     </button>
