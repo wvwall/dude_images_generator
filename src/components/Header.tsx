@@ -21,7 +21,7 @@ const Header: React.FC = () => {
             <span className="w-2 h-2 mt-2 rounded-full bg-friends-yellow"></span>
             E
           </h1>
-          <span className="text-xs font-bold tracking-widest uppercase text-friends-purple">
+          <span className="hidden text-xs font-bold tracking-widest uppercase text-friends-purple sm:inline-block">
             Central Perk Studio
           </span>
         </div>
@@ -51,7 +51,7 @@ const Header: React.FC = () => {
 
       {/* Mobile Nav Dropdown */}
       {isMenuOpen && (
-        <div className="absolute top-[104px] z-50 left-0 w-full bg-white border-b-4 border-friends-purple shadow-xl md:hidden flex flex-col animate-in slide-in-from-top-5 duration-200">
+        <div className="absolute top-[84px] sm:top-[88px] z-50 left-0 w-full bg-white border-b-4 border-friends-purple shadow-xl md:hidden flex flex-col animate-in slide-in-from-top-5 duration-200">
           <Link
             to="/"
             onClick={() => setIsMenuOpen(false)}
