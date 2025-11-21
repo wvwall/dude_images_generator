@@ -29,7 +29,7 @@ const Gallery: React.FC = () => {
 
   return (
     <div className="min-h-screen pb-12 font-sans bg-friends-purple-light">
-      <main className="px-6 pt-10 mx-auto max-w-7xl">
+      <main className="px-4 pt-10 mx-auto max-w-7xl">
         <h2 className="mb-6 text-4xl text-gray-800 font-hand">Gallery</h2>
         <ImageHistory images={images} onDelete={handleDelete} />
       </main>
