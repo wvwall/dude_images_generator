@@ -8,61 +8,60 @@ const Header: React.FC = () => {
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
   return (
-    <header className="w-full py-4 px-6 md:px-12 flex items-center justify-between border-b-4 border-friends-purple bg-white top-0 z-50 shadow-sm">
+    <header className="top-0 z-50 flex items-center justify-between w-full px-6 py-4 bg-white border-b-4 shadow-sm md:px-12 border-friends-purple">
       <div className="flex items-center gap-4">
-        <div className="w-12 h-12 bg-friends-purple rounded-full flex items-center justify-center shadow-lg border-2 border-friends-yellow">
+        <div className="flex items-center justify-center w-12 h-12 border-2 rounded-full shadow-lg bg-friends-purple border-friends-yellow">
           <Coffee size={24} className="text-white" />
         </div>
         <div className="flex flex-col">
-          <h1 className="text-3xl font-hand tracking-wider text-black flex items-center gap-1">
-            D <span className="w-2 h-2 rounded-full bg-friends-red mt-2"></span>
-            U<span className="w-2 h-2 rounded-full bg-friends-blue mt-2"></span>
+          <h1 className="flex items-center gap-1 text-3xl tracking-wider text-black font-hand">
+            D <span className="w-2 h-2 mt-2 rounded-full bg-friends-red"></span>
+            U<span className="w-2 h-2 mt-2 rounded-full bg-friends-blue"></span>
             D
-            <span className="w-2 h-2 rounded-full bg-friends-yellow mt-2"></span>
+            <span className="w-2 h-2 mt-2 rounded-full bg-friends-yellow"></span>
             E
           </h1>
-          <span className="text-xs font-bold tracking-widest text-friends-purple uppercase">
+          <span className="text-xs font-bold tracking-widest uppercase text-friends-purple">
             Central Perk Studio
           </span>
         </div>
       </div>
-    
+
       {/* Desktop Nav */}
-      <nav className="hidden md:flex items-center gap-8">
+      <nav className="items-center hidden gap-8 md:flex">
         <Link
           to="/"
-          className="text-base font-bold text-friends-purple hover:text-friends-red hover:underline decoration-2 underline-offset-4 transition-colors">
+          className="text-base font-bold transition-colors text-friends-purple hover:text-friends-red hover:underline decoration-2 underline-offset-4">
           Home
         </Link>
         <Link
           to="/gallery"
-          className="text-base font-bold text-friends-purple hover:text-friends-red hover:underline decoration-2 underline-offset-4 transition-colors">
+          className="text-base font-bold transition-colors text-friends-purple hover:text-friends-red hover:underline decoration-2 underline-offset-4">
           Gallery
         </Link>
       </nav>
 
-        {/* Mobile Menu Button */}
-      <button 
-        className="md:hidden text-friends-purple p-2 hover:bg-friends-cream rounded-lg transition-colors"
+      {/* Mobile Menu Button */}
+      <button
+        className="p-2 transition-colors rounded-lg md:hidden text-friends-purple hover:bg-friends-cream"
         onClick={toggleMenu}
-        aria-label="Toggle menu"
-      >
+        aria-label="Toggle menu">
         {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
       </button>
 
       {/* Mobile Nav Dropdown */}
       {isMenuOpen && (
-        <div className="absolute top-full left-0 w-full bg-white border-b-4 border-friends-purple shadow-xl md:hidden flex flex-col animate-in slide-in-from-top-5 duration-200">
+        <div className="absolute top-[104px] z-50 left-0 w-full bg-white border-b-4 border-friends-purple shadow-xl md:hidden flex flex-col animate-in slide-in-from-top-5 duration-200">
           <Link
             to="/"
             onClick={() => setIsMenuOpen(false)}
-            className="p-4 text-center text-lg font-bold text-friends-purple hover:bg-friends-cream border-b border-gray-100">
+            className="p-4 text-lg font-bold text-center border-b border-gray-100 text-friends-purple hover:bg-friends-cream">
             Home
           </Link>
           <Link
             to="/gallery"
             onClick={() => setIsMenuOpen(false)}
-            className="p-4 text-center text-lg font-bold text-friends-purple hover:bg-friends-cream">
+            className="p-4 text-lg font-bold text-center text-friends-purple hover:bg-friends-cream">
             Gallery
           </Link>
         </div>
