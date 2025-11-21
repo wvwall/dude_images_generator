@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Coffee, Menu, X } from "lucide-react";
+import { ImagePlus, Menu, X } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Header: React.FC = () => {
@@ -11,7 +11,7 @@ const Header: React.FC = () => {
     <header className="top-0 z-50 flex items-center justify-between w-full px-4 py-4 bg-white border-b-4 shadow-sm md:px-12 border-friends-purple">
       <div className="flex items-center gap-4">
         <div className="flex items-center justify-center w-12 h-12 border-2 rounded-full shadow-lg bg-friends-purple border-friends-yellow">
-          <Coffee size={24} className="text-white" />
+          <ImagePlus size={24} className="text-white" />
         </div>
         <div className="flex flex-col">
           <h1 className="flex items-center gap-1 text-3xl tracking-wider text-black font-hand">
