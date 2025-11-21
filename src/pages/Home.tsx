@@ -1,10 +1,20 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import AspectRatioSelector from "../components/AspectRatioSelector";
 import ImageHistory from "../components/ImageHistory";
 import { generateImage } from "../services/geminiService";
 import { AspectRatio, GeneratedImage } from "../types";
 import * as sqliteService from "../services/sqliteService";
-import { Wand2, Loader2, AlertCircle, Save, Armchair } from "lucide-react";
+import {
+  Wand2,
+  Loader2,
+  AlertCircle,
+  Save,
+  Armchair,
+  Upload,
+  ImagePlus,
+  Type,
+  X,
+} from "lucide-react";
 
 const Home: React.FC = () => {
   const [prompt, setPrompt] = useState("");
@@ -13,6 +23,40 @@ const Home: React.FC = () => {
   const [currentImage, setCurrentImage] = useState<GeneratedImage | null>(null);
   const [history, setHistory] = useState<GeneratedImage[]>([]);
   const [error, setError] = useState<string | null>(null);
+
+  // New state for Image-to-Image mode
+  const [mode, setMode] = useState<"text" | "image">("text");
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      if (file.size > 4 * 1024 * 1024) {
+        setError("File too large! Please keep it under 4MB.");
+        return;
+      }
+      setSelectedFile(file);
+      setPreviewUrl(URL.createObjectURL(file));
+      setError(null);
+    }
+  };
+
+  const clearFile = () => {
+    setSelectedFile(null);
+    setPreviewUrl(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  const fileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = (error) => reject(error);
+    });
+  };
 
   const handleGenerate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,7 +67,17 @@ const Home: React.FC = () => {
     setCurrentImage(null);
 
     try {
-      const imageUrl = await generateImage(prompt, aspectRatio);
+      let referenceImageBase64: string | undefined = undefined;
+
+      if (mode === "image" && selectedFile) {
+        referenceImageBase64 = await fileToBase64(selectedFile);
+      }
+
+      const imageUrl = await generateImage(
+        prompt,
+        aspectRatio,
+        referenceImageBase64
+      );
 
       const newImage: GeneratedImage = {
         id: Date.now().toString(),
@@ -41,14 +95,16 @@ const Home: React.FC = () => {
 
       setCurrentImage(newImage);
       setHistory((prev) => [newImage, ...prev]);
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      setError("Could not generate image. Maybe the API key is on a break?");
+      setError(
+        err.message ||
+          "Could not generate image. Please check API Key and Billing status."
+      );
     } finally {
       setIsGenerating(false);
     }
   };
-
   const handleDelete = useCallback(
     async (id: string) => {
       try {
@@ -103,76 +159,159 @@ const Home: React.FC = () => {
               </p>
             </div>
 
-            <form
-              onSubmit={handleGenerate}
-              className="relative flex flex-col flex-1 gap-6 p-6 overflow-hidden bg-white border-2 border-gray-200 shadow-lg rounded-2xl">
-              <div className="absolute top-0 left-0 w-full h-1 bg-friends-yellow"></div>
+            <div className="relative flex flex-col flex-1 overflow-hidden bg-white border-2 border-gray-200 shadow-lg rounded-2xl">
+              <div className="absolute top-0 left-0 z-10 w-full h-1 bg-friends-yellow"></div>
 
-              <div className="space-y-3">
-                <label className="block text-sm font-bold tracking-wide text-gray-700 uppercase">
-                  The Prompt
-                </label>
-                <div className="relative group">
-                  <textarea
-                    value={prompt}
-                    onChange={(e) => setPrompt(e.target.value)}
-                    placeholder="A couch in a fountain, 90s sitcom style, cozy coffee shop vibe..."
-                    className="w-full min-h-[140px] p-4 bg-gray-50 border-2 border-gray-200 rounded-xl text-gray-800 focus:border-friends-purple focus:bg-white focus:ring-0 transition-all outline-none resize-none placeholder:text-gray-400"
-                    disabled={isGenerating}
-                  />
-                  <div className="absolute text-xs font-bold text-gray-400 bottom-3 right-3 group-focus-within:text-friends-purple">
-                    {prompt.length} chars
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                <label className="block text-sm font-bold tracking-wide text-gray-700 uppercase">
-                  The Shape
-                </label>
-                <AspectRatioSelector
-                  selected={aspectRatio}
-                  onSelect={setAspectRatio}
-                  disabled={isGenerating}
-                />
-              </div>
-
-              <div className="pt-4 mt-auto">
+              {/* Tab Switcher */}
+              <div className="flex border-b-2 border-gray-100">
                 <button
-                  type="submit"
-                  disabled={isGenerating || !prompt.trim()}
-                  className={`
-                    w-full py-4 px-4 rounded-xl font-bold text-base transition-all duration-200 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] border-2 border-black
-                    ${
-                      isGenerating
-                        ? "bg-gray-100 text-gray-400 border-gray-300 shadow-none cursor-not-allowed"
-                        : "bg-friends-yellow text-black hover:bg-yellow-400"
-                    }
-                  `}>
-                  {isGenerating ? (
-                    <div className="flex items-center justify-center gap-3">
-                      <Loader2
-                        className="animate-spin text-friends-purple"
-                        size={20}
-                      />
-                      <span>Pivot... Pivot!</span>
-                    </div>
-                  ) : (
-                    <div className="flex items-center justify-center gap-2">
-                      <Wand2 size={20} />
-                      <span>Make it Happen!</span>
-                    </div>
-                  )}
+                  onClick={() => setMode("text")}
+                  className={`flex-1 py-4 font-bold text-sm flex items-center justify-center gap-2 transition-colors ${
+                    mode === "text"
+                      ? "bg-white text-friends-purple"
+                      : "bg-gray-50 text-gray-400 hover:bg-gray-100"
+                  }`}>
+                  <Type size={18} />
+                  The One with Text
+                </button>
+                <div className="w-[2px] bg-gray-100"></div>
+                <button
+                  onClick={() => setMode("image")}
+                  className={`flex-1 py-4 font-bold text-sm flex items-center justify-center gap-2 transition-colors ${
+                    mode === "image"
+                      ? "bg-white text-friends-purple"
+                      : "bg-gray-50 text-gray-400 hover:bg-gray-100"
+                  }`}>
+                  <ImagePlus size={18} />
+                  The One with Photo
                 </button>
               </div>
 
-              {error && (
-                <div className="flex items-start gap-3 p-4 text-sm font-medium border-2 border-red-100 bg-red-50 rounded-xl text-friends-red">
-                  <AlertCircle size={18} className="shrink-0 mt-0.5" />
-                  <span>{error}</span>
+              <form
+                onSubmit={handleGenerate}
+                className="flex flex-col flex-1 gap-6 p-6">
+                {/* Image Upload Area (Only in Image Mode) */}
+                {mode === "image" && (
+                  <div className="space-y-3 duration-200 animate-in fade-in zoom-in-95">
+                    <label className="block text-sm font-bold tracking-wide text-gray-700 uppercase">
+                      Your Reference
+                    </label>
+
+                    {!previewUrl ? (
+                      <div
+                        onClick={() => fileInputRef.current?.click()}
+                        className="flex flex-col items-center justify-center h-32 gap-2 transition-colors border-2 border-dashed cursor-pointer border-friends-purple/30 bg-friends-cream/30 rounded-xl hover:bg-friends-cream group">
+                        <Upload
+                          className="transition-transform text-friends-purple group-hover:scale-110"
+                          size={24}
+                        />
+                        <span className="text-sm font-bold text-friends-purple">
+                          Upload a photo to pivot
+                        </span>
+                        <span className="text-xs text-gray-500">
+                          JPG or PNG, max 4MB
+                        </span>
+                      </div>
+                    ) : (
+                      <div className="relative w-full h-32 overflow-hidden bg-gray-100 border-2 rounded-xl border-friends-purple">
+                        <img
+                          src={previewUrl}
+                          alt="Preview"
+                          className="object-cover w-full h-full"
+                        />
+                        <button
+                          type="button"
+                          onClick={clearFile}
+                          className="absolute top-2 right-2 bg-red-500 text-white p-1.5 rounded-full shadow-md hover:bg-red-600 transition-colors">
+                          <X size={14} />
+                        </button>
+                      </div>
+                    )}
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      onChange={handleFileSelect}
+                      accept="image/png, image/jpeg"
+                      className="hidden"
+                    />
+                  </div>
+                )}
+
+                <div className="space-y-3">
+                  <label className="block text-sm font-bold tracking-wide text-gray-700 uppercase">
+                    {mode === "image" ? "Modify it how?" : "The Prompt"}
+                  </label>
+                  <div className="relative group">
+                    <textarea
+                      value={prompt}
+                      onChange={(e) => setPrompt(e.target.value)}
+                      placeholder={
+                        mode === "image"
+                          ? "Make it look like a comic book, add a turkey on the head..."
+                          : "A couch in a fountain, 90s sitcom style, cozy coffee shop vibe..."
+                      }
+                      className="w-full min-h-[120px] p-4 bg-gray-50 border-2 border-gray-200 rounded-xl text-gray-800 focus:border-friends-purple focus:bg-white focus:ring-0 transition-all outline-none resize-none placeholder:text-gray-400"
+                      disabled={isGenerating}
+                    />
+                    <div className="absolute text-xs font-bold text-gray-400 bottom-3 right-3 group-focus-within:text-friends-purple">
+                      {prompt.length} chars
+                    </div>
+                  </div>
                 </div>
-              )}
-            </form>
+
+                <div className="space-y-3">
+                  <label className="block text-sm font-bold tracking-wide text-gray-700 uppercase">
+                    The Shape
+                  </label>
+                  <AspectRatioSelector
+                    selected={aspectRatio}
+                    onSelect={setAspectRatio}
+                    disabled={isGenerating}
+                  />
+                </div>
+
+                <div className="pt-2 mt-auto">
+                  <button
+                    type="submit"
+                    disabled={
+                      isGenerating ||
+                      !prompt.trim() ||
+                      (mode === "image" && !selectedFile)
+                    }
+                    className={`
+                            w-full py-4 px-6 rounded-xl font-bold text-base transition-all duration-200 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] border-2 border-black
+                            ${
+                              isGenerating ||
+                              (mode === "image" && !selectedFile)
+                                ? "bg-gray-100 text-gray-400 border-gray-300 shadow-none cursor-not-allowed"
+                                : "bg-friends-yellow text-black hover:bg-yellow-400"
+                            }
+                          `}>
+                    {isGenerating ? (
+                      <div className="flex items-center justify-center gap-3">
+                        <Loader2
+                          className="animate-spin text-friends-purple"
+                          size={20}
+                        />
+                        <span>Pivot... Pivot!</span>
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-center gap-2">
+                        <Wand2 size={20} />
+                        <span>Make it Happen!</span>
+                      </div>
+                    )}
+                  </button>
+                </div>
+
+                {error && (
+                  <div className="flex items-start gap-3 p-4 text-sm font-medium border-2 border-red-100 bg-red-50 rounded-xl text-friends-red">
+                    <AlertCircle size={18} className="shrink-0 mt-0.5" />
+                    <span>{error}</span>
+                  </div>
+                )}
+              </form>
+            </div>
           </div>
 
           {/* Preview Panel */}

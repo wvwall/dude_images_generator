@@ -2,13 +2,14 @@ import { AspectRatio } from "../types";
 
 export const generateImage = async (
   prompt: string,
-  aspectRatio: AspectRatio
+  aspectRatio: AspectRatio,
+  referenceImageBase64?: string
 ): Promise<string> => {
   try {
     const res = await fetch("/.netlify/functions/generate-image", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ prompt, aspectRatio }),
+      body: JSON.stringify({ prompt, aspectRatio, referenceImageBase64 }),
     });
 
     if (!res.ok) {

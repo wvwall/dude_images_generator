@@ -31,12 +31,12 @@ const Header: React.FC = () => {
       <nav className="items-center hidden gap-8 md:flex">
         <Link
           to="/"
-          className="text-base font-bold transition-colors text-friends-purple hover:text-friends-red hover:underline decoration-2 underline-offset-4">
+          className="text-base font-bold transition-colors text-friends-purple hover:text-friends-yellow hover:underline decoration-2 underline-offset-4">
           Home
         </Link>
         <Link
           to="/gallery"
-          className="text-base font-bold transition-colors text-friends-purple hover:text-friends-red hover:underline decoration-2 underline-offset-4">
+          className="text-base font-bold transition-colors text-friends-purple hover:text-friends-yellow hover:underline decoration-2 underline-offset-4">
           Gallery
         </Link>
       </nav>
@@ -55,13 +55,13 @@ const Header: React.FC = () => {
           <Link
             to="/"
             onClick={() => setIsMenuOpen(false)}
-            className="p-4 text-lg font-bold text-center border-b border-gray-100 text-friends-purple hover:bg-friends-cream">
+            className="p-4 text-lg font-bold text-center border-b border-gray-100 text-friends-purple hover:text-friends-yellow hover:underline decoration-2 underline-offset-4">
             Home
           </Link>
           <Link
             to="/gallery"
             onClick={() => setIsMenuOpen(false)}
-            className="p-4 text-lg font-bold text-center text-friends-purple hover:bg-friends-cream">
+            className="p-4 text-lg font-bold text-center text-friends-purple hover:text-friends-yellow hover:underline decoration-2 underline-offset-4">
             Gallery
           </Link>
         </div>
