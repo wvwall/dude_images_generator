@@ -68,10 +68,8 @@ const Home: React.FC = () => {
   useEffect(() => {
     (async () => {
       try {
-        await sqliteService.initDB();
         const imgs = await sqliteService.getAllImages();
         setHistory(imgs);
-        // if (imgs.length > 0) setCurrentImage(imgs[0]);
       } catch (err) {
         console.warn("Failed to load images from local sqlite DB", err);
       }

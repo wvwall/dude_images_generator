@@ -145,6 +145,32 @@ export async function getAllImages(): Promise<GeneratedImage[]> {
   }
 }
 
+export async function getImageById(id: string): Promise<GeneratedImage | null> {
+  await ensureDbInitialized();
+  if (!db) return null;
+  try {
+    const stmt = db.prepare(
+      "SELECT id, url, prompt, timestamp, aspectRatio FROM images WHERE id = ?"
+    );
+    stmt.bind([id]);
+    if (stmt.step()) {
+      const row = stmt.getAsObject();
+      stmt.free();
+      const obj: any = {};
+      Object.keys(row).forEach((key) => {
+        obj[key] = (row as any)[key];
+      });
+      return obj as GeneratedImage;
+    } else {
+      stmt.free();
+      return null;
+    }
+  } catch (e) {
+    console.error("Error fetching image by ID", e);
+    return null;
+  }
+}
+
 export async function addImage(img: GeneratedImage) {
   await ensureDbInitialized();
   if (!db) throw new Error("DB not initialized");
