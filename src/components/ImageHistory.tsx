@@ -37,7 +37,7 @@ const ImageHistory: React.FC<ImageHistoryProps> = ({ images, onDelete }) => {
       <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
         {images.map((img) => (
           <div
-            onDoubleClick={() => goToDetails(img)}
+            onClick={() => goToDetails(img)}
             key={img.id}
             className="group cursor-pointer bg-white p-3 pb-4 rounded-xl border-2 border-gray-200 hover:border-friends-purple transition-all duration-300 shadow-md hover:shadow-[5px_5px_0px_0px_rgba(93,63,106,0.2)]">
             <div className="relative w-full overflow-hidden bg-gray-100 border border-gray-200 rounded-lg aspect-square">
