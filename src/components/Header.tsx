@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Coffee } from "lucide-react";
+import { Coffee, Menu, X } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Header: React.FC = () => {
