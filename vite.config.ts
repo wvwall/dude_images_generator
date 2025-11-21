@@ -15,6 +15,7 @@ export default defineConfig(({ mode }) => {
         },
       },
     },
+    assetsInclude: ["**/*.html"],
     plugins: [react()],
     // Do not inline secret environment variables into the client bundle.
     // Secrets should be provided at runtime from server-side environment (Netlify env vars)
