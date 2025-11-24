@@ -19,15 +19,10 @@ const Gallery: React.FC = () => {
     })();
   }, []);
 
-  const goToHome = () => {
-    navigate(`/`);
-  };
-
   const handleDelete = useCallback(async (id: string) => {
     try {
       await sqliteService.deleteImage(id);
       setImages((prev) => prev.filter((i) => i.id !== id));
-      goToHome();
     } catch (err) {
       console.warn("Failed to delete image from DB", err);
     }
