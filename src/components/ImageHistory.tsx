@@ -49,13 +49,19 @@ const ImageHistory: React.FC<ImageHistoryProps> = ({ images, onDelete }) => {
 
               <div className="absolute inset-0 flex items-center justify-center gap-3 transition-opacity duration-300 opacity-0 bg-black/40 group-hover:opacity-100">
                 <button
-                  onClick={() => handleDownload(img)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDownload(img);
+                  }}
                   className="p-3 text-black transition-transform border-2 border-black rounded-full shadow-lg bg-friends-yellow hover:bg-yellow-400 hover:scale-110"
                   title="Download">
                   <Download size={20} />
                 </button>
                 <button
-                  onClick={() => onDelete(img.id)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onDelete(img.id);
+                  }}
                   className="p-3 text-white transition-transform border-2 border-black rounded-full shadow-lg bg-friends-red hover:bg-red-500 hover:scale-110"
                   title="Delete">
                   <Trash2 size={20} />
