@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { Play, Pause } from "lucide-react";
+import { Play, Pause, CirclePlay, CirclePause } from "lucide-react";
 
 export enum AudioType {
   HOW_YOU_DOIN = "HOW_YOU_DOIN",
@@ -40,7 +40,7 @@ export default function AudioPlayer({ type, volume = 1 }: AudioPlayerProps) {
   return (
     <div className="flex items-center gap-2">
       <button onClick={togglePlay}>
-        {playing ? <Pause size={14} /> : <Play size={14} />}
+        {playing ? <CirclePause size={16} /> : <CirclePlay size={16} />}
       </button>
 
       <audio ref={audioRef} src={src} onEnded={() => setPlaying(false)} />
