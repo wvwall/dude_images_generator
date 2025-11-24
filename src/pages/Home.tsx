@@ -15,6 +15,7 @@ import {
   Type,
   X,
 } from "lucide-react";
+import AudioPlayer, { AudioType } from "../components/AudioPlayer";
 
 const Home: React.FC = () => {
   const [prompt, setPrompt] = useState("");
@@ -149,12 +150,18 @@ const Home: React.FC = () => {
           {/* Input Panel */}
           <div className="flex flex-col w-full gap-6 lg:w-5/12">
             <div className="mb-2">
-              <h2 className="mb-3 text-5xl text-gray-800 font-hand drop-shadow-sm">
-                How you doin'?
-              </h2>
-              <p className="font-medium text-gray-600">
-                Describe what you want to see, and we'll be there for you.
-              </p>
+              <div className="flex gap-2">
+                <h2 className="mb-3 text-4xl text-gray-800 md:text-5xl font-hand drop-shadow-sm">
+                  How you doin'?
+                </h2>
+                <AudioPlayer type={AudioType.HOW_YOU_DOIN} volume={0.3} />
+              </div>
+              <div className="flex gap-2">
+                <p className="font-medium text-gray-600">
+                  Describe what you want to see, and I'll be there for you.{" "}
+                </p>
+                <AudioPlayer type={AudioType.FRIENDS_THEME} volume={0.3} />
+              </div>
             </div>
 
             <div className="relative flex flex-col flex-1 overflow-hidden bg-white border-2 border-gray-200 shadow-lg rounded-2xl">
@@ -181,7 +188,7 @@ const Home: React.FC = () => {
                       : "bg-gray-50 text-gray-400 hover:bg-gray-100"
                   }`}>
                   <ImagePlus size={18} />
-                  Text + Image
+                  Image + Text
                 </button>
               </div>
 
@@ -348,9 +355,13 @@ const Home: React.FC = () => {
                     <Armchair size={40} className="text-black" />
                   </div>
                   <div>
-                    <h3 className="mb-2 text-2xl text-friends-purple font-hand">
-                      Oh. My. God.
-                    </h3>
+                    <div className="flex justify-center gap-2">
+                      <h3 className="mb-2 text-2xl text-friends-purple font-hand">
+                        Oh. My. God.
+                      </h3>
+                      <AudioPlayer type={AudioType.OH_MY_GOD} volume={0.3} />
+                    </div>
+
                     <p className="text-base font-medium text-gray-500">
                       It's empty in here! Enter a prompt to start creating.
                     </p>
