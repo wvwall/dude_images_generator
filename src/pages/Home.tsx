@@ -303,7 +303,7 @@ const Home: React.FC = () => {
                     ) : (
                       <div className="flex items-center justify-center gap-2">
                         <Wand2 size={20} />
-                        <span>Make it Happen!</span>
+                        <span>PIVOT!</span>
                       </div>
                     )}
                   </button>
