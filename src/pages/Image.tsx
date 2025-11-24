@@ -1,10 +1,12 @@
 import { Camera, Download, Trash2 } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import * as sqliteService from "../services/sqliteService";
 import { GeneratedImage } from "../types";
 
 const Gallery: React.FC = () => {
+  const navigate = useNavigate();
+
   const [image, setImage] = useState<GeneratedImage | null>(null);
   const { id } = useParams();
 
@@ -27,11 +29,13 @@ const Gallery: React.FC = () => {
     link.click();
     document.body.removeChild(link);
   };
-
+  const goToHome = () => {
+    navigate(`/`);
+  };
   const handleDelete = useCallback(async (id: string) => {
     try {
       await sqliteService.deleteImage(id);
-      // TODO navigate to home or gallery
+      goToHome();
     } catch (err) {
       console.warn("Failed to delete image from DB", err);
     }

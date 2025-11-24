@@ -2,9 +2,10 @@ import React, { useEffect, useState, useCallback } from "react";
 import ImageHistory from "../components/ImageHistory";
 import { GeneratedImage } from "../types";
 import * as sqliteService from "../services/sqliteService";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Gallery: React.FC = () => {
+  const navigate = useNavigate();
   const [images, setImages] = useState<GeneratedImage[]>([]);
 
   useEffect(() => {
@@ -18,10 +19,15 @@ const Gallery: React.FC = () => {
     })();
   }, []);
 
+  const goToHome = () => {
+    navigate(`/`);
+  };
+
   const handleDelete = useCallback(async (id: string) => {
     try {
       await sqliteService.deleteImage(id);
       setImages((prev) => prev.filter((i) => i.id !== id));
+      goToHome();
     } catch (err) {
       console.warn("Failed to delete image from DB", err);
     }

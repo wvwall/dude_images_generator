@@ -320,7 +320,7 @@ const Home: React.FC = () => {
           </div>
 
           {/* Preview Panel */}
-          <div className="w-full lg:w-7/12 min-h[350px] sm:min-h-[500px] max-h-[600px] mt-[12px] ">
+          <div className="w-full lg:w-7/12 min-h[350px] sm:min-h-[500px]   mt-[12px] ">
             <div
               className={`
               relative w-full h-full bg-white border-4 border-friends-purple rounded-2xl flex flex-col items-center justify-center overflow-hidden shadow-xl
@@ -371,8 +371,9 @@ const Home: React.FC = () => {
             </div>
           </div>
         </div>
-
-        <ImageHistory images={history} onDelete={handleDelete} />
+        {history.length > 0 && (
+          <ImageHistory images={history} onDelete={handleDelete} />
+        )}
       </main>
     </div>
   );
