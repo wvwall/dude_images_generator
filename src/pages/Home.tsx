@@ -158,7 +158,7 @@ const Home: React.FC = () => {
               </div>
               <div className="flex gap-2">
                 <p className="font-medium text-gray-600">
-                  Describe what you want to see, and I'll be there for you.{" "}
+                  Describe what you want to see, I'll be there for you.
                 </p>
                 <AudioPlayer type={AudioType.FRIENDS_THEME} volume={0.3} />
               </div>
