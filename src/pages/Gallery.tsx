@@ -2,15 +2,15 @@ import React, { useEffect, useState, useCallback } from "react";
 import ImageHistory from "../components/ImageHistory";
 import { GeneratedImage } from "../types";
 import * as sqliteService from "../services/sqliteService";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Gallery: React.FC = () => {
+  const navigate = useNavigate();
   const [images, setImages] = useState<GeneratedImage[]>([]);
 
   useEffect(() => {
     (async () => {
       try {
-        await sqliteService.initDB();
         const imgs = await sqliteService.getAllImages();
         setImages(imgs);
       } catch (err) {

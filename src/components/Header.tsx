@@ -1,14 +1,28 @@
 import React, { useState } from "react";
 import { ImagePlus, Menu, X } from "lucide-react";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
+  const navClasses = ({ isActive }: { isActive: boolean }) =>
+    `text-md font-bold transition-colors underline-offset-4 decoration-2 ${
+      isActive
+        ? "text-friends-yellow underline"
+        : "text-friends-purple hover:text-friends-yellow hover:underline"
+    }`;
+
+  const mobileNavClasses = ({ isActive }: { isActive: boolean }) =>
+    `p-4 text-md font-bold text-center underline-offset-4 decoration-2 ${
+      isActive
+        ? "text-friends-yellow underline"
+        : "text-friends-purple hover:text-friends-yellow hover:underline"
+    }`;
+
   return (
-    <header className="top-0 z-50 flex items-center justify-between w-full px-4 py-4 bg-white border-b-4 shadow-sm md:px-12 border-friends-purple">
+    <header className="top-0 z-50 flex items-center justify-between w-full px-4 py-4 bg-white border-b-4 shadow-sm md:px-20 border-friends-purple">
       <div className="flex items-center gap-4">
         <div className="flex items-center justify-center w-12 h-12 border-2 rounded-full shadow-lg bg-friends-purple border-friends-yellow">
           <ImagePlus size={24} className="text-white" />
@@ -28,17 +42,14 @@ const Header: React.FC = () => {
       </div>
 
       {/* Desktop Nav */}
-      <nav className="items-center hidden gap-8 md:flex">
-        <Link
-          to="/"
-          className="text-base font-bold transition-colors text-friends-purple hover:text-friends-yellow hover:underline decoration-2 underline-offset-4">
+      <nav className="items-center hidden gap-6 md:flex">
+        <NavLink to="/" className={navClasses}>
           Home
-        </Link>
-        <Link
-          to="/gallery"
-          className="text-base font-bold transition-colors text-friends-purple hover:text-friends-yellow hover:underline decoration-2 underline-offset-4">
+        </NavLink>
+
+        <NavLink to="/gallery" className={navClasses}>
           Gallery
-        </Link>
+        </NavLink>
       </nav>
 
       {/* Mobile Menu Button */}
@@ -52,18 +63,19 @@ const Header: React.FC = () => {
       {/* Mobile Nav Dropdown */}
       {isMenuOpen && (
         <div className="absolute top-[84px] sm:top-[88px] z-50 left-0 w-full bg-white border-b-4 border-friends-purple shadow-xl md:hidden flex flex-col animate-in slide-in-from-top-5 duration-200">
-          <Link
+          <NavLink
             to="/"
             onClick={() => setIsMenuOpen(false)}
-            className="p-4 text-lg font-bold text-center border-b border-gray-100 text-friends-purple hover:text-friends-yellow hover:underline decoration-2 underline-offset-4">
+            className={mobileNavClasses}>
             Home
-          </Link>
-          <Link
+          </NavLink>
+
+          <NavLink
             to="/gallery"
             onClick={() => setIsMenuOpen(false)}
-            className="p-4 text-lg font-bold text-center text-friends-purple hover:text-friends-yellow hover:underline decoration-2 underline-offset-4">
+            className={mobileNavClasses}>
             Gallery
-          </Link>
+          </NavLink>
         </div>
       )}
     </header>
