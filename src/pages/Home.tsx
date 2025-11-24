@@ -144,7 +144,7 @@ const Home: React.FC = () => {
 
   return (
     <div className="min-h-screen pb-12 font-sans bg-friends-purple-light">
-      <main className="px-4 pt-10 mx-auto max-w-7xl">
+      <main className="px-4 pt-10 mx-auto md:pt-20 max-w-7xl">
         <div className="flex flex-col items-stretch gap-8 lg:flex-row">
           {/* Input Panel */}
           <div className="flex flex-col w-full gap-6 lg:w-5/12">
@@ -170,7 +170,7 @@ const Home: React.FC = () => {
                       : "bg-gray-50 text-gray-400 hover:bg-gray-100"
                   }`}>
                   <Type size={18} />
-                  The One with Text
+                  Text
                 </button>
                 <div className="w-[2px] bg-gray-100"></div>
                 <button
@@ -181,7 +181,7 @@ const Home: React.FC = () => {
                       : "bg-gray-50 text-gray-400 hover:bg-gray-100"
                   }`}>
                   <ImagePlus size={18} />
-                  The One with Photo
+                  Text + Image
                 </button>
               </div>
 
