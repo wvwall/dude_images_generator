@@ -31,6 +31,35 @@ const Home: React.FC = () => {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const [isDragging, setIsDragging] = useState(false);
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+
+    const file = e.dataTransfer.files?.[0];
+    if (!file) return;
+
+    if (file.size > 4 * 1024 * 1024) {
+      setError("File too large! Please keep it under 4MB.");
+      return;
+    }
+
+    setSelectedFile(file);
+    setPreviewUrl(URL.createObjectURL(file));
+    setError(null);
+  };
+
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
@@ -205,17 +234,33 @@ const Home: React.FC = () => {
                     {!previewUrl ? (
                       <div
                         onClick={() => fileInputRef.current?.click()}
-                        className="flex flex-col items-center justify-center h-32 gap-2 transition-colors border-2 border-dashed cursor-pointer border-friends-purple/30 bg-friends-cream/30 rounded-xl hover:bg-friends-cream group">
+                        onDragOver={handleDragOver}
+                        onDragLeave={handleDragLeave}
+                        onDrop={handleDrop}
+                        className={`
+                          flex flex-col items-center justify-center h-32 gap-2 transition-colors border-2 border-dashed cursor-pointer rounded-xl group
+                          ${
+                            isDragging
+                              ? "border-friends-purple bg-friends-cream"
+                              : "border-friends-purple/30 bg-friends-cream/30 hover:bg-friends-cream"
+                          }
+                        `}>
                         <Upload
-                          className="transition-transform text-friends-purple group-hover:scale-110"
+                          className={`transition-transform text-friends-purple ${
+                            isDragging ? "scale-110" : "group-hover:scale-110"
+                          }`}
                           size={24}
                         />
+
                         <span className="text-sm font-bold text-friends-purple">
-                          Upload a photo to pivot
+                          {isDragging ? "Drop it!" : "Upload a photo to pivot"}
                         </span>
-                        <span className="text-xs text-gray-500">
-                          JPG or PNG, max 4MB
-                        </span>
+
+                        {!isDragging && (
+                          <span className="text-xs text-gray-500">
+                            JPG or PNG, max 4MB
+                          </span>
+                        )}
                       </div>
                     ) : (
                       <div className="relative w-full h-32 overflow-hidden bg-gray-100 border-2 rounded-xl border-friends-purple">
