@@ -1,14 +1,19 @@
 import React from "react";
 import { GeneratedImage } from "../types";
-import { Download, Trash2, History, Camera } from "lucide-react";
+import { Download, Trash2, History, Camera, Edit2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface ImageHistoryProps {
   images: GeneratedImage[];
   onDelete: (id: string) => void;
+  onEdit: (id: string) => void;
 }
 
-const ImageHistory: React.FC<ImageHistoryProps> = ({ images, onDelete }) => {
+const ImageHistory: React.FC<ImageHistoryProps> = ({
+  images,
+  onDelete,
+  onEdit,
+}) => {
   const navigate = useNavigate();
 
   const handleDownload = (image: GeneratedImage) => {
@@ -56,6 +61,15 @@ const ImageHistory: React.FC<ImageHistoryProps> = ({ images, onDelete }) => {
                   className="p-3 text-black transition-transform border-2 border-black rounded-full shadow-lg bg-friends-yellow hover:bg-yellow-400 hover:scale-110"
                   title="Download">
                   <Download size={20} />
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onEdit(img.id);
+                  }}
+                  className="p-3 text-white transition-transform border-2 border-black rounded-full shadow-lg bg-friends-blue hover:bg-blue-500 hover:scale-110"
+                  title="Delete">
+                  <Edit2 size={20} />
                 </button>
                 <button
                   onClick={(e) => {

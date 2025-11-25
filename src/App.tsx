@@ -1,5 +1,11 @@
 import React, { useEffect } from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+} from "react-router-dom";
 import Header from "./components/Header";
 import Home from "./pages/Home";
 import Gallery from "./pages/Gallery";
@@ -7,6 +13,15 @@ import Image from "./pages/Image";
 import sqliteService from "./services/sqliteService";
 
 const App: React.FC = () => {
+  function ScrollToTop() {
+    const { pathname } = useLocation();
+
+    useEffect(() => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }, [pathname]);
+
+    return null;
+  }
   useEffect(() => {
     (async () => {
       try {
@@ -20,6 +35,7 @@ const App: React.FC = () => {
   return (
     <BrowserRouter>
       <Header />
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/gallery" element={<Gallery />} />

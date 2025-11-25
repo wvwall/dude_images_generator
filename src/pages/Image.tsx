@@ -49,7 +49,7 @@ const Gallery: React.FC = () => {
           Image
         </h2>
 
-        <div className="grid gap*:-8 py-10 md:grid-cols-2">
+        <div className="grid py-10 ">
           <div
             key={image?.id}
             className="group cursor-pointer bg-white p-3 pb-4 rounded-xl border-2 border-gray-200 hover:border-friends-purple transition-all duration-300 shadow-md hover:shadow-[5px_5px_0px_0px_rgba(93,63,106,0.2)]">

@@ -151,6 +151,27 @@ const Home: React.FC = () => {
     [currentImage]
   );
 
+  async function urlToFile(url: string, filename = "image.jpg"): Promise<File> {
+    const res = await fetch(url);
+    const blob = await res.blob();
+    return new File([blob], filename, { type: blob.type });
+  }
+
+  const handleEdit = useCallback(
+    async (id: string) => {
+      setMode("image");
+      const imgToEdit = history.find((img) => img.id === id);
+      if (!imgToEdit) return;
+      const file = await urlToFile(imgToEdit.url);
+      setPrompt(imgToEdit.prompt);
+      setSelectedFile(file);
+      setPreviewUrl(URL.createObjectURL(file));
+      setError(null);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    },
+    [history]
+  );
+
   useEffect(() => {
     (async () => {
       try {
@@ -417,7 +438,11 @@ const Home: React.FC = () => {
           </div>
         </div>
         {history.length > 0 && (
-          <ImageHistory images={history} onDelete={handleDelete} />
+          <ImageHistory
+            images={history}
+            onDelete={handleDelete}
+            onEdit={handleEdit}
+          />
         )}
       </main>
     </div>
