@@ -27,9 +27,9 @@ const ImageHistory: React.FC<ImageHistoryProps> = ({ images, onDelete }) => {
   return (
     <div className="w-full pb-20 mt-16">
       <div className="flex items-center gap-3 pb-4 mb-8 border-b-2 border-friends-purple">
-        <History size={24} className="text-gray-800" />
-        <h2 className="text-2xl text-gray-800 font-hand">The Archive</h2>
-        <span className="px-3 py-1 ml-auto text-xs font-bold text-white rounded-full shadow-sm bg-friends-blue">
+        <History size={24} className="text-friends-purple" />
+        <h2 className="text-3xl text-gray-800 font-hand">The Archive</h2>
+        <span className="px-3 py-1 ml-auto text-xs font-bold text-white rounded-lg shadow-sm bg-friends-blue">
           {images.length} SNAPS
         </span>
       </div>
