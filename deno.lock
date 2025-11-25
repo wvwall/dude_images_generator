@@ -13,6 +13,7 @@
       "dependencies": [
         "npm:@google/genai@^1.30.0",
         "npm:@types/node@^22.14.0",
+        "npm:@types/react-dom@^19.2.3",
         "npm:@types/react@^19.2.6",
         "npm:@types/sql.js@^1.4.9",
         "npm:@vitejs/plugin-react@5",

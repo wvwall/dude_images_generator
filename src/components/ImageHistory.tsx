@@ -1,14 +1,19 @@
 import React from "react";
 import { GeneratedImage } from "../types";
-import { Download, Trash2, History, Camera } from "lucide-react";
+import { Download, Trash2, History, Camera, Edit2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface ImageHistoryProps {
   images: GeneratedImage[];
   onDelete: (id: string) => void;
+  onEdit: (id: string) => void;
 }
 
-const ImageHistory: React.FC<ImageHistoryProps> = ({ images, onDelete }) => {
+const ImageHistory: React.FC<ImageHistoryProps> = ({
+  images,
+  onDelete,
+  onEdit,
+}) => {
   const navigate = useNavigate();
 
   const handleDownload = (image: GeneratedImage) => {
@@ -27,9 +32,9 @@ const ImageHistory: React.FC<ImageHistoryProps> = ({ images, onDelete }) => {
   return (
     <div className="w-full pb-20 mt-16">
       <div className="flex items-center gap-3 pb-4 mb-8 border-b-2 border-friends-purple">
-        <History size={24} className="text-gray-800" />
-        <h2 className="text-2xl text-gray-800 font-hand">The Archive</h2>
-        <span className="px-3 py-1 ml-auto text-xs font-bold text-white rounded-full shadow-sm bg-friends-blue">
+        <History size={24} className="text-friends-purple" />
+        <h2 className="text-3xl text-gray-800 font-hand">The Archive</h2>
+        <span className="px-3 py-1 ml-auto text-xs font-bold text-white rounded-lg shadow-sm bg-friends-blue">
           {images.length} SNAPS
         </span>
       </div>
@@ -60,9 +65,18 @@ const ImageHistory: React.FC<ImageHistoryProps> = ({ images, onDelete }) => {
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
+                    onEdit(img.id);
+                  }}
+                  className="p-3 text-black transition-transform border-2 border-black rounded-full shadow-lg bg-friends-blue hover:bg-blue-500 hover:scale-110"
+                  title="Delete">
+                  <Edit2 size={20} />
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
                     onDelete(img.id);
                   }}
-                  className="p-3 text-white transition-transform border-2 border-black rounded-full shadow-lg bg-friends-red hover:bg-red-500 hover:scale-110"
+                  className="p-3 text-black transition-transform border-2 border-black rounded-full shadow-lg bg-friends-red hover:bg-red-500 hover:scale-110"
                   title="Delete">
                   <Trash2 size={20} />
                 </button>

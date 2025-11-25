@@ -16,8 +16,10 @@ import {
   X,
 } from "lucide-react";
 import AudioPlayer, { AudioType } from "../components/AudioPlayer";
+import { useLocation } from "react-router-dom";
 
 const Home: React.FC = () => {
+  const location = useLocation();
   const [prompt, setPrompt] = useState("");
   const [aspectRatio, setAspectRatio] = useState<AspectRatio>("1:1");
   const [isGenerating, setIsGenerating] = useState(false);
@@ -30,6 +32,35 @@ const Home: React.FC = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const [isDragging, setIsDragging] = useState(false);
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+
+    const file = e.dataTransfer.files?.[0];
+    if (!file) return;
+
+    if (file.size > 4 * 1024 * 1024) {
+      setError("File too large! Please keep it under 4MB.");
+      return;
+    }
+
+    setSelectedFile(file);
+    setPreviewUrl(URL.createObjectURL(file));
+    setError(null);
+  };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -122,6 +153,48 @@ const Home: React.FC = () => {
     [currentImage]
   );
 
+  async function urlToFile(url: string, filename = "image.jpg"): Promise<File> {
+    const res = await fetch(url);
+    const blob = await res.blob();
+    return new File([blob], filename, { type: blob.type });
+  }
+
+  const handleEdit = useCallback(
+    async (id: string) => {
+      setMode("image");
+      const imgToEdit = history.find((img) => img.id === id);
+      if (!imgToEdit) return;
+      const file = await urlToFile(imgToEdit.url);
+      setPrompt(imgToEdit.prompt);
+      setSelectedFile(file);
+      setPreviewUrl(URL.createObjectURL(file));
+      setError(null);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    },
+    [history]
+  );
+
+  useEffect(() => {
+    const editId = location.state?.editId;
+    if (!editId) return;
+
+    const imgToEdit = history.find((img) => img.id === editId);
+    if (!imgToEdit) return;
+
+    setMode("image");
+    setPrompt(imgToEdit.prompt);
+
+    fetch(imgToEdit.url)
+      .then((res) => res.blob())
+      .then((blob) => {
+        const file = new File([blob], "edit.jpg", { type: blob.type });
+        setSelectedFile(file);
+        setPreviewUrl(imgToEdit.url);
+      });
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [location.state, history]);
+
   useEffect(() => {
     (async () => {
       try {
@@ -205,17 +278,33 @@ const Home: React.FC = () => {
                     {!previewUrl ? (
                       <div
                         onClick={() => fileInputRef.current?.click()}
-                        className="flex flex-col items-center justify-center h-32 gap-2 transition-colors border-2 border-dashed cursor-pointer border-friends-purple/30 bg-friends-cream/30 rounded-xl hover:bg-friends-cream group">
+                        onDragOver={handleDragOver}
+                        onDragLeave={handleDragLeave}
+                        onDrop={handleDrop}
+                        className={`
+                          flex flex-col items-center justify-center h-32 gap-2 transition-colors border-2 border-dashed cursor-pointer rounded-xl group
+                          ${
+                            isDragging
+                              ? "border-friends-purple bg-friends-cream"
+                              : "border-friends-purple/30 bg-friends-cream/30 hover:bg-friends-cream"
+                          }
+                        `}>
                         <Upload
-                          className="transition-transform text-friends-purple group-hover:scale-110"
+                          className={`transition-transform text-friends-purple ${
+                            isDragging ? "scale-110" : "group-hover:scale-110"
+                          }`}
                           size={24}
                         />
+
                         <span className="text-sm font-bold text-friends-purple">
-                          Upload a photo to pivot
+                          {isDragging ? "Drop it!" : "Upload a photo to pivot"}
                         </span>
-                        <span className="text-xs text-gray-500">
-                          JPG or PNG, max 4MB
-                        </span>
+
+                        {!isDragging && (
+                          <span className="text-xs text-gray-500">
+                            JPG or PNG, max 4MB
+                          </span>
+                        )}
                       </div>
                     ) : (
                       <div className="relative w-full h-32 overflow-hidden bg-gray-100 border-2 rounded-xl border-friends-purple">
@@ -372,7 +461,11 @@ const Home: React.FC = () => {
           </div>
         </div>
         {history.length > 0 && (
-          <ImageHistory images={history} onDelete={handleDelete} />
+          <ImageHistory
+            images={history}
+            onDelete={handleDelete}
+            onEdit={handleEdit}
+          />
         )}
       </main>
     </div>

@@ -1,4 +1,4 @@
-import { Camera, Download, Trash2 } from "lucide-react";
+import { Camera, Download, Edit2, Trash2 } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import * as sqliteService from "../services/sqliteService";
@@ -49,7 +49,7 @@ const Gallery: React.FC = () => {
           Image
         </h2>
 
-        <div className="grid gap*:-8 py-10 md:grid-cols-2">
+        <div className="grid py-10 ">
           <div
             key={image?.id}
             className="group cursor-pointer bg-white p-3 pb-4 rounded-xl border-2 border-gray-200 hover:border-friends-purple transition-all duration-300 shadow-md hover:shadow-[5px_5px_0px_0px_rgba(93,63,106,0.2)]">
@@ -68,8 +68,18 @@ const Gallery: React.FC = () => {
                   <Download size={20} />
                 </button>
                 <button
+                  onClick={() => {
+                    if (image) {
+                      navigate("/", { state: { editId: image.id } });
+                    }
+                  }}
+                  className="p-3 text-black transition-transform border-2 border-black rounded-full shadow-lg bg-friends-blue hover:bg-blue-500 hover:scale-110"
+                  title="Edit">
+                  <Edit2 size={20} />
+                </button>
+                <button
                   onClick={() => handleDelete(image?.id)}
-                  className="p-3 text-white transition-transform border-2 border-black rounded-full shadow-lg bg-friends-red hover:bg-red-500 hover:scale-110"
+                  className="p-3 text-black transition-transform border-2 border-black rounded-full shadow-lg bg-friends-red hover:bg-red-500 hover:scale-110"
                   title="Delete">
                   <Trash2 size={20} />
                 </button>
