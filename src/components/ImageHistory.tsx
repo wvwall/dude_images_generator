@@ -67,7 +67,7 @@ const ImageHistory: React.FC<ImageHistoryProps> = ({
                     e.stopPropagation();
                     onEdit(img.id);
                   }}
-                  className="p-3 text-white transition-transform border-2 border-black rounded-full shadow-lg bg-friends-blue hover:bg-blue-500 hover:scale-110"
+                  className="p-3 text-black transition-transform border-2 border-black rounded-full shadow-lg bg-friends-blue hover:bg-blue-500 hover:scale-110"
                   title="Delete">
                   <Edit2 size={20} />
                 </button>
@@ -76,7 +76,7 @@ const ImageHistory: React.FC<ImageHistoryProps> = ({
                     e.stopPropagation();
                     onDelete(img.id);
                   }}
-                  className="p-3 text-white transition-transform border-2 border-black rounded-full shadow-lg bg-friends-red hover:bg-red-500 hover:scale-110"
+                  className="p-3 text-black transition-transform border-2 border-black rounded-full shadow-lg bg-friends-red hover:bg-red-500 hover:scale-110"
                   title="Delete">
                   <Trash2 size={20} />
                 </button>
