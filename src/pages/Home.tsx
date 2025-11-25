@@ -16,8 +16,10 @@ import {
   X,
 } from "lucide-react";
 import AudioPlayer, { AudioType } from "../components/AudioPlayer";
+import { useLocation } from "react-router-dom";
 
 const Home: React.FC = () => {
+  const location = useLocation();
   const [prompt, setPrompt] = useState("");
   const [aspectRatio, setAspectRatio] = useState<AspectRatio>("1:1");
   const [isGenerating, setIsGenerating] = useState(false);
@@ -171,6 +173,27 @@ const Home: React.FC = () => {
     },
     [history]
   );
+
+  useEffect(() => {
+    const editId = location.state?.editId;
+    if (!editId) return;
+
+    const imgToEdit = history.find((img) => img.id === editId);
+    if (!imgToEdit) return;
+
+    setMode("image");
+    setPrompt(imgToEdit.prompt);
+
+    fetch(imgToEdit.url)
+      .then((res) => res.blob())
+      .then((blob) => {
+        const file = new File([blob], "edit.jpg", { type: blob.type });
+        setSelectedFile(file);
+        setPreviewUrl(imgToEdit.url);
+      });
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [location.state, history]);
 
   useEffect(() => {
     (async () => {

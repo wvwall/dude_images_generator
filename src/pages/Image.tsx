@@ -1,4 +1,4 @@
-import { Camera, Download, Trash2 } from "lucide-react";
+import { Camera, Download, Edit2, Trash2 } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import * as sqliteService from "../services/sqliteService";
@@ -68,8 +68,18 @@ const Gallery: React.FC = () => {
                   <Download size={20} />
                 </button>
                 <button
+                  onClick={() => {
+                    if (image) {
+                      navigate("/", { state: { editId: image.id } });
+                    }
+                  }}
+                  className="p-3 text-black transition-transform border-2 border-black rounded-full shadow-lg bg-friends-blue hover:bg-blue-500 hover:scale-110"
+                  title="Edit">
+                  <Edit2 size={20} />
+                </button>
+                <button
                   onClick={() => handleDelete(image?.id)}
-                  className="p-3 text-white transition-transform border-2 border-black rounded-full shadow-lg bg-friends-red hover:bg-red-500 hover:scale-110"
+                  className="p-3 text-black transition-transform border-2 border-black rounded-full shadow-lg bg-friends-red hover:bg-red-500 hover:scale-110"
                   title="Delete">
                   <Trash2 size={20} />
                 </button>
