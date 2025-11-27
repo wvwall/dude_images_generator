@@ -43,7 +43,6 @@ export const handler = async (event) => {
       model: "veo-3.1-generate-preview",
       prompt: finalPrompt,
     });
-    ß;
 
     // Poll the operation status until the video is ready.
     while (!operation.done) {
