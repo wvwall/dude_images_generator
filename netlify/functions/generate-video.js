@@ -1,5 +1,6 @@
 import { GoogleGenAI } from "@google/genai";
 const apiKey = process.env.GEMINI_API_KEY || "";
+const downloadDir = require("os").homedir() + "/Downloads";
 
 export const handler = async (event) => {
   if (event.httpMethod !== "POST") {
@@ -56,7 +57,7 @@ export const handler = async (event) => {
     // Download the generated video.
     ai.files.download({
       file: operation.response.generatedVideos[0].video,
-      downloadPath: "style_example.mp4",
+      downloadPath: downloadDir + "/generated_video.mp4",
     });
     return {
       statusCode: 200,

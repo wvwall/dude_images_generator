@@ -26,3 +26,26 @@ export const generateImage = async (
     throw error;
   }
 };
+
+export const generateVideo = async (
+  prompt: string
+): Promise<{ operationName: string }> => {
+  try {
+    const res = await fetch("/.netlify/functions/generate-video", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ prompt }),
+    });
+    if (!res.ok) {
+      const txt = await res.text();
+      throw new Error(`Server error: ${res.status} - ${txt}`);
+    }
+    const json = await res.json();
+    if (!json || !json.operationName)
+      throw new Error("No operationName in function response");
+    return { operationName: json.operationName as string };
+  } catch (error) {
+    console.error("Error generating video via function:", error);
+    throw error;
+  }
+};

@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect, useRef } from "react";
 import AspectRatioSelector from "../components/AspectRatioSelector";
 import ImageHistory from "../components/ImageHistory";
-import { generateImage } from "../services/geminiService";
+import { generateImage, generateVideo } from "../services/geminiService";
 import { AspectRatio, GeneratedImage } from "../types";
 import * as sqliteService from "../services/sqliteService";
 import {
@@ -14,6 +14,7 @@ import {
   ImagePlus,
   Type,
   X,
+  Video,
 } from "lucide-react";
 import AudioPlayer, { AudioType } from "../components/AudioPlayer";
 import { useLocation } from "react-router-dom";
@@ -28,7 +29,7 @@ const Home: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   // New state for Image-to-Image mode
-  const [mode, setMode] = useState<"text" | "image">("text");
+  const [mode, setMode] = useState<"text" | "image" | "video">("text");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -94,6 +95,15 @@ const Home: React.FC = () => {
     e.preventDefault();
     if (!prompt.trim()) return;
 
+    if (mode === "image" || mode === "text") {
+      await imageModeGeneration();
+    } else if (mode === "video") {
+      // Video generation logic to be implemented
+      await videoModeGeneration();
+    }
+  };
+
+  const imageModeGeneration = async () => {
     setIsGenerating(true);
     setError(null);
     setCurrentImage(null);
@@ -137,6 +147,25 @@ const Home: React.FC = () => {
       setIsGenerating(false);
     }
   };
+
+  const videoModeGeneration = async () => {
+    setIsGenerating(true);
+    setError(null);
+    setCurrentImage(null);
+
+    try {
+      await generateVideo(prompt);
+    } catch (err: any) {
+      console.error(err);
+      setError(
+        err.message ||
+          "Could not generate image. Please check API Key and Billing status."
+      );
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
   const handleDelete = useCallback(
     async (id: string) => {
       try {
@@ -224,7 +253,7 @@ const Home: React.FC = () => {
           <div className="flex flex-col w-full gap-6 lg:w-5/12">
             <div className="mb-2">
               <div className="flex gap-2">
-                <h2 className="mb-3 text-4xl text-gray-800 md:text-5xl font-hand drop-shadow-sm">
+                <h2 className="mb-3 text-4xl text-gray-800 md:text-6xl font-hand drop-shadow-sm">
                   How you doin'?
                 </h2>
                 <AudioPlayer type={AudioType.HOW_YOU_DOIN} volume={0.3} />
@@ -261,7 +290,18 @@ const Home: React.FC = () => {
                       : "bg-gray-50 text-gray-400 hover:bg-gray-100"
                   }`}>
                   <ImagePlus size={18} />
-                  Image + Text
+                  Image
+                </button>
+                <div className="w-[2px] bg-gray-100"></div>
+                <button
+                  onClick={() => setMode("video")}
+                  className={`flex-1 py-4 font-bold text-sm flex items-center justify-center gap-2 transition-colors ${
+                    mode === "video"
+                      ? "bg-white text-friends-purple"
+                      : "bg-gray-50 text-gray-400 hover:bg-gray-100"
+                  }`}>
+                  <Video size={18} />
+                  Video
                 </button>
               </div>
 
@@ -331,6 +371,12 @@ const Home: React.FC = () => {
                   </div>
                 )}
 
+                {mode === "video" && (
+                  <div className="p-4 text-sm font-medium text-yellow-800 bg-yellow-100 border-2 border-yellow-200 rounded-xl">
+                    <strong className="font-bold">Note:</strong> Video
+                    generation may take longer to process.
+                  </div>
+                )}
                 <div className="space-y-3">
                   <label className="block text-sm font-bold tracking-wide text-gray-700 uppercase">
                     {mode === "image" ? "Modify it how?" : "The Prompt"}
@@ -352,17 +398,18 @@ const Home: React.FC = () => {
                     </div>
                   </div>
                 </div>
-
-                <div className="space-y-3">
-                  <label className="block text-sm font-bold tracking-wide text-gray-700 uppercase">
-                    The Shape
-                  </label>
-                  <AspectRatioSelector
-                    selected={aspectRatio}
-                    onSelect={setAspectRatio}
-                    disabled={isGenerating}
-                  />
-                </div>
+                {(mode === "text" || mode === "image") && (
+                  <div className="space-y-3">
+                    <label className="block text-sm font-bold tracking-wide text-gray-700 uppercase">
+                      The Shape
+                    </label>
+                    <AspectRatioSelector
+                      selected={aspectRatio}
+                      onSelect={setAspectRatio}
+                      disabled={isGenerating}
+                    />
+                  </div>
+                )}
 
                 <div className="pt-2 mt-auto">
                   <button
