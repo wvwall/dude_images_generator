@@ -42,7 +42,7 @@ const Header: React.FC = () => {
       </div>
 
       {/* Desktop Nav */}
-      <nav className="items-center hidden gap-6 md:flex">
+      <nav className="items-center hidden gap-4 md:flex">
         <NavLink to="/" className={navClasses}>
           Home
         </NavLink>
