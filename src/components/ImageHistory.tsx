@@ -15,6 +15,7 @@ const ImageHistory: React.FC<ImageHistoryProps> = ({
   onEdit,
 }) => {
   const navigate = useNavigate();
+  const isHomePath = window.location.pathname === "/";
 
   const handleDownload = (image: GeneratedImage) => {
     const link = document.createElement("a");
@@ -29,13 +30,21 @@ const ImageHistory: React.FC<ImageHistoryProps> = ({
     navigate(`/image/${image.id}`);
   };
 
+  const IMAGES = isHomePath ? images.slice(0, 6) : images;
+
   return (
     <div className="w-full pb-20 mt-16">
       <div className="flex items-center gap-2 pb-4 mb-8 border-b-2 border-friends-purple">
-        <span className="px-3 py-1 text-xs font-bold rounded-lg shadow-sm text-friends-yellow bg-friends-purple">
-          {images.length} SNAPS
-        </span>
-        {window.location.pathname === "/" && (
+        {isHomePath ? (
+          <span className="px-3 py-1 text-xs font-bold rounded-lg shadow-sm text-friends-yellow bg-friends-purple">
+            6 of {images.length} SNAPS
+          </span>
+        ) : (
+          <span className="px-3 py-1 text-xs font-bold rounded-lg shadow-sm text-friends-yellow bg-friends-purple">
+            {images.length} SNAPS
+          </span>
+        )}
+        {isHomePath && (
           <>
             <button
               onClick={() => navigate("/gallery")}
@@ -49,7 +58,7 @@ const ImageHistory: React.FC<ImageHistoryProps> = ({
       </div>
 
       <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-        {images.map((img) => (
+        {IMAGES.map((img) => (
           <div
             onClick={() => goToDetails(img)}
             key={img.id}

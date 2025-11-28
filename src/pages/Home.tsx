@@ -332,7 +332,7 @@ const Home: React.FC = () => {
         </div>
         {history.length > 0 && (
           <ImageHistory
-            images={history.slice(0, 6)}
+            images={history}
             onDelete={handleDelete}
             onEdit={handleEdit}
           />
