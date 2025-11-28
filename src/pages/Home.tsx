@@ -32,6 +32,9 @@ const Home: React.FC = () => {
   const [videoStatus, setVideoStatus] = useState<string>("");
   const [videoProgress, setVideoProgress] = useState<number>(0);
   const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const [completedVideoUri, setCompletedVideoUri] = useState<string | null>(
+    null
+  );
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -157,7 +160,8 @@ const Home: React.FC = () => {
 
       // Qui puoi gestire il video completato
       console.log("Video URI:", result.videoUri);
-
+      setCompletedVideoUri(result.videoUri || null);
+      setCurrentImage(null);
       // Opzionalmente salvare nella history o mostrare
       // const newVideo = { ... };
       // setHistory(prev => [newVideo, ...prev]);
@@ -180,6 +184,7 @@ const Home: React.FC = () => {
     setIsGenerating(true);
     setError(null);
     setCurrentImage(null);
+    setCompletedVideoUri(null);
     setVideoStatus("Starting video generation...");
     setVideoProgress(0);
 
@@ -322,6 +327,7 @@ const Home: React.FC = () => {
             handleDownloadCurrent={handleDownloadCurrent}
             videoStatus={mode === "video" ? videoStatus : undefined}
             videoProgress={mode === "video" ? videoProgress : undefined}
+            completedVideoUri={completedVideoUri}
           />
         </div>
         {history.length > 0 && (
