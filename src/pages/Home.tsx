@@ -264,7 +264,7 @@ const Home: React.FC = () => {
         </div>
         {history.length > 0 && (
           <ImageHistory
-            images={history}
+            images={history.slice(0, 6)}
             onDelete={handleDelete}
             onEdit={handleEdit}
           />
