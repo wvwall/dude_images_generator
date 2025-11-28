@@ -4,7 +4,7 @@ import {
   Loader2,
   AlertCircle,
   Upload,
-  ImagePlus,
+  Image,
   Type,
   X,
   Video,
@@ -96,7 +96,7 @@ const InputPanel: React.FC<InputPanelProps> = ({
                 ? "bg-white text-friends-purple"
                 : "bg-gray-50 text-gray-400 hover:bg-gray-100"
             }`}>
-            <ImagePlus size={18} />
+            <Image size={18} />
             Image
           </button>
           <div className="w-[2px] bg-gray-100"></div>
