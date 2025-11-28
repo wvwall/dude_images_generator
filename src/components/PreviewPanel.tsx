@@ -1,29 +1,65 @@
 import React from "react";
-import { Save, Armchair } from "lucide-react";
+import { Save, Armchair, Video, Loader2 } from "lucide-react";
 import { GeneratedImage } from "../types";
 import AudioPlayer, { AudioType } from "./AudioPlayer";
 
 interface PreviewPanelProps {
   currentImage: GeneratedImage | null;
   handleDownloadCurrent: () => void;
+  videoStatus?: string;
+  videoProgress?: number;
 }
 
 const PreviewPanel: React.FC<PreviewPanelProps> = ({
   currentImage,
   handleDownloadCurrent,
+  videoStatus,
+  videoProgress,
 }) => {
+  const isGeneratingVideo = videoStatus && videoStatus !== "Video ready!";
+
   return (
     <div className="w-full lg:w-7/12 min-h[350px] sm:min-h-[500px] mt-[12px]">
       <div
         className={`
           relative w-full h-full bg-white border-4 border-friends-purple rounded-2xl flex flex-col items-center justify-center overflow-hidden shadow-xl
           ${
-            !currentImage
+            !currentImage && !isGeneratingVideo
               ? 'bg-[url("https://www.transparenttextures.com/patterns/cubes.png")]'
               : ""
           }
         `}>
-        {currentImage ? (
+        {isGeneratingVideo ? (
+          <div className="max-w-md p-12 mx-auto space-y-6 text-center">
+            <div className="relative w-24 h-24 bg-friends-yellow rounded-full flex items-center justify-center mx-auto border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <Video size={40} className="text-black" />
+            </div>
+
+            <div>
+              <h3 className="mb-3 text-2xl text-friends-purple font-hand">
+                {videoStatus}
+              </h3>
+
+              {videoProgress !== undefined && videoProgress > 0 && (
+                <div className="w-full bg-gray-200 rounded-full h-3 mb-3 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                  <div
+                    className="h-full transition-all duration-500 rounded-full bg-friends-yellow"
+                    style={{ width: `${videoProgress}%` }}
+                  />
+                </div>
+              )}
+
+              <p className="text-base font-medium text-gray-500">
+                This might take a few minutes. Grab a coffee! ☕
+              </p>
+
+              <div className="flex items-center justify-center gap-2 mt-4 text-sm text-gray-400">
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span>Checking status every 10 seconds...</span>
+              </div>
+            </div>
+          </div>
+        ) : currentImage ? (
           <div className="relative w-full h-full p-6 group bg-gray-50">
             <div className="relative w-full h-full overflow-hidden border-8 border-white rounded-lg shadow-lg">
               <img

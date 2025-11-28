@@ -1,6 +1,10 @@
 import React, { useState, useCallback, useEffect, useRef } from "react";
 import ImageHistory from "../components/ImageHistory";
-import { generateImage, generateVideo } from "../services/geminiService";
+import {
+  generateImage,
+  generateVideo,
+  checkVideoStatus,
+} from "../services/geminiService";
 import { AspectRatio, GeneratedImage } from "../types";
 import * as sqliteService from "../services/sqliteService";
 import { useLocation } from "react-router-dom";
@@ -23,6 +27,11 @@ const Home: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [isDragging, setIsDragging] = useState(false);
+
+  // Video generation state
+  const [videoStatus, setVideoStatus] = useState<string>("");
+  const [videoProgress, setVideoProgress] = useState<number>(0);
+  const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -86,7 +95,6 @@ const Home: React.FC = () => {
     if (mode === "image" || mode === "text") {
       await imageModeGeneration();
     } else if (mode === "video") {
-      // Video generation logic to be implemented
       await videoModeGeneration();
     }
   };
@@ -136,23 +144,75 @@ const Home: React.FC = () => {
     }
   };
 
+  const pollVideoStatus = async (operationName: string) => {
+    const result = await checkVideoStatus(operationName);
+
+    if (result.status === "completed") {
+      setVideoStatus("Video ready!");
+      setIsGenerating(false);
+      if (pollingIntervalRef.current) {
+        clearInterval(pollingIntervalRef.current);
+        pollingIntervalRef.current = null;
+      }
+
+      // Qui puoi gestire il video completato
+      console.log("Video URI:", result.videoUri);
+
+      // Opzionalmente salvare nella history o mostrare
+      // const newVideo = { ... };
+      // setHistory(prev => [newVideo, ...prev]);
+    } else if (result.status === "failed") {
+      setError(result.error || "Video generation failed");
+      setIsGenerating(false);
+
+      if (pollingIntervalRef.current) {
+        clearInterval(pollingIntervalRef.current);
+        pollingIntervalRef.current = null;
+      }
+    } else {
+      // Still processing
+      setVideoProgress(result.progress || 0);
+      setVideoStatus("Generating video...");
+    }
+  };
+
   const videoModeGeneration = async () => {
     setIsGenerating(true);
     setError(null);
     setCurrentImage(null);
+    setVideoStatus("Starting video generation...");
+    setVideoProgress(0);
 
     try {
-      await generateVideo(prompt);
+      const { operationName } = await generateVideo(prompt);
+
+      // Avvia il polling ogni 10 secondi
+      pollingIntervalRef.current = setInterval(() => {
+        pollVideoStatus(operationName);
+      }, 10000);
+
+      // Prima verifica immediata
+      await pollVideoStatus(operationName);
     } catch (err: any) {
       console.error(err);
       setError(
         err.message ||
-          "Could not generate image. Please check API Key and Billing status."
+          "Could not start video generation. Please check API Key and Billing status."
       );
-    } finally {
+      setVideoProgress(0);
+      setVideoStatus("");
       setIsGenerating(false);
     }
   };
+
+  // Cleanup polling on unmount
+  useEffect(() => {
+    return () => {
+      if (pollingIntervalRef.current) {
+        clearInterval(pollingIntervalRef.current);
+      }
+    };
+  }, []);
 
   const handleDelete = useCallback(
     async (id: string) => {
@@ -260,6 +320,8 @@ const Home: React.FC = () => {
           <PreviewPanel
             currentImage={currentImage}
             handleDownloadCurrent={handleDownloadCurrent}
+            videoStatus={mode === "video" ? videoStatus : undefined}
+            videoProgress={mode === "video" ? videoProgress : undefined}
           />
         </div>
         {history.length > 0 && (

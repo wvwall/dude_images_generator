@@ -1,6 +1,5 @@
 import { GoogleGenAI } from "@google/genai";
 const apiKey = process.env.GEMINI_API_KEY || "";
-const downloadDir = require("os").homedir() + "/Downloads";
 
 export const handler = async (event) => {
   if (event.httpMethod !== "POST") {
@@ -26,7 +25,7 @@ export const handler = async (event) => {
     return { statusCode: 400, body: JSON.stringify({ error: "Invalid JSON" }) };
   }
 
-  const { prompt, duration } = body;
+  const { prompt, duration = 5 } = body;
   if (!prompt) {
     return {
       statusCode: 400,
@@ -37,37 +36,33 @@ export const handler = async (event) => {
   const ai = new GoogleGenAI({ apiKey });
 
   try {
-    // Using Gemini Pro Video model (gemini-1.5-pro-video).
     const finalPrompt = `Generate a video based on this description: ${prompt}. The video must be ${duration} seconds long.`;
 
-    let operation = await ai.models.generateVideos({
+    console.log("Starting video generation with prompt:", finalPrompt);
+
+    // Avvia solo la generazione, NON aspettare il completamento
+    const operation = await ai.models.generateVideos({
       model: "veo-3.1-generate-preview",
       prompt: finalPrompt,
     });
 
-    // Poll the operation status until the video is ready.
-    while (!operation.done) {
-      console.log("Waiting for video generation to complete...");
-      await new Promise((resolve) => setTimeout(resolve, 10000));
-      operation = await ai.operations.getVideosOperation({
-        operation: operation,
-      });
-    }
+    console.log("Video generation started, operation name:", operation.name);
 
-    // Download the generated video.
-    ai.files.download({
-      file: operation.response.generatedVideos[0].video,
-      downloadPath: downloadDir + "/generated_video.mp4",
-    });
+    // Ritorna immediatamente l'operation name per il polling lato client
     return {
       statusCode: 200,
-      body: JSON.stringify({ videoUrl }),
+      body: JSON.stringify({
+        operationName: operation.name,
+        status: "started",
+      }),
     };
   } catch (error) {
-    console.error("Error generating video:", error);
+    console.error("Error starting video generation:", error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: "Failed to generate video" }),
+      body: JSON.stringify({
+        error: error.message || "Failed to start video generation",
+      }),
     };
   }
 };

@@ -253,7 +253,7 @@ const InputPanel: React.FC<InputPanelProps> = ({
           {error && (
             <div className="flex items-start gap-3 p-4 text-sm font-medium border-2 border-red-100 bg-red-50 rounded-xl text-friends-red">
               <AlertCircle size={18} className="shrink-0 mt-0.5" />
-              <span>{error}</span>
+              <span>Error, try again later.</span>
             </div>
           )}
         </form>

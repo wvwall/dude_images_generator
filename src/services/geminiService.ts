@@ -28,13 +28,14 @@ export const generateImage = async (
 };
 
 export const generateVideo = async (
-  prompt: string
+  prompt: string,
+  duration: number = 5
 ): Promise<{ operationName: string }> => {
   try {
     const res = await fetch("/.netlify/functions/generate-video", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ prompt }),
+      body: JSON.stringify({ prompt, duration }),
     });
     if (!res.ok) {
       const txt = await res.text();
@@ -47,5 +48,33 @@ export const generateVideo = async (
   } catch (error) {
     console.error("Error generating video via function:", error);
     throw error;
+  }
+};
+
+export const checkVideoStatus = async (
+  operationName: string
+): Promise<{
+  status: "processing" | "completed" | "failed";
+  videoUri?: string;
+  progress?: number;
+  error?: string;
+}> => {
+  try {
+    const res = await fetch("/.netlify/functions/check-video-status", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ operationName }),
+    });
+
+    if (!res.ok) {
+      const txt = await res.text();
+      throw new Error(`Server error: ${res.status} - ${txt}`);
+    }
+
+    const json = await res.json();
+    return json;
+  } catch (error) {
+    console.error("Error checking video status:", error);
+    return { status: "failed", error: (error as Error).message };
   }
 };
