@@ -14,6 +14,9 @@ export default defineConfig(({ mode }) => {
           secure: false,
         },
       },
+      hmr: {
+        overlay: false,
+      },
     },
     plugins: [react()],
     // Do not inline secret environment variables into the client bundle.
