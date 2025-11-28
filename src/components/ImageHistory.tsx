@@ -31,12 +31,21 @@ const ImageHistory: React.FC<ImageHistoryProps> = ({
 
   return (
     <div className="w-full pb-20 mt-16">
-      <div className="flex items-center gap-3 pb-4 mb-8 border-b-2 border-friends-purple">
-        <History size={24} className="text-friends-purple" />
-        <h2 className="text-3xl text-gray-800 font-hand">The Archive</h2>
-        <span className="px-3 py-1 ml-auto text-xs font-bold text-white rounded-lg shadow-sm bg-friends-blue">
+      <div className="flex items-center gap-2 pb-4 mb-8 border-b-2 border-friends-purple">
+        <span className="px-3 py-1 text-xs font-bold rounded-lg shadow-sm text-friends-yellow bg-friends-purple">
           {images.length} SNAPS
         </span>
+        {window.location.pathname === "/" && (
+          <>
+            <button
+              onClick={() => navigate("/gallery")}
+              className="ml-auto font-semibold text-black underline text-md underline-offset-4 hover:text-friends-purple hover:brightness-110"
+              title="See all">
+              See all
+            </button>
+            <History size={20} className="text-black " />
+          </>
+        )}
       </div>
 
       <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">

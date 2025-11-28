@@ -8,17 +8,17 @@ const Header: React.FC = () => {
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
   const navClasses = ({ isActive }: { isActive: boolean }) =>
-    `text-md font-bold transition-colors underline-offset-4 decoration-2 ${
+    `text-md font-hand transition-colors Poppins decoration-2 ${
       isActive
-        ? "text-friends-yellow underline"
-        : "text-friends-purple hover:text-friends-yellow hover:underline"
+        ? "text-friends-purple underline"
+        : " hover:text-friends-yellow hover:underline"
     }`;
 
   const mobileNavClasses = ({ isActive }: { isActive: boolean }) =>
-    `p-4 text-md font-bold text-center underline-offset-4 decoration-2 ${
+    `p-4 text-md font-hand text-center underline-offset-4 decoration-2 ${
       isActive
-        ? "text-friends-yellow underline"
-        : "text-friends-purple hover:text-friends-yellow hover:underline"
+        ? "text-friends-purple underline"
+        : " hover:text-friends-yellow hover:underline"
     }`;
 
   return (

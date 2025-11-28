@@ -16,7 +16,7 @@ export default {
         foreground: "hsl(var(--foreground))",
       },
       fontFamily: {
-        sans: ['"Inter"', "sans-serif"],
+        sans: ['"Poppins"', "sans-serif"],
         hand: ['"Permanent Marker"', "cursive"],
       },
     },
