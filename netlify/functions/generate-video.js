@@ -40,7 +40,7 @@ export const handler = async (event) => {
 
     console.log("Starting video generation with prompt:", finalPrompt);
 
-    // Avvia solo la generazione, NON aspettare il completamento
+    // Only start the generation, DO NOT wait for completion
     const operation = await ai.models.generateVideos({
       model: "veo-3.1-generate-preview",
       prompt: finalPrompt,
@@ -48,7 +48,7 @@ export const handler = async (event) => {
 
     console.log("Video generation started, operation name:", operation.name);
 
-    // Ritorna immediatamente l'operation name per il polling lato client
+    // Immediately return the operation name for client-side polling
     return {
       statusCode: 200,
       body: JSON.stringify({

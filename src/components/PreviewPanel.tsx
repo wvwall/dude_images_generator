@@ -8,6 +8,7 @@ interface PreviewPanelProps {
   handleDownloadCurrent: () => void;
   videoStatus?: string;
   videoProgress?: number;
+  completedVideoUri?: string | null;
 }
 
 const PreviewPanel: React.FC<PreviewPanelProps> = ({
@@ -15,8 +16,11 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({
   handleDownloadCurrent,
   videoStatus,
   videoProgress,
+  completedVideoUri,
 }) => {
   const isGeneratingVideo = videoStatus && videoStatus !== "Video ready!";
+  // Variable to determine if the video is ready for display
+  const isVideoReady = !!completedVideoUri;
 
   return (
     <div className="w-full lg:w-7/12 min-h[350px] sm:min-h-[500px] mt-[12px]">
@@ -24,12 +28,13 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({
         className={`
           relative w-full h-full bg-white border-4 border-friends-purple rounded-2xl flex flex-col items-center justify-center overflow-hidden shadow-xl
           ${
-            !currentImage && !isGeneratingVideo
+            !currentImage && !isGeneratingVideo && !isVideoReady
               ? 'bg-[url("https://www.transparenttextures.com/patterns/cubes.png")]'
               : ""
           }
         `}>
         {isGeneratingVideo ? (
+          // Block 1: Video Generating
           <div className="max-w-md p-12 mx-auto space-y-6 text-center">
             <div className="relative w-24 h-24 bg-friends-yellow rounded-full flex items-center justify-center mx-auto border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
               <Video size={40} className="text-black" />
@@ -59,7 +64,39 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({
               </div>
             </div>
           </div>
+        ) : isVideoReady ? (
+          // Block 2: Video Completed and Ready
+          <div className="relative w-full h-full p-6 group bg-gray-50">
+            <div className="relative flex flex-col items-center justify-center w-full h-full overflow-hidden border-8 border-white rounded-lg shadow-lg">
+              <h4 className="p-4 text-xl text-friends-purple font-hand">
+                Video Generated Successfully! 🎉
+              </h4>
+
+              {/* HTML5 Video Player */}
+              <video
+                controls
+                width="80%"
+                src={completedVideoUri || ""}
+                className="max-h-[80%] rounded-lg shadow-md">
+                Your browser does not support the video tag.
+              </video>
+            </div>
+
+            {/* Download Link */}
+            <div className="absolute transition-opacity duration-300 opacity-0 top-10 right-10 group-hover:opacity-100">
+              <a
+                href={completedVideoUri || ""}
+                download="video_generato_gemini.mp4"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-4 py-3 text-sm font-bold text-white transition-colors border-2 border-white rounded-full shadow-lg bg-friends-purple hover:bg-purple-800">
+                <Save size={18} />
+                Download Video
+              </a>
+            </div>
+          </div>
         ) : currentImage ? (
+          // Block 3: Generated Static Image
           <div className="relative w-full h-full p-6 group bg-gray-50">
             <div className="relative w-full h-full overflow-hidden border-8 border-white rounded-lg shadow-lg">
               <img
@@ -79,6 +116,7 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({
             </div>
           </div>
         ) : (
+          // Block 4: Initial/Empty State
           <div className="max-w-sm p-12 mx-auto space-y-6 text-center">
             <div className="w-24 h-24 bg-friends-yellow rounded-full flex items-center justify-center mx-auto border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
               <Armchair size={40} className="text-black" />

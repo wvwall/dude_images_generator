@@ -32,6 +32,9 @@ const Home: React.FC = () => {
   const [videoStatus, setVideoStatus] = useState<string>("");
   const [videoProgress, setVideoProgress] = useState<number>(0);
   const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const [completedVideoUri, setCompletedVideoUri] = useState<string | null>(
+    null
+  );
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -155,10 +158,11 @@ const Home: React.FC = () => {
         pollingIntervalRef.current = null;
       }
 
-      // Qui puoi gestire il video completato
+      // Here you can handle the completed video
       console.log("Video URI:", result.videoUri);
-
-      // Opzionalmente salvare nella history o mostrare
+      setCompletedVideoUri(result.videoUri || null);
+      setCurrentImage(null);
+      // Optionally save to history or display
       // const newVideo = { ... };
       // setHistory(prev => [newVideo, ...prev]);
     } else if (result.status === "failed") {
@@ -180,18 +184,19 @@ const Home: React.FC = () => {
     setIsGenerating(true);
     setError(null);
     setCurrentImage(null);
+    setCompletedVideoUri(null);
     setVideoStatus("Starting video generation...");
     setVideoProgress(0);
 
     try {
       const { operationName } = await generateVideo(prompt);
 
-      // Avvia il polling ogni 10 secondi
+      // Start polling every 10 seconds
       pollingIntervalRef.current = setInterval(() => {
         pollVideoStatus(operationName);
       }, 10000);
 
-      // Prima verifica immediata
+      // First immediate check
       await pollVideoStatus(operationName);
     } catch (err: any) {
       console.error(err);
@@ -322,11 +327,12 @@ const Home: React.FC = () => {
             handleDownloadCurrent={handleDownloadCurrent}
             videoStatus={mode === "video" ? videoStatus : undefined}
             videoProgress={mode === "video" ? videoProgress : undefined}
+            completedVideoUri={completedVideoUri}
           />
         </div>
         {history.length > 0 && (
           <ImageHistory
-            images={history.slice(0, 6)}
+            images={history}
             onDelete={handleDelete}
             onEdit={handleEdit}
           />
