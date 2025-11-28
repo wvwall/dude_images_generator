@@ -37,7 +37,7 @@ export const handler = async (event) => {
   }
 
   try {
-    // Usa l'API REST diretta invece della libreria SDK
+    // Use the direct REST API instead of the SDK library
     const url = `https://generativelanguage.googleapis.com/v1beta/${operationName}?key=${apiKey}`;
 
     console.log("Fetching operation status from:", url);
@@ -55,7 +55,7 @@ export const handler = async (event) => {
     console.log("Operation done:", operation.done);
 
     if (operation.done) {
-      // Video pronto! La struttura corretta è generateVideoResponse.generatedSamples
+      // Video ready! The correct structure is generateVideoResponse.generatedSamples
       const videoData =
         operation.response?.generateVideoResponse?.generatedSamples?.[0]?.video;
 
@@ -76,7 +76,7 @@ export const handler = async (event) => {
         }),
       };
     } else {
-      // Ancora in elaborazione
+      // Still processing
       const progress = operation.metadata?.progress || 0;
       console.log("Still processing, progress:", progress);
 

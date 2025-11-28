@@ -158,11 +158,11 @@ const Home: React.FC = () => {
         pollingIntervalRef.current = null;
       }
 
-      // Qui puoi gestire il video completato
+      // Here you can handle the completed video
       console.log("Video URI:", result.videoUri);
       setCompletedVideoUri(result.videoUri || null);
       setCurrentImage(null);
-      // Opzionalmente salvare nella history o mostrare
+      // Optionally save to history or display
       // const newVideo = { ... };
       // setHistory(prev => [newVideo, ...prev]);
     } else if (result.status === "failed") {
@@ -191,12 +191,12 @@ const Home: React.FC = () => {
     try {
       const { operationName } = await generateVideo(prompt);
 
-      // Avvia il polling ogni 10 secondi
+      // Start polling every 10 seconds
       pollingIntervalRef.current = setInterval(() => {
         pollVideoStatus(operationName);
       }, 10000);
 
-      // Prima verifica immediata
+      // First immediate check
       await pollVideoStatus(operationName);
     } catch (err: any) {
       console.error(err);

@@ -19,7 +19,7 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({
   completedVideoUri,
 }) => {
   const isGeneratingVideo = videoStatus && videoStatus !== "Video ready!";
-  // Variabile per determinare se il video è pronto per la visualizzazione
+  // Variable to determine if the video is ready for display
   const isVideoReady = !!completedVideoUri;
 
   return (
@@ -34,7 +34,7 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({
           }
         `}>
         {isGeneratingVideo ? (
-          // Blocco 1: Video in Generazione
+          // Block 1: Video Generating
           <div className="max-w-md p-12 mx-auto space-y-6 text-center">
             <div className="relative w-24 h-24 bg-friends-yellow rounded-full flex items-center justify-center mx-auto border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
               <Video size={40} className="text-black" />
@@ -65,24 +65,24 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({
             </div>
           </div>
         ) : isVideoReady ? (
-          // Blocco 2: Video Completato e Pronto (NUOVA AGGIUNTA)
+          // Block 2: Video Completed and Ready
           <div className="relative w-full h-full p-6 group bg-gray-50">
             <div className="relative flex flex-col items-center justify-center w-full h-full overflow-hidden border-8 border-white rounded-lg shadow-lg">
               <h4 className="p-4 text-xl text-friends-purple font-hand">
-                Video Generato con Successo! 🎉
+                Video Generated Successfully! 🎉
               </h4>
 
-              {/* Player Video HTML5 */}
+              {/* HTML5 Video Player */}
               <video
                 controls
                 width="80%"
                 src={completedVideoUri || ""}
                 className="max-h-[80%] rounded-lg shadow-md">
-                Il tuo browser non supporta il tag video.
+                Your browser does not support the video tag.
               </video>
             </div>
 
-            {/* Link di Download */}
+            {/* Download Link */}
             <div className="absolute transition-opacity duration-300 opacity-0 top-10 right-10 group-hover:opacity-100">
               <a
                 href={completedVideoUri || ""}
@@ -91,12 +91,12 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 px-4 py-3 text-sm font-bold text-white transition-colors border-2 border-white rounded-full shadow-lg bg-friends-purple hover:bg-purple-800">
                 <Save size={18} />
-                Scarica Video
+                Download Video
               </a>
             </div>
           </div>
         ) : currentImage ? (
-          // Blocco 3: Immagine Statica Generata
+          // Block 3: Generated Static Image
           <div className="relative w-full h-full p-6 group bg-gray-50">
             <div className="relative w-full h-full overflow-hidden border-8 border-white rounded-lg shadow-lg">
               <img
@@ -116,7 +116,7 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({
             </div>
           </div>
         ) : (
-          // Blocco 4: Stato Iniziale/Vuoto
+          // Block 4: Initial/Empty State
           <div className="max-w-sm p-12 mx-auto space-y-6 text-center">
             <div className="w-24 h-24 bg-friends-yellow rounded-full flex items-center justify-center mx-auto border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
               <Armchair size={40} className="text-black" />
