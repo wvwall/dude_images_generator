@@ -60,7 +60,7 @@ const InputPanel: React.FC<InputPanelProps> = ({
     <div className="flex flex-col w-full gap-6 lg:w-5/12">
       <div className="mb-2">
         <div className="flex gap-2">
-          <h2 className="mb-3 text-4xl text-gray-800 md:text-5xl font-hand drop-shadow-sm">
+          <h2 className="mb-3 text-4xl text-gray-800 md:text-6xl font-hand drop-shadow-sm">
             How you doin'?
           </h2>
           <AudioPlayer type={AudioType.HOW_YOU_DOIN} volume={0.3} />

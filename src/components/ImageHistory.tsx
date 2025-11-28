@@ -1,7 +1,13 @@
+import {
+  Camera,
+  Download,
+  Edit2,
+  GalleryHorizontalEnd,
+  Trash2,
+} from "lucide-react";
 import React from "react";
-import { GeneratedImage } from "../types";
-import { Download, Trash2, History, Camera, Edit2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { GeneratedImage } from "../types";
 
 interface ImageHistoryProps {
   images: GeneratedImage[];
@@ -34,7 +40,7 @@ const ImageHistory: React.FC<ImageHistoryProps> = ({
 
   return (
     <div className="w-full pb-20 mt-16">
-      <div className="flex items-center gap-2 pb-4 mb-8 border-b-2 border-friends-purple">
+      <div className="flex items-center gap-1 pb-4 mb-8 border-b-2 border-friends-purple">
         {isHomePath ? (
           <span className="px-3 py-1 text-xs font-bold rounded-lg shadow-sm text-friends-yellow bg-friends-purple">
             6 of {images.length} SNAPS
@@ -46,13 +52,13 @@ const ImageHistory: React.FC<ImageHistoryProps> = ({
         )}
         {isHomePath && (
           <>
+            <GalleryHorizontalEnd size={18} className="ml-auto text-black" />
             <button
               onClick={() => navigate("/gallery")}
-              className="ml-auto font-semibold text-black underline text-md underline-offset-4 hover:text-friends-purple hover:brightness-110"
-              title="See all">
+              className="text-sm font-semibold text-black underline decoration-2 underline-offset-4 hover:text-friends-purple hover:brightness-110"
+              title="See more">
               See all
             </button>
-            <History size={20} className="text-black " />
           </>
         )}
       </div>
