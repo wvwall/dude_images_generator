@@ -43,7 +43,7 @@ const Gallery: React.FC = () => {
 
   return (
     <div className="min-h-screen pb-12 font-sans bg-friends-purple-light">
-      {/* TODO image card + prompt to modify it */}
+      {/* TODO: image card + prompt to modify it */}
       <main className="px-4 pt-10 mx-auto max-w-7xl">
         <h2 className="mb-6 text-4xl text-center text-gray-800 font-hand">
           Image

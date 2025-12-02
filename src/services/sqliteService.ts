@@ -6,7 +6,7 @@ import type { SqlJsStatic, Database } from "sql.js";
 let SQL: SqlJsStatic | null = null;
 let db: Database | null = null;
 
-// Nome costante per lo store
+// Constant name for the store
 const DB_NAME = "dude_images_db";
 const STORE_NAME = "sqlite";
 const KEY_NAME = "dude_db";
@@ -16,12 +16,12 @@ async function ensureDbInitialized() {
 
   SQL = await initSqlJs({ locateFile: () => wasmUrl });
 
-  // 1. Proviamo a caricare SOLO da IndexedDB
+  // 1. Try to load ONLY from IndexedDB
   try {
     const u8 = await loadFromIndexedDB();
     if (u8 && u8.length > 0) {
       db = new SQL.Database(u8);
-      // Pulizia opzionale: Rimuovi vecchi residui da localStorage per evitare confusioni future
+      // Optional cleanup: Remove old leftovers from localStorage to avoid future confusion
       localStorage.removeItem("dude_db");
       return;
     }
@@ -29,22 +29,22 @@ async function ensureDbInitialized() {
     console.warn("Failed reading DB from IndexedDB, creating new:", e);
   }
 
-  // 2. Se non esiste, ne creiamo uno nuovo
+  // 2. If it doesn't exist, create a new one
   db = new SQL.Database();
   db.run(
     "CREATE TABLE IF NOT EXISTS images (id TEXT PRIMARY KEY, url TEXT, prompt TEXT, timestamp INTEGER, aspectRatio TEXT)"
   );
-  // Salviamo subito lo stato iniziale vuoto
+  // Immediately save the initial empty state
   await persist();
 }
 
-// Funzione persist resa asincrona
+// Asynchronous persist function
 async function persist() {
   if (!db) return;
   const binary: Uint8Array = db.export();
 
-  // Salviamo direttamente il buffer binario su IndexedDB
-  // Non serve base64, non serve localStorage
+  // Save the binary buffer directly to IndexedDB
+  // No base64 needed, no localStorage needed
   try {
     await persistToIndexedDB(binary);
   } catch (e) {
@@ -67,7 +67,7 @@ function persistToIndexedDB(data: Uint8Array): Promise<void> {
       const idb = req.result;
       const tx = idb.transaction(STORE_NAME, "readwrite");
       const store = tx.objectStore(STORE_NAME);
-      // IndexedDB gestisce nativamente Uint8Array/Blob
+      // IndexedDB natively handles Uint8Array/Blob
       const putReq = store.put(data, KEY_NAME);
 
       putReq.onsuccess = () => resolve();
@@ -100,11 +100,11 @@ function loadFromIndexedDB(): Promise<Uint8Array | null> {
         if (!result) {
           resolve(null);
         } else {
-          // Assicuriamoci che sia un Uint8Array
+          // Make sure it is a Uint8Array
           if (result instanceof Uint8Array) {
             resolve(result);
           } else {
-            // Fallback se salvato come ArrayBuffer
+            // Fallback if saved as ArrayBuffer
             resolve(new Uint8Array(result));
           }
         }
@@ -181,9 +181,9 @@ export async function addImage(img: GeneratedImage) {
   stmt.run([img.id, img.url, img.prompt, img.timestamp, img.aspectRatio]);
   stmt.free();
 
-  // Nota: persist ora è asincrono, ma possiamo lanciarlo senza await
-  // se non vogliamo bloccare l'UI, a patto di gestire gli errori internamente.
-  // Tuttavia è meglio un await se vogliamo essere sicuri che sia salvato.
+  // Note: persist is now asynchronous, but we can call it without await
+  // if we don't want to block the UI, as long as we handle errors internally.
+  // However, await is better if we want to be sure it's saved.
   await persist();
 }
 

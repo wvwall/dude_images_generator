@@ -32,6 +32,9 @@ const Home: React.FC = () => {
   const [videoStatus, setVideoStatus] = useState<string>("");
   const [videoProgress, setVideoProgress] = useState<number>(0);
   const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const [completedVideoUri, setCompletedVideoUri] = useState<string | null>(
+    null
+  );
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -150,24 +153,23 @@ const Home: React.FC = () => {
     if (result.status === "completed") {
       setVideoStatus("Video ready!");
       setIsGenerating(false);
+
       if (pollingIntervalRef.current) {
         clearInterval(pollingIntervalRef.current);
-        pollingIntervalRef.current = null;
       }
 
-      // Qui puoi gestire il video completato
-      console.log("Video URI:", result.videoUri);
+      if (result.videoBuffer) {
+        const blob = new Blob([result.videoBuffer], { type: "video/mp4" });
+        const url = URL.createObjectURL(blob);
 
-      // Opzionalmente salvare nella history o mostrare
-      // const newVideo = { ... };
-      // setHistory(prev => [newVideo, ...prev]);
-    } else if (result.status === "failed") {
-      setError(result.error || "Video generation failed");
-      setIsGenerating(false);
+        // Show in preview
+        setCompletedVideoUri(url);
 
-      if (pollingIntervalRef.current) {
-        clearInterval(pollingIntervalRef.current);
-        pollingIntervalRef.current = null;
+        // Download
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "generated_video.mp4";
+        link.click();
       }
     } else {
       // Still processing
@@ -180,18 +182,19 @@ const Home: React.FC = () => {
     setIsGenerating(true);
     setError(null);
     setCurrentImage(null);
+    setCompletedVideoUri(null);
     setVideoStatus("Starting video generation...");
     setVideoProgress(0);
 
     try {
       const { operationName } = await generateVideo(prompt);
 
-      // Avvia il polling ogni 10 secondi
+      // Start polling every 10 seconds
       pollingIntervalRef.current = setInterval(() => {
         pollVideoStatus(operationName);
       }, 10000);
 
-      // Prima verifica immediata
+      // First immediate check
       await pollVideoStatus(operationName);
     } catch (err: any) {
       console.error(err);
@@ -322,11 +325,12 @@ const Home: React.FC = () => {
             handleDownloadCurrent={handleDownloadCurrent}
             videoStatus={mode === "video" ? videoStatus : undefined}
             videoProgress={mode === "video" ? videoProgress : undefined}
+            completedVideoUri={completedVideoUri}
           />
         </div>
         {history.length > 0 && (
           <ImageHistory
-            images={history.slice(0, 6)}
+            images={history}
             onDelete={handleDelete}
             onEdit={handleEdit}
           />

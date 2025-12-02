@@ -51,30 +51,23 @@ export const generateVideo = async (
   }
 };
 
-export const checkVideoStatus = async (
-  operationName: string
-): Promise<{
-  status: "processing" | "completed" | "failed";
-  videoUri?: string;
-  progress?: number;
-  error?: string;
-}> => {
-  try {
-    const res = await fetch("/.netlify/functions/check-video-status", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ operationName }),
-    });
+export const checkVideoStatus = async (operationName: string) => {
+  const res = await fetch("/.netlify/functions/check-video-status", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ operationName }),
+  });
 
-    if (!res.ok) {
-      const txt = await res.text();
-      throw new Error(`Server error: ${res.status} - ${txt}`);
-    }
+  const contentType = res.headers.get("Content-Type");
 
-    const json = await res.json();
-    return json;
-  } catch (error) {
-    console.error("Error checking video status:", error);
-    return { status: "failed", error: (error as Error).message };
+  // Se il server sta restituendo un file video, leggi arraybuffer
+  if (contentType === "video/mp4") {
+    const buffer = await res.arrayBuffer();
+    return {
+      status: "completed",
+      videoBuffer: buffer,
+    };
   }
+
+  return await res.json();
 };

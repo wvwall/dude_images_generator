@@ -4,7 +4,7 @@ import {
   Loader2,
   AlertCircle,
   Upload,
-  ImagePlus,
+  Image,
   Type,
   X,
   Video,
@@ -54,6 +54,8 @@ const InputPanel: React.FC<InputPanelProps> = ({
   handleDrop,
   selectedFile,
 }) => {
+  const isDisabled =
+    isGenerating || !prompt.trim() || (mode === "image" && !selectedFile);
   return (
     <div className="flex flex-col w-full gap-6 lg:w-5/12">
       <div className="mb-2">
@@ -94,7 +96,7 @@ const InputPanel: React.FC<InputPanelProps> = ({
                 ? "bg-white text-friends-purple"
                 : "bg-gray-50 text-gray-400 hover:bg-gray-100"
             }`}>
-            <ImagePlus size={18} />
+            <Image size={18} />
             Image
           </button>
           <div className="w-[2px] bg-gray-100"></div>
@@ -219,16 +221,11 @@ const InputPanel: React.FC<InputPanelProps> = ({
           <div className="pt-2 mt-auto">
             <button
               type="submit"
-              disabled={
-                isGenerating ||
-                !prompt.trim() ||
-                (mode === "image" && !selectedFile)
-              }
+              disabled={isDisabled}
               className={`
                             w-full py-4 px-6 rounded-xl font-bold text-base transition-all duration-200 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] border-2 border-black
                             ${
-                              isGenerating ||
-                              (mode === "image" && !selectedFile)
+                              isDisabled
                                 ? "bg-gray-100 text-gray-400 border-gray-300 shadow-none cursor-not-allowed"
                                 : "bg-friends-yellow text-black hover:bg-yellow-400"
                             }
