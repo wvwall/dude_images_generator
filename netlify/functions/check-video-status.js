@@ -58,7 +58,7 @@ export const handler = async (event) => {
       };
     }
 
-    // Operazione completata → scarichiamo il video
+    // Operation completed → download the video
     const videoData =
       operation.response?.generateVideoResponse?.generatedSamples?.[0]?.video;
 
@@ -69,19 +69,19 @@ export const handler = async (event) => {
 
     const ai = new GoogleGenAI({ apiKey });
 
-    // 🔥 Percorso corretto per Netlify / serverless
+    // 🔥 Correct path for Netlify / serverless
     const filePath = "/tmp/generated_video.mp4";
 
-    // Scarica il file nella funzione serverless
+    // Download the file inside the serverless function
     await ai.files.download({
       file: videoData,
       downloadPath: filePath,
     });
 
-    // Leggi il file in buffer
+    // Read the file into a buffer
     const fileBuffer = fs.readFileSync(filePath);
 
-    // 🔥 Ritorna il video direttamente al browser
+    // 🔥 Return the video directly to the browser
     return {
       statusCode: 200,
       isBase64Encoded: true,

@@ -162,10 +162,10 @@ const Home: React.FC = () => {
         const blob = new Blob([result.videoBuffer], { type: "video/mp4" });
         const url = URL.createObjectURL(blob);
 
-        // Mostra nel preview
+        // Show in preview
         setCompletedVideoUri(url);
 
-        // Download automatico
+        // Download
         const link = document.createElement("a");
         link.href = url;
         link.download = "generated_video.mp4";
