@@ -1,3 +1,6 @@
+import { GoogleGenAI } from "@google/genai";
+import fs from "fs";
+
 const apiKey = process.env.GEMINI_API_KEY || "";
 
 export const handler = async (event) => {
@@ -26,8 +29,6 @@ export const handler = async (event) => {
 
   const { operationName } = body;
 
-  console.log("Received operationName:", operationName);
-
   if (!operationName) {
     return {
       statusCode: 400,
@@ -36,13 +37,9 @@ export const handler = async (event) => {
   }
 
   try {
-    // Use the direct REST API instead of the SDK library
     const url = `https://generativelanguage.googleapis.com/v1beta/${operationName}?key=${apiKey}`;
 
-    console.log("Fetching operation status from:", url);
-
     const response = await fetch(url);
-
     if (!response.ok) {
       const errorText = await response.text();
       console.error("API Error:", errorText);
@@ -51,42 +48,49 @@ export const handler = async (event) => {
 
     const operation = await response.json();
 
-    console.log("Operation done:", operation.done);
-
-    if (operation.done) {
-      // Video ready! The correct structure is generateVideoResponse.generatedSamples
-      const videoData =
-        operation.response?.generateVideoResponse?.generatedSamples?.[0]?.video;
-
-      if (!videoData || !videoData.uri) {
-        console.error(
-          "Could not find video in response. Full response:",
-          JSON.stringify(operation, null, 2)
-        );
-        throw new Error("No video URI found in completed operation");
-      }
-
-      return {
-        statusCode: 200,
-        body: JSON.stringify({
-          status: "completed",
-          videoUri: videoData.uri,
-          videoName: operation.name,
-        }),
-      };
-    } else {
-      // Still processing
-      const progress = operation.metadata?.progress || 0;
-      console.log("Still processing, progress:", progress);
-
+    if (!operation.done) {
       return {
         statusCode: 200,
         body: JSON.stringify({
           status: "processing",
-          progress: progress,
+          progress: operation.metadata?.progress || 0,
         }),
       };
     }
+
+    // Operazione completata → scarichiamo il video
+    const videoData =
+      operation.response?.generateVideoResponse?.generatedSamples?.[0]?.video;
+
+    if (!videoData || !videoData.uri) {
+      console.error("No video URI found in completed operation:", operation);
+      throw new Error("No video URI found in completed operation");
+    }
+
+    const ai = new GoogleGenAI({ apiKey });
+
+    // 🔥 Percorso corretto per Netlify / serverless
+    const filePath = "/tmp/generated_video.mp4";
+
+    // Scarica il file nella funzione serverless
+    await ai.files.download({
+      file: videoData,
+      downloadPath: filePath,
+    });
+
+    // Leggi il file in buffer
+    const fileBuffer = fs.readFileSync(filePath);
+
+    // 🔥 Ritorna il video direttamente al browser
+    return {
+      statusCode: 200,
+      isBase64Encoded: true,
+      headers: {
+        "Content-Type": "video/mp4",
+        "Content-Disposition": "attachment; filename=generated_video.mp4",
+      },
+      body: fileBuffer.toString("base64"),
+    };
   } catch (error) {
     console.error("Error checking video status:", error);
     return {

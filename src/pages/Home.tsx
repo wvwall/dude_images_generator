@@ -153,25 +153,23 @@ const Home: React.FC = () => {
     if (result.status === "completed") {
       setVideoStatus("Video ready!");
       setIsGenerating(false);
+
       if (pollingIntervalRef.current) {
         clearInterval(pollingIntervalRef.current);
-        pollingIntervalRef.current = null;
       }
 
-      // Here you can handle the completed video
-      console.log("Video URI:", result.videoUri);
-      setCompletedVideoUri(result.videoUri || null);
-      setCurrentImage(null);
-      // Optionally save to history or display
-      // const newVideo = { ... };
-      // setHistory(prev => [newVideo, ...prev]);
-    } else if (result.status === "failed") {
-      setError(result.error || "Video generation failed");
-      setIsGenerating(false);
+      if (result.videoBuffer) {
+        const blob = new Blob([result.videoBuffer], { type: "video/mp4" });
+        const url = URL.createObjectURL(blob);
 
-      if (pollingIntervalRef.current) {
-        clearInterval(pollingIntervalRef.current);
-        pollingIntervalRef.current = null;
+        // Mostra nel preview
+        setCompletedVideoUri(url);
+
+        // Download automatico
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "generated_video.mp4";
+        link.click();
       }
     } else {
       // Still processing
