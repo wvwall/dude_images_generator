@@ -43,7 +43,7 @@ const ImageHistory: React.FC<ImageHistoryProps> = ({
       <div className="flex items-center gap-1 pb-4 mb-8 border-b-2 border-friends-purple">
         {isHomePath ? (
           <span className="px-3 py-1 text-xs font-bold rounded-lg shadow-sm text-friends-yellow bg-friends-purple">
-            6 of {images.length} SNAPS
+            {images.length >= 6 ? 6 : images.length} of {images.length} SNAPS
           </span>
         ) : (
           <span className="px-3 py-1 text-xs font-bold rounded-lg shadow-sm text-friends-yellow bg-friends-purple">
