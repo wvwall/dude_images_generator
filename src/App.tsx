@@ -6,7 +6,7 @@ import {
   Routes,
   useLocation,
 } from "react-router-dom";
-import Header from "./components/Header";
+import Header from "./components/Header/Header";
 import Gallery from "./pages/Gallery";
 import Home from "./pages/Home";
 import Image from "./pages/ImageView";

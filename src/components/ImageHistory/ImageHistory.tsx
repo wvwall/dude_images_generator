@@ -1,3 +1,4 @@
+import { GeneratedImage } from "@/src/types";
 import {
   Camera,
   Download,
@@ -7,7 +8,6 @@ import {
 } from "lucide-react";
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { GeneratedImage } from "../types";
 
 interface ImageHistoryProps {
   images: GeneratedImage[];

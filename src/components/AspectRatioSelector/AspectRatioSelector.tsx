@@ -1,6 +1,6 @@
 import React from "react";
-import { AspectRatio } from "../types";
 import { Square, Smartphone, Monitor, LayoutTemplate } from "lucide-react";
+import { AspectRatio } from "@/src/types";
 
 interface AspectRatioSelectorProps {
   selected: AspectRatio;

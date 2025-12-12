@@ -1,15 +1,15 @@
-import React, { useState, useCallback, useEffect, useRef } from "react";
-import ImageHistory from "../components/ImageHistory";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useLocation } from "react-router-dom";
+import ImageHistory from "../components/ImageHistory/ImageHistory";
+import InputPanel from "../components/InputPanel/InputPanel";
+import PreviewPanel from "../components/PreviewPanel";
 import {
+  checkVideoStatus,
   generateImage,
   generateVideo,
-  checkVideoStatus,
 } from "../services/geminiService";
-import { AspectRatio, GeneratedImage } from "../types";
 import * as sqliteService from "../services/sqliteService";
-import { useLocation } from "react-router-dom";
-import InputPanel from "../components/InputPanel";
-import PreviewPanel from "../components/PreviewPanel";
+import { AspectRatio, GeneratedImage } from "../types";
 
 const Home: React.FC = () => {
   const location = useLocation();

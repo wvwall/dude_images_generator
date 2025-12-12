@@ -1,8 +1,8 @@
-import React, { useEffect, useState, useCallback } from "react";
-import ImageHistory from "../components/ImageHistory";
-import { GeneratedImage } from "../types";
-import * as sqliteService from "../services/sqliteService";
+import React, { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import ImageHistory from "../components/ImageHistory/ImageHistory";
+import * as sqliteService from "../services/sqliteService";
+import { GeneratedImage } from "../types";
 
 const Gallery: React.FC = () => {
   const navigate = useNavigate();

@@ -1,7 +1,7 @@
+import { Armchair, Loader2, Save, Video } from "lucide-react";
 import React from "react";
-import { Save, Armchair, Video, Loader2 } from "lucide-react";
 import { GeneratedImage } from "../types";
-import AudioPlayer, { AudioType } from "./AudioPlayer";
+import AudioPlayer, { AudioType } from "./AudioPlayer/AudioPlayer";
 
 interface PreviewPanelProps {
   currentImage: GeneratedImage | null;
