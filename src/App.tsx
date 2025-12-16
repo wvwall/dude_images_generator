@@ -7,6 +7,7 @@ import {
   useLocation,
 } from "react-router-dom";
 import Header from "./components/Header/Header";
+import BottomBar from "./components/BottomBar/BottomBar";
 import Gallery from "./pages/Gallery";
 import Home from "./pages/Home";
 import Image from "./pages/ImageView";
@@ -44,6 +45,7 @@ const App: React.FC = () => {
           <Route path="/image/:id" element={<Image />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
+        <BottomBar />
       </FeatureTour>
     </BrowserRouter>
   );

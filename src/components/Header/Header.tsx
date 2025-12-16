@@ -1,21 +1,10 @@
-import React, { useState } from "react";
-import { Coffee, Menu, X } from "lucide-react";
+import { Coffee } from "lucide-react";
+import React from "react";
 import { NavLink } from "react-router-dom";
 
 const Header: React.FC = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
-
   const navClasses = ({ isActive }: { isActive: boolean }) =>
     `text-xl font-hand transition-colors underline-offset-4 decoration-4 ${
-      isActive
-        ? "text-friends-purple underline"
-        : " hover:text-friends-yellow hover:underline"
-    }`;
-
-  const mobileNavClasses = ({ isActive }: { isActive: boolean }) =>
-    `p-4 text-lg font-hand text-center underline-offset-2 decoration-2 ${
       isActive
         ? "text-friends-purple underline"
         : " hover:text-friends-yellow hover:underline"
@@ -51,33 +40,6 @@ const Header: React.FC = () => {
           Gallery
         </NavLink>
       </nav>
-
-      {/* Mobile Menu Button */}
-      <button
-        className="p-2 transition-colors rounded-lg md:hidden text-friends-purple hover:bg-friends-cream"
-        onClick={toggleMenu}
-        aria-label="Toggle menu">
-        {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
-      </button>
-
-      {/* Mobile Nav Dropdown */}
-      {isMenuOpen && (
-        <div className="absolute top-[84px] sm:top-[88px] z-50 left-0 w-full bg-white border-b-4 border-friends-purple shadow-xl md:hidden flex flex-col animate-in slide-in-from-top-5 duration-200">
-          <NavLink
-            to="/"
-            onClick={() => setIsMenuOpen(false)}
-            className={mobileNavClasses}>
-            Home
-          </NavLink>
-
-          <NavLink
-            to="/gallery"
-            onClick={() => setIsMenuOpen(false)}
-            className={mobileNavClasses}>
-            Gallery
-          </NavLink>
-        </div>
-      )}
     </header>
   );
 };
