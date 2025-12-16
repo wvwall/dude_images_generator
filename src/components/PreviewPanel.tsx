@@ -23,7 +23,9 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({
   const isVideoReady = !!completedVideoUri;
 
   return (
-    <div className="w-full lg:w-7/12 min-h[350px] sm:min-h-[500px] mt-[12px]">
+    <div
+      className="w-full lg:w-7/12 min-h[350px] sm:min-h-[500px] mt-[12px]"
+      data-tour="preview-panel">
       <div
         className={`
           relative w-full h-full bg-white border-4 border-friends-purple rounded-2xl flex flex-col items-center justify-center overflow-hidden shadow-xl

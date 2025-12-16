@@ -11,6 +11,7 @@ import Gallery from "./pages/Gallery";
 import Home from "./pages/Home";
 import Image from "./pages/ImageView";
 import sqliteService from "./services/sqliteService";
+import FeatureTour from "./components/FeatureTour/FeatureTour";
 
 const App: React.FC = () => {
   function ScrollToTop() {
@@ -34,14 +35,16 @@ const App: React.FC = () => {
 
   return (
     <BrowserRouter>
-      <Header />
-      <ScrollToTop />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/gallery" element={<Gallery />} />
-        <Route path="/image/:id" element={<Image />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+      <FeatureTour>
+        <Header />
+        <ScrollToTop />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/gallery" element={<Gallery />} />
+          <Route path="/image/:id" element={<Image />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </FeatureTour>
     </BrowserRouter>
   );
 };

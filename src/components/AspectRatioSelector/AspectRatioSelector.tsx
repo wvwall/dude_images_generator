@@ -26,7 +26,7 @@ const AspectRatioSelector: React.FC<AspectRatioSelectorProps> = ({
     ];
 
   return (
-    <div className="flex flex-wrap gap-3">
+    <div className="flex flex-wrap gap-3" data-tour="aspect-ratio-selector">
       {ratios.map((ratio) => (
         <button
           key={ratio.value}

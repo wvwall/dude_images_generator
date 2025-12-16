@@ -14,7 +14,7 @@ const PromptInput: React.FC<PromptInputProps> = ({
   mode,
 }) => {
   return (
-    <div className="space-y-3">
+    <div className="space-y-3" data-tour="prompt-input">
       <label className="block text-sm font-bold tracking-wide text-gray-700 uppercase">
         {mode === "image" ? "Modify it how?" : "The Prompt"}
       </label>

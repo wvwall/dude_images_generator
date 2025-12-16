@@ -10,9 +10,11 @@ import {
 } from "../services/geminiService";
 import * as sqliteService from "../services/sqliteService";
 import { AspectRatio, GeneratedImage } from "../types";
+import { useTour } from "@reactour/tour";
 
 const Home: React.FC = () => {
   const location = useLocation();
+  const { setIsOpen } = useTour();
   const [prompt, setPrompt] = useState("");
   const [aspectRatio, setAspectRatio] = useState<AspectRatio>("1:1");
   const [isGenerating, setIsGenerating] = useState(false);
@@ -216,6 +218,14 @@ const Home: React.FC = () => {
       }
     };
   }, []);
+
+  useEffect(() => {
+    const tourSeen = localStorage.getItem("tourSeen");
+    if (!tourSeen) {
+      setIsOpen(true);
+      // localStorage.setItem("tourSeen", "true");
+    }
+  }, [setIsOpen]);
 
   const handleDelete = useCallback(
     async (id: string) => {

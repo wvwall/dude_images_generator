@@ -14,6 +14,7 @@ const PivotButton: React.FC<PivotButtonProps> = ({
     <button
       type="submit"
       disabled={isDisabled}
+      data-tour="pivot-button"
       className={`
         w-full py-4 px-6 rounded-xl font-bold text-base transition-all duration-200 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] border-2 border-black
         ${

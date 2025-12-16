@@ -8,7 +8,7 @@ interface ModeSelectorProps {
 
 const ModeSelector: React.FC<ModeSelectorProps> = ({ mode, setMode }) => {
   return (
-    <div className="flex border-b-2 border-gray-100">
+    <div className="flex border-b-2 border-gray-100" data-tour="mode-selector">
       <button
         onClick={() => setMode("text")}
         className={`flex-1 py-4 font-bold text-sm flex items-center justify-center gap-2 transition-colors ${
