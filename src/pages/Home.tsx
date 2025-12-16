@@ -1,18 +1,20 @@
-import React, { useState, useCallback, useEffect, useRef } from "react";
-import ImageHistory from "../components/ImageHistory";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useLocation } from "react-router-dom";
+import ImageHistory from "../components/ImageHistory/ImageHistory";
+import InputPanel from "../components/InputPanel/InputPanel";
+import PreviewPanel from "../components/PreviewPanel";
 import {
+  checkVideoStatus,
   generateImage,
   generateVideo,
-  checkVideoStatus,
 } from "../services/geminiService";
-import { AspectRatio, GeneratedImage } from "../types";
 import * as sqliteService from "../services/sqliteService";
-import { useLocation } from "react-router-dom";
-import InputPanel from "../components/InputPanel";
-import PreviewPanel from "../components/PreviewPanel";
+import { AspectRatio, GeneratedImage } from "../types";
+import { useTour } from "@reactour/tour";
 
 const Home: React.FC = () => {
   const location = useLocation();
+  const { setIsOpen } = useTour();
   const [prompt, setPrompt] = useState("");
   const [aspectRatio, setAspectRatio] = useState<AspectRatio>("1:1");
   const [isGenerating, setIsGenerating] = useState(false);
@@ -216,6 +218,13 @@ const Home: React.FC = () => {
       }
     };
   }, []);
+
+  useEffect(() => {
+    const tourSeen = localStorage.getItem("tourSeen");
+    if (!tourSeen) {
+      setIsOpen(true);
+    }
+  }, [setIsOpen]);
 
   const handleDelete = useCallback(
     async (id: string) => {
