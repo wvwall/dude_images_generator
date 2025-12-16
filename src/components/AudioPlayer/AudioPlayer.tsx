@@ -40,7 +40,7 @@ export default function AudioPlayer({ type, volume = 1 }: AudioPlayerProps) {
   return (
     <div className="flex items-center gap-2">
       <button onClick={togglePlay}>
-        {playing ? <CirclePause size={16} /> : <CirclePlay size={16} />}
+        {playing ? <CirclePause size={18} /> : <CirclePlay size={18} />}
       </button>
 
       <audio ref={audioRef} src={src} onEnded={() => setPlaying(false)} />
