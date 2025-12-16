@@ -1,28 +1,32 @@
 export const steps = [
   {
     selector: '[data-tour="mode-selector"]',
-    content: "Here you can choose the generation mode: Text, Image, or Video.",
+    content:
+      "Could this BE any more creative? Pick your mode: start with text, an image, or even make a short video!",
   },
   {
     selector: '[data-tour="prompt-input"]',
-    content: "Write your creative prompt here to generate the image or video.",
+    content:
+      "This is where you tell us your 'pla'. I may not have a 'pla', but you do! What are we creating today?",
   },
   {
     selector: '[data-tour="aspect-ratio-selector"]',
-    content: "Select the aspect ratio for the generated image.",
+    content:
+      "Get it just right. Square, portrait, wide... Everything has to be perfect. Monica would approve.",
   },
   {
     selector: '[data-tour="pivot-button"]',
-    content: "Click here to start the generation process. PIVOT!",
+    content:
+      "The one where you make art! Hit this button to... PIVOT! PIVOT! PIVOT!",
   },
   {
     selector: '[data-tour="preview-panel"]',
     content:
-      "The generated image or video will be displayed here. You can download it from here as well.",
+      "Oh. My. God! Look what you did! Your creation is ready. Perfect for sharing with your own 'friends'.",
   },
   {
     selector: '[data-tour="image-history"]',
     content:
-      "Your generated images will be saved here. You can view, edit, or delete them.",
+      "They don't know that we know they know... this is where all your past creations are saved. It’s our little secret.",
   },
 ];

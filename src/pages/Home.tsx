@@ -223,7 +223,6 @@ const Home: React.FC = () => {
     const tourSeen = localStorage.getItem("tourSeen");
     if (!tourSeen) {
       setIsOpen(true);
-      // localStorage.setItem("tourSeen", "true");
     }
   }, [setIsOpen]);
 

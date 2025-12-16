@@ -6,9 +6,17 @@ interface FeatureTourProps {
   children: React.ReactNode;
 }
 
+const setTourSeen = () => {
+  localStorage.setItem("tourSeen", "true");
+};
+
 const FeatureTour: React.FC<FeatureTourProps> = ({ children }) => {
   return (
     <TourProvider
+      onClickClose={({ setIsOpen }) => {
+        setTourSeen();
+        setIsOpen(false);
+      }}
       steps={steps}
       styles={{
         popover: (base) => ({
@@ -17,15 +25,16 @@ const FeatureTour: React.FC<FeatureTourProps> = ({ children }) => {
           borderRadius: "1rem",
           border: "2px solid #2d2d2d",
           boxShadow: "4px 4px 0px 0px rgba(0,0,0,1)",
-          padding: "1.5rem",
+          padding: "1.8rem",
           maxWidth: "350px",
+          left: "12px",
         }),
         dot: (base, { current }) => ({
           ...base,
           backgroundColor: current ? "#5D3F6A" : "#F4C430",
           border: "1px solid #2d2d2d",
-          width: "12px",
-          height: "12px",
+          width: "10px",
+          height: "10px",
         }),
       }}
       showNavigation={true}
