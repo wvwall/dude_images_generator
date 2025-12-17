@@ -39,12 +39,14 @@ const App: React.FC = () => {
       <FeatureTour>
         <Header />
         <ScrollToTop />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/gallery" element={<Gallery />} />
-          <Route path="/image/:id" element={<Image />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
+        <div className="pb-12 md:pb-0">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/gallery" element={<Gallery />} />
+            <Route path="/image/:id" element={<Image />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </div>
         <BottomBar />
       </FeatureTour>
     </BrowserRouter>

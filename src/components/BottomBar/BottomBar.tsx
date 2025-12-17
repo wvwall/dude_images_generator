@@ -11,14 +11,14 @@ const BottomBar: React.FC = () => {
     }`;
 
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-50 flex justify-around p-2 bg-white border-t-4 shadow-lg md:hidden border-friends-purple">
+    <nav className="fixed inset-x-0 bottom-0 z-[99] flex justify-around bg-white border-t-4 shadow-lg md:hidden border-friends-purple">
       <NavLink to="/" className={navClasses}>
         <Home size={16} />
-        <span>Home</span>
+        <span className="p-1">Home</span>
       </NavLink>
       <NavLink to="/gallery" className={navClasses}>
         <Image size={16} />
-        <span>Gallery</span>
+        <span className="p-">Gallery</span>
       </NavLink>
     </nav>
   );
