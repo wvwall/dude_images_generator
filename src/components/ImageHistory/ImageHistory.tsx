@@ -39,7 +39,7 @@ const ImageHistory: React.FC<ImageHistoryProps> = ({
   const IMAGES = isHomePath ? images.slice(0, 6) : images;
 
   return (
-    <div className="pt-12 mt-8" data-tour="image-history">
+    <div className="pt-12 mt-8">
       <div className="flex items-center gap-1 pb-4 mb-8 border-b-2 border-dashed border-friends-purple/70">
         {isHomePath ? (
           <span className="px-3 py-1 text-xs font-bold rounded-lg shadow-sm text-friends-yellow bg-friends-purple">

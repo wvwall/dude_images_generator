@@ -24,9 +24,4 @@ export const steps = [
     content:
       "Oh. My. God! Look what you did! Your creation is ready. Perfect for sharing with your own 'friends'.",
   },
-  {
-    selector: '[data-tour="image-history"]',
-    content:
-      "They don't know that we know they know... this is where all your past creations are saved. It’s our little secret.",
-  },
 ];
