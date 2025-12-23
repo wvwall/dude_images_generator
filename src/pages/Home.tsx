@@ -306,8 +306,8 @@ const Home: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen pb-12 font-sans bg-friends-purple-light">
-      <main className="px-4 pt-6 mx-auto md:pt-20 max-w-7xl">
+    <section className="min-h-screen pb-12 font-sans bg-friends-purple-light">
+      <main className="px-4 pt-12 mx-auto md:pt-16 max-w-7xl">
         <div className="flex flex-col items-stretch gap-8 lg:flex-row">
           <InputPanel
             prompt={prompt}
@@ -345,7 +345,7 @@ const Home: React.FC = () => {
           />
         )}
       </main>
-    </div>
+    </section>
   );
 };
 
