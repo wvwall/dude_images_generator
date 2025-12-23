@@ -4,7 +4,7 @@ import { Home, Image } from "lucide-react";
 
 const BottomBar: React.FC = () => {
   const navClasses = ({ isActive }: { isActive: boolean }) =>
-    `flex flex-col items-center p-2 text-sm font-hand transition-colors ${
+    `flex flex-col items-center p-3 text-sm font-hand transition-colors ${
       isActive
         ? "text-friends-purple"
         : "text-gray-400 hover:text-friends-yellow"
