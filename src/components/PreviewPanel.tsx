@@ -124,7 +124,7 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({
               <Armchair size={40} className="text-black" />
             </div>
             <div>
-              <div className="flex justify-center gap-1">
+              <div className="flex items-start justify-center gap-2">
                 <h3 className="mb-2 text-2xl text-friends-purple font-hand">
                   Oh. My. God.
                 </h3>
