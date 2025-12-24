@@ -1,5 +1,5 @@
 import { GeneratedImage } from "@/src/types";
-import { Camera, Download, Edit2, Image, Trash2 } from "lucide-react";
+import { Camera, Download, Edit2, Eye, Trash2 } from "lucide-react";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -37,7 +37,7 @@ const ImageCard: React.FC<ImageCardProps> = ({ image, onDelete, onEdit }) => {
           className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105"
         />
         <div className="absolute top-[50%] right-[50%] opacity-0 transition-opacity duration-300  group-hover:opacity-100 translate-x-[50%] translate-y-[-50%] px-3 py-2 text-sm font-semibold text-gray-50">
-          <Image size={20} className="opacity-70 " />
+          <Eye size={25} className="opacity-70 " />
         </div>
         <div className="absolute *:mb-4 *:mr-4 inset-0 flex items-end justify-end  transition-opacity duration-300 opacity-0 bg-black/40 group-hover:opacity-100">
           <button
