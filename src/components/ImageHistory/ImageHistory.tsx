@@ -18,14 +18,14 @@ const ImageHistory: React.FC<ImageHistoryProps> = ({
   const navigate = useNavigate();
   const isHomePath = window.location.pathname === "/";
 
-  const IMAGES = isHomePath ? images.slice(0, 6) : images;
+  const IMAGES = isHomePath ? images.slice(0, 3) : images;
 
   return (
     <div className="mt-8 ">
       <div className="flex items-center gap-1 pb-4 mb-8 border-b-2 border-dashed border-friends-purple/70">
         {isHomePath ? (
           <span className="px-3 py-1 text-xs font-bold rounded-lg shadow-sm text-friends-yellow bg-friends-purple">
-            {images.length >= 6 ? 6 : images.length} of {images.length} SNAPS
+            {images.length >= 3 ? 3 : images.length} of {images.length} SNAPS
           </span>
         ) : (
           <span className="px-3 py-1 text-xs font-bold rounded-lg shadow-sm text-friends-yellow bg-friends-purple">
