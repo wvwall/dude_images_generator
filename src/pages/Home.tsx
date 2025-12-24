@@ -26,6 +26,9 @@ const Home: React.FC = () => {
   const [mode, setMode] = useState<"text" | "image" | "video">("text");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [model, setModel] = useState<
+    "gemini-2.5-flash-image" | "gemini-3-pro-image-preview"
+  >("gemini-2.5-flash-image");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [isDragging, setIsDragging] = useState(false);
@@ -328,6 +331,8 @@ const Home: React.FC = () => {
             handleDragOver={handleDragOver}
             handleDragLeave={handleDragLeave}
             handleDrop={handleDrop}
+            model={model}
+            setModel={setModel}
           />
           <PreviewPanel
             currentImage={currentImage}

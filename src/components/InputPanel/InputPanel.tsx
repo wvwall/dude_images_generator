@@ -23,6 +23,10 @@ interface InputPanelProps {
   handleDragOver: (e: React.DragEvent) => void;
   handleDragLeave: (e: React.DragEvent) => void;
   handleDrop: (e: React.DragEvent) => void;
+  model: "gemini-2.5-flash-image" | "gemini-3-pro-image-preview";
+  setModel: (
+    model: "gemini-2.5-flash-image" | "gemini-3-pro-image-preview"
+  ) => void;
 }
 
 const InputPanel: React.FC<InputPanelProps> = ({
@@ -44,6 +48,8 @@ const InputPanel: React.FC<InputPanelProps> = ({
   handleDragLeave,
   handleDrop,
   selectedFile,
+  model,
+  setModel,
 }) => {
   const isDisabled =
     isGenerating || !prompt.trim() || (mode === "image" && !selectedFile);
@@ -74,6 +80,8 @@ const InputPanel: React.FC<InputPanelProps> = ({
           handleDragOver={handleDragOver}
           handleDragLeave={handleDragLeave}
           handleDrop={handleDrop}
+          model={model}
+          setModel={setModel}
         />
       </div>
     </div>
