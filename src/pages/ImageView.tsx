@@ -44,12 +44,12 @@ const Gallery: React.FC = () => {
   return (
     <div className="min-h-screen pb-12 font-sans bg-friends-purple-light">
       {/* TODO: image card + prompt to modify it */}
-      <main className="px-4 pt-10 mx-auto max-w-7xl">
-        <h2 className="mb-6 text-4xl text-center text-gray-800 font-hand">
-          Image
+      <main className="max-w-4xl px-4 pt-16 mx-auto">
+        <h2 className="p-4 text-2xl text-center  border-friends-purple shadow-[3px_3px_0px_0px_rgba(93,63,106,1)] text-gray-800 border  text-balance font-hand bg-friends-yellow-light rounded-2xl">
+          {image?.prompt}
         </h2>
 
-        <div className="grid py-10 ">
+        <div className="flex justify-center py-10">
           <div
             key={image?.id}
             className="group cursor-pointer bg-white p-3 pb-4 rounded-xl border-2 border-gray-200 hover:border-friends-purple transition-all duration-300 shadow-md hover:shadow-[5px_5px_0px_0px_rgba(93,63,106,0.2)]">
