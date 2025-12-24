@@ -15,6 +15,11 @@ export const steps = [
       "Get it just right. Square, portrait, wide... Everything has to be perfect. Monica would approve.",
   },
   {
+    selector: '[data-tour="model-selector"]',
+    content:
+      "Pick your creative buddy! Choose the model that vibes with your artistic style.",
+  },
+  {
     selector: '[data-tour="pivot-button"]',
     content:
       "The one where you make art! Hit this button to... PIVOT! PIVOT! PIVOT!",

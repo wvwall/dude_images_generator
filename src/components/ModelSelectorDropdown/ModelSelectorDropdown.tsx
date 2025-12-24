@@ -23,7 +23,7 @@ const ModelSelectorDropdown: React.FC<ModelSelectorDropdownProps> = ({
   }
 
   return (
-    <div className="relative">
+    <div className="relative" data-tour="model-selector">
       <select
         value={model}
         onChange={(e) =>
