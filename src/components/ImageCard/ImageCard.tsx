@@ -37,7 +37,7 @@ const ImageCard: React.FC<ImageCardProps> = ({ image, onDelete, onEdit }) => {
           className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105"
         />
 
-        <div className="absolute inset-0 flex items-center justify-center gap-3 transition-opacity duration-300 opacity-0 bg-black/40 group-hover:opacity-100">
+        <div className="absolute *:mb-4 *:mr-4 inset-0 flex items-end justify-end  transition-opacity duration-300 opacity-0 bg-black/40 group-hover:opacity-100">
           <button
             onClick={(e) => {
               e.stopPropagation();

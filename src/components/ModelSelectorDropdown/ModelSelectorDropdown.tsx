@@ -14,8 +14,8 @@ const ModelSelectorDropdown: React.FC<ModelSelectorDropdownProps> = ({
   mode,
 }) => {
   const models = [
-    { id: "gemini-2.5-flash-image", name: "Flash Image", icon: "⚡" },
-    { id: "gemini-3-pro-image-preview", name: "Pro Image ", icon: "🚀" },
+    { id: "gemini-2.5-flash-image", name: "Flash Generation", icon: "⚡" },
+    { id: "gemini-3-pro-image-preview", name: "Pro Generation ", icon: "🚀" },
   ];
 
   if (mode === "video") {
