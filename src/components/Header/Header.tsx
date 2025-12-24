@@ -6,7 +6,7 @@ const Header: React.FC = () => {
   const navClasses = ({ isActive }: { isActive: boolean }) =>
     `text-sm font-hand transition-colors underline-offset-4 decoration-2 ${
       isActive
-        ? "text-xl text-friends-purple underline"
+        ? "text-lg text-friends-purple underline"
         : "hover:text-friends-yellow hover:underline"
     }`;
 
