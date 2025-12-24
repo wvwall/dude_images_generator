@@ -60,12 +60,12 @@ const Gallery: React.FC = () => {
                 className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105"
               />
 
-              <div className="absolute inset-0 flex items-center justify-center gap-3 transition-opacity duration-300 opacity-0 bg-black/40 group-hover:opacity-100">
+              <div className="absolute *:mb-3 *:mr-3 inset-0 flex items-end justify-end  transition-opacity duration-300 opacity-0 bg-black/40 group-hover:opacity-100">
                 <button
-                  onClick={() => handleDownload(image)}
-                  className="p-3 text-black transition-transform border-2 border-black rounded-full shadow-lg bg-friends-yellow hover:bg-yellow-400 hover:scale-110"
-                  title="Download">
-                  <Download size={20} />
+                  onClick={() => handleDelete(image?.id)}
+                  className="p-2 text-black transition-transform border-2 border-black rounded-full shadow-lg bg-friends-red hover:bg-red-500 hover:scale-110"
+                  title="Delete">
+                  <Trash2 size={16} />
                 </button>
                 <button
                   onClick={() => {
@@ -73,15 +73,15 @@ const Gallery: React.FC = () => {
                       navigate("/", { state: { editId: image.id } });
                     }
                   }}
-                  className="p-3 text-black transition-transform border-2 border-black rounded-full shadow-lg bg-friends-blue hover:bg-blue-500 hover:scale-110"
+                  className="p-2 text-black transition-transform border-2 border-black rounded-full shadow-lg bg-friends-blue hover:bg-blue-500 hover:scale-110"
                   title="Edit">
-                  <Edit2 size={20} />
+                  <Edit2 size={16} />
                 </button>
                 <button
-                  onClick={() => handleDelete(image?.id)}
-                  className="p-3 text-black transition-transform border-2 border-black rounded-full shadow-lg bg-friends-red hover:bg-red-500 hover:scale-110"
-                  title="Delete">
-                  <Trash2 size={20} />
+                  onClick={() => handleDownload(image)}
+                  className="p-2 text-black transition-transform border-2 border-black rounded-full shadow-lg bg-friends-yellow hover:bg-yellow-400 hover:scale-110"
+                  title="Download">
+                  <Download size={16} />
                 </button>
               </div>
             </div>
