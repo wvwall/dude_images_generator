@@ -14,8 +14,8 @@ const ModelSelectorDropdown: React.FC<ModelSelectorDropdownProps> = ({
   mode,
 }) => {
   const models = [
-    { id: "gemini-2.5-flash-image", name: "Flash Image" },
-    { id: "gemini-3-pro-image-preview", name: "Pro Image Preview" },
+    { id: "gemini-2.5-flash-image", name: "Flash Image", icon: "⚡" },
+    { id: "gemini-3-pro-image-preview", name: "Pro Image ", icon: "🚀" },
   ];
 
   if (mode === "video") {
@@ -33,10 +33,10 @@ const ModelSelectorDropdown: React.FC<ModelSelectorDropdownProps> = ({
               | "gemini-3-pro-image-preview"
           )
         }
-        className="block w-full px-2 py-1 pr-8 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm appearance-none hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-friends-purple">
+        className="block w-full px-2 py-2 pr-6 text-xs font-medium text-gray-700 border-2 border-gray-200 rounded-md shadow-sm appearance-none bg-gray-50 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-friends-purple hover:border-friends-yellow hover:text-friends-purple hover:cursor-pointer">
         {models.map((m) => (
           <option key={m.id} value={m.id}>
-            {m.name}
+            {m.icon} • {m.name}
           </option>
         ))}
       </select>
