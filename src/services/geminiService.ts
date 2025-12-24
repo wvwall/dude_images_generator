@@ -3,13 +3,21 @@ import { AspectRatio } from "../types";
 export const generateImage = async (
   prompt: string,
   aspectRatio: AspectRatio,
-  referenceImageBase64?: string
+  referenceImageBase64?: string,
+  model:
+    | "gemini-2.5-flash-image"
+    | "gemini-3-pro-image-preview" = "gemini-2.5-flash-image"
 ): Promise<string> => {
   try {
     const res = await fetch("/.netlify/functions/generate-image", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ prompt, aspectRatio, referenceImageBase64 }),
+      body: JSON.stringify({
+        prompt,
+        aspectRatio,
+        referenceImageBase64,
+        model,
+      }),
     });
 
     if (!res.ok) {

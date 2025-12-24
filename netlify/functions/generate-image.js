@@ -26,7 +26,7 @@ export const handler = async (event) => {
     return { statusCode: 400, body: JSON.stringify({ error: "Invalid JSON" }) };
   }
 
-  const { prompt, aspectRatio, referenceImageBase64 } = body;
+  const { prompt, aspectRatio, referenceImageBase64, model } = body;
   if (!prompt) {
     return {
       statusCode: 400,
@@ -61,7 +61,7 @@ export const handler = async (event) => {
     // Add the text prompt
     parts.push({ text: finalPrompt });
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash-image",
+      model: model,
       contents: {
         parts: parts,
       },

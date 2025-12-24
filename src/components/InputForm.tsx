@@ -5,6 +5,7 @@ import AspectRatioSelector from "./AspectRatioSelector/AspectRatioSelector";
 import ImageUploadArea from "./ImageUploadArea/ImageUploadArea";
 import PivotButton from "./PivotButton/PivotButton";
 import PromptInput from "./PromptInput/PromptInput";
+import ModelSelectorDropdown from "./ModelSelectorDropdown/ModelSelectorDropdown";
 
 interface InputFormProps {
   prompt: string;
@@ -24,6 +25,10 @@ interface InputFormProps {
   handleDragOver: (e: React.DragEvent) => void;
   handleDragLeave: (e: React.DragEvent) => void;
   handleDrop: (e: React.DragEvent) => void;
+  model: "gemini-2.5-flash-image" | "gemini-3-pro-image-preview";
+  setModel: (
+    model: "gemini-2.5-flash-image" | "gemini-3-pro-image-preview"
+  ) => void;
 }
 
 const InputForm: React.FC<InputFormProps> = ({
@@ -44,6 +49,8 @@ const InputForm: React.FC<InputFormProps> = ({
   handleDragOver,
   handleDragLeave,
   handleDrop,
+  model,
+  setModel,
 }) => {
   const isDisabled =
     isGenerating || !prompt.trim() || (mode === "image" && !selectedFile);
@@ -79,16 +86,32 @@ const InputForm: React.FC<InputFormProps> = ({
       />
 
       {(mode === "text" || mode === "image") && (
-        <div className="space-y-3">
-          <label className="block text-sm font-bold tracking-wide text-gray-700 uppercase">
-            The Shape
-          </label>
-          <AspectRatioSelector
-            selected={aspectRatio}
-            onSelect={setAspectRatio}
-            disabled={isGenerating}
-          />
-        </div>
+        <>
+          <div className="space-y-3">
+            <label className="block text-sm font-bold tracking-wide text-gray-700 uppercase">
+              The Shape
+            </label>
+            <AspectRatioSelector
+              selected={aspectRatio}
+              onSelect={setAspectRatio}
+              disabled={isGenerating}
+            />
+          </div>
+          <div className="space-y-3">
+            <label className="block text-sm font-bold tracking-wide text-gray-700 uppercase">
+              The Model
+            </label>
+            {(mode === "text" || mode === "image") && (
+              <div className="flex ">
+                <ModelSelectorDropdown
+                  model={model}
+                  setModel={setModel}
+                  mode={mode}
+                />
+              </div>
+            )}
+          </div>
+        </>
       )}
 
       <div className="pt-2 mt-auto">
