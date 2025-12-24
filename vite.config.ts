@@ -2,9 +2,15 @@ import path from "path";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { VitePWA } from "vite-plugin-pwa";
+import { readFileSync } from "fs";
+
+const packageJson = JSON.parse(readFileSync("./package.json", "utf8"));
 
 export default defineConfig(({ mode }) => {
   return {
+    define: {
+      "process.env.VITE_APP_VERSION": JSON.stringify(packageJson.version),
+    },
     server: {
       port: 3000,
       host: "0.0.0.0",

@@ -27,9 +27,14 @@ const Header: React.FC = () => {
               <span className="w-2 h-2 mt-2 rounded-full bg-friends-yellow"></span>
               E
             </h1>
-            <span className="hidden text-xs font-bold tracking-widest uppercase text-friends-purple sm:inline-block">
-              Central Perk Studio
-            </span>
+            <div className="flex items-center gap-1">
+              <span className="text-[8px] font-bold tracking-widest uppercase  text-friends-purple sm:text-xs">
+                Central Perk Studio
+              </span>
+              <span className="text-[8px] text-gray-500 font-hand">
+                v{process.env.VITE_APP_VERSION}
+              </span>
+            </div>
           </div>
         </div>
 
