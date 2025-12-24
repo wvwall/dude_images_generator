@@ -4,10 +4,10 @@ import { NavLink } from "react-router-dom";
 
 const Header: React.FC = () => {
   const navClasses = ({ isActive }: { isActive: boolean }) =>
-    `text-xl font-hand transition-colors underline-offset-4 decoration-4 ${
+    `font-hand transition-colors underline-offset-4 decoration-2 ${
       isActive
-        ? "text-friends-purple underline"
-        : " hover:text-friends-yellow hover:underline"
+        ? "text-xl text-friends-purple underline"
+        : "text-sm hover:text-friends-yellow hover:underline"
     }`;
 
   return (
@@ -19,7 +19,7 @@ const Header: React.FC = () => {
           </div>
           <div className="flex flex-col">
             <h1 className="flex items-center gap-1 text-4xl tracking-wider text-black font-hand">
-              D{" "}
+              D
               <span className="w-2 h-2 mt-2 rounded-full bg-friends-red"></span>
               U
               <span className="w-2 h-2 mt-2 rounded-full bg-friends-blue"></span>

@@ -122,7 +122,8 @@ const Home: React.FC = () => {
       const imageUrl = await generateImage(
         prompt,
         aspectRatio,
-        referenceImageBase64
+        referenceImageBase64,
+        model
       );
 
       const newImage: GeneratedImage = {

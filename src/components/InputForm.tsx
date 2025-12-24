@@ -86,23 +86,23 @@ const InputForm: React.FC<InputFormProps> = ({
       />
 
       {(mode === "text" || mode === "image") && (
-        <>
-          <div className="space-y-3">
-            <label className="block text-sm font-bold tracking-wide text-gray-700 uppercase">
+        <div className="flex flex-col justify-between gap-5 md:flex-row">
+          <div className="w-[250px] space-y-3">
+            <span className="block text-sm font-bold tracking-wide text-gray-700 uppercase">
               The Shape
-            </label>
+            </span>
             <AspectRatioSelector
               selected={aspectRatio}
               onSelect={setAspectRatio}
               disabled={isGenerating}
             />
           </div>
-          <div className="space-y-3">
-            <label className="block text-sm font-bold tracking-wide text-gray-700 uppercase">
+          <div className="space-y-3 w-[180px]">
+            <span className="block text-sm font-bold tracking-wide text-gray-700 uppercase">
               The Model
-            </label>
+            </span>
             {(mode === "text" || mode === "image") && (
-              <div className="flex ">
+              <div>
                 <ModelSelectorDropdown
                   model={model}
                   setModel={setModel}
@@ -111,7 +111,7 @@ const InputForm: React.FC<InputFormProps> = ({
               </div>
             )}
           </div>
-        </>
+        </div>
       )}
 
       <div className="pt-2 mt-auto">
