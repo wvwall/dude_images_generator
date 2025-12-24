@@ -80,29 +80,30 @@ const ImageHistory: React.FC<ImageHistoryProps> = ({
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleDownload(img);
+                    onDelete(img.id);
                   }}
-                  className="p-3 text-black transition-transform border-2 border-black rounded-full shadow-lg bg-friends-yellow hover:bg-yellow-400 hover:scale-110"
-                  title="Download">
-                  <Download size={20} />
+                  className="p-2 text-black transition-transform border-2 border-black rounded-full shadow-lg bg-friends-red hover:bg-red-500 hover:scale-125"
+                  title="Delete">
+                  <Trash2 size={14} />
                 </button>
+
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
                     onEdit(img.id);
                   }}
-                  className="p-3 text-black transition-transform border-2 border-black rounded-full shadow-lg bg-friends-blue hover:bg-blue-500 hover:scale-110"
+                  className="p-2 text-black transition-transform border-2 border-black rounded-full shadow-lg bg-friends-blue hover:bg-blue-500 hover:scale-125"
                   title="Delete">
-                  <Edit2 size={20} />
+                  <Edit2 size={14} />
                 </button>
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    onDelete(img.id);
+                    handleDownload(img);
                   }}
-                  className="p-3 text-black transition-transform border-2 border-black rounded-full shadow-lg bg-friends-red hover:bg-red-500 hover:scale-110"
-                  title="Delete">
-                  <Trash2 size={20} />
+                  className="p-2 text-black transition-transform border-2 border-black rounded-full shadow-lg bg-friends-yellow hover:bg-yellow-400 hover:scale-125"
+                  title="Download">
+                  <Download size={14} />
                 </button>
               </div>
             </div>
