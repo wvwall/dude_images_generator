@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   BrowserRouter,
   Navigate,
@@ -6,15 +6,17 @@ import {
   Routes,
   useLocation,
 } from "react-router-dom";
-import Header from "./components/Header/Header";
 import BottomBar from "./components/BottomBar/BottomBar";
+import FeatureTour from "./components/FeatureTour/FeatureTour";
+import Header from "./components/Header/Header";
 import Gallery from "./pages/Gallery";
 import Home from "./pages/Home";
 import Image from "./pages/ImageView";
+import LoadingPage from "./pages/LoadingPage";
 import sqliteService from "./services/sqliteService";
-import FeatureTour from "./components/FeatureTour/FeatureTour";
 
 const App: React.FC = () => {
+  const [isLoading, setIsLoading] = useState(true);
   function ScrollToTop() {
     const { pathname } = useLocation();
 
@@ -30,9 +32,17 @@ const App: React.FC = () => {
         await sqliteService.initDB();
       } catch (err) {
         console.warn("Failed to init db", err);
+      } finally {
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 3000); // Display loading page for 3 seconds
       }
     })();
   }, []);
+
+  if (isLoading) {
+    return <LoadingPage />;
+  }
 
   return (
     <BrowserRouter>
