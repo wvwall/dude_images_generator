@@ -30,6 +30,7 @@ const AspectRatioSelector: React.FC<AspectRatioSelectorProps> = ({
       {ratios.map((ratio) => (
         <button
           key={ratio.value}
+          type="button"
           onClick={() => onSelect(ratio.value)}
           disabled={disabled}
           className={`
