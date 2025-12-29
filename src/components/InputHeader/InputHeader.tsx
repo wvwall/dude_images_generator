@@ -12,7 +12,7 @@ const InputHeader: React.FC = () => {
       setCurrentPhraseIndex(
         (prevIndex) => (prevIndex + 1) % dynamicPhrases.length
       );
-    }, 10000); // Change phrase every 10 seconds
+    }, 20000); // Change phrase every 20 seconds
 
     return () => clearInterval(interval); // Cleanup on unmount
   }, [dynamicPhrases.length]);
