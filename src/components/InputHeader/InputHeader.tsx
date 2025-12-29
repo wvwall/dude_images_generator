@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import AudioPlayer from "../AudioPlayer/AudioPlayer";
-import { AUDIO_MAP, AudioType, phrases } from "../../types";
+import { AUDIO_MAP, AudioType } from "../../types";
 import { useEffect } from "react";
+import { phrases } from "../AudioPlayer/phrases";
 const InputHeader: React.FC = () => {
   const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0);
   const dynamicPhrases = phrases.filter((phrase) => phrase.dynamic);
