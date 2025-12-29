@@ -30,8 +30,19 @@ const PromptInput: React.FC<PromptInputProps> = ({
           className="w-full min-h-[120px] p-4 bg-gray-50 border-2 border-gray-200 rounded-xl text-gray-800 focus:border-friends-purple focus:bg-white focus:ring-0 transition-all outline-none resize-none placeholder:text-gray-400"
           disabled={isGenerating}
         />
-        <div className="absolute text-xs font-bold text-gray-400 bottom-3 right-3 group-focus-within:text-friends-purple">
-          {prompt.length} chars
+        <div className="absolute flex items-center space-x-2 bottom-3 right-3">
+          {prompt.length > 0 && (
+            <button
+              type="button"
+              onClick={() => setPrompt("")}
+              disabled={isGenerating}
+              className="text-xs font-bold text-gray-400 hover:text-friends-red focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed">
+              Clear
+            </button>
+          )}
+          <span className="text-xs font-bold text-gray-400 group-focus-within:text-friends-purple">
+            {prompt.length} chars
+          </span>
         </div>
       </div>
     </div>
