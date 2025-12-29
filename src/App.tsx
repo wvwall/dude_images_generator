@@ -9,6 +9,7 @@ import {
 import BottomBar from "./components/BottomBar/BottomBar";
 import FeatureTour from "./components/FeatureTour/FeatureTour";
 import Header from "./components/Header/Header";
+import PullToRefresh from "./components/PullToRefresh/PullToRefresh";
 import Gallery from "./pages/Gallery";
 import Home from "./pages/Home";
 import Image from "./pages/ImageView";
@@ -50,14 +51,20 @@ const App: React.FC = () => {
       <FeatureTour>
         <Header />
         <ScrollToTop />
-        <section className="pb-12 md:pb-0">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/gallery" element={<Gallery />} />
-            <Route path="/image/:id" element={<Image />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </section>
+        <PullToRefresh
+          onRefresh={() => {
+            // Hard reload the current page so the current route is fully refreshed
+            window.location.reload();
+          }}>
+          <section className="pb-12 md:pb-0">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/gallery" element={<Gallery />} />
+              <Route path="/image/:id" element={<Image />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </section>
+        </PullToRefresh>
         <BottomBar />
       </FeatureTour>
     </BrowserRouter>
