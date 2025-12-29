@@ -34,7 +34,9 @@ const App: React.FC = () => {
         console.warn("Failed to init db", err);
       } finally {
         await document.fonts.ready;
-        setIsLoading(false);
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 1000); // Display loading page for 3 seconds
       }
     })();
   }, []);
