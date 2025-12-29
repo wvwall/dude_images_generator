@@ -90,52 +90,53 @@ const PullToRefresh: React.FC<Props> = ({ onRefresh, children }) => {
   return (
     <div
       ref={containerRef}
-      className="min-h-screen overflow-auto"
+      className="relative min-h-screen overflow-auto"
       style={{ WebkitOverflowScrolling: "touch" }}>
+      {/* Spinner overlay - absolutely positioned so it does not push content */}
       <div
-        className="transition-transform duration-200 transform-gpu"
-        style={{ transform: `translateY(${translate}px)` }}>
-        <div className="flex items-center justify-center h-14">
-          <div
-            className={`w-6 h-6 text-gray-700 transition-transform duration-200 ${
-              refreshing ? "animate-spin" : ""
-            }`}
-            style={{
-              transform: `scale(${Math.min(
-                1,
-                Math.max(0.4, translate / THRESHOLD)
-              )})`,
-              opacity: translate > 0 || refreshing ? 1 : 0,
-            }}
-            aria-hidden={!refreshing && translate === 0}>
-            <svg
-              className="w-full h-full"
-              viewBox="0 0 50 50"
-              xmlns="http://www.w3.org/2000/svg">
-              <circle
-                cx="25"
-                cy="25"
-                r="20"
-                stroke="currentColor"
-                strokeWidth="4"
-                strokeLinecap="round"
-                strokeDasharray="90"
-                strokeDashoffset="0"
-                fill="none"
-                strokeOpacity="0.25"
-              />
-              <path
-                d="M45 25a20 20 0 0 0-20-20"
-                stroke="currentColor"
-                strokeWidth="4"
-                strokeLinecap="round"
-                fill="none"
-              />
-            </svg>
-          </div>
+        className="absolute pointer-events-none"
+        style={{
+          left: "50%",
+          transform: `translate(-50%, ${Math.min(translate, MAX_PULL)}px)`,
+          top: "-40px",
+          transition: refreshing
+            ? "transform 180ms linear"
+            : "transform 180ms linear, opacity 120ms linear",
+          opacity: translate > 0 || refreshing ? 1 : 0,
+        }}
+        aria-hidden={!refreshing && translate === 0}>
+        <div
+          className={`w-6 h-6 text-gray-700 ${
+            refreshing ? "animate-spin" : "transition-transform duration-200"
+          }`}>
+          <svg
+            className="w-full h-full"
+            viewBox="0 0 50 50"
+            xmlns="http://www.w3.org/2000/svg">
+            <circle
+              cx="25"
+              cy="25"
+              r="20"
+              stroke="currentColor"
+              strokeWidth="4"
+              strokeLinecap="round"
+              strokeDasharray="90"
+              strokeDashoffset="0"
+              fill="none"
+              strokeOpacity="0.25"
+            />
+            <path
+              d="M45 25a20 20 0 0 0-20-20"
+              stroke="currentColor"
+              strokeWidth="4"
+              strokeLinecap="round"
+              fill="none"
+            />
+          </svg>
         </div>
-        {children}
       </div>
+
+      <div>{children}</div>
     </div>
   );
 };

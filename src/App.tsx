@@ -49,23 +49,23 @@ const App: React.FC = () => {
   return (
     <BrowserRouter>
       <FeatureTour>
-        <PullToRefresh
+        {/* <PullToRefresh
           onRefresh={() => {
             // Hard reload the current page so the current route is fully refreshed
             window.location.reload();
-          }}>
-          <Header />
-          <ScrollToTop />
-          <section className="pb-12 md:pb-0">
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/gallery" element={<Gallery />} />
-              <Route path="/image/:id" element={<Image />} />
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-          </section>
-          <BottomBar />
-        </PullToRefresh>
+          }}> */}
+        <Header />
+        <ScrollToTop />
+        <section className="pb-12 md:pb-0">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/gallery" element={<Gallery />} />
+            <Route path="/image/:id" element={<Image />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </section>
+        <BottomBar />
+        {/* </PullToRefresh> */}
       </FeatureTour>
     </BrowserRouter>
   );
