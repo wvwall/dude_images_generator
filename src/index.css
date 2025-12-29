@@ -7,6 +7,7 @@
   font-style: normal;
   font-weight: 400;
   src: url("/fonts/Poppins-Regular.ttf") format("truetype");
+  font-display: swap;
 }
 
 @font-face {
@@ -14,6 +15,7 @@
   font-style: normal;
   font-weight: 500;
   src: url("/fonts/Poppins-Medium.ttf") format("truetype");
+  font-display: swap;
 }
 
 @font-face {
@@ -21,6 +23,7 @@
   font-style: normal;
   font-weight: 600;
   src: url("/fonts/Poppins-SemiBold.ttf") format("truetype");
+  font-display: swap;
 }
 
 @font-face {
@@ -28,6 +31,7 @@
   font-style: normal;
   font-weight: 700;
   src: url("/fonts/Poppins-Bold.ttf") format("truetype");
+  font-display: swap;
 }
 
 @font-face {
@@ -35,6 +39,7 @@
   font-style: normal;
   font-weight: 400;
   src: url("/fonts/PermanentMarker-Regular.ttf") format("truetype");
+  font-display: swap;
 }
 
 body {

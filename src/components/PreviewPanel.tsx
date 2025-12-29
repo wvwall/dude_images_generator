@@ -1,7 +1,7 @@
 import { Armchair, Loader2, Save, Video } from "lucide-react";
 import React from "react";
-import { GeneratedImage } from "../types";
-import AudioPlayer, { AudioType } from "./AudioPlayer/AudioPlayer";
+import { AUDIO_MAP, AudioType, GeneratedImage } from "../types";
+import AudioPlayer from "./AudioPlayer/AudioPlayer";
 
 interface PreviewPanelProps {
   currentImage: GeneratedImage | null;
@@ -128,7 +128,10 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({
                 <h3 className="mb-2 text-2xl text-friends-purple font-hand">
                   Oh. My. God.
                 </h3>
-                <AudioPlayer type={AudioType.OH_MY_GOD} volume={0.3} />
+                <AudioPlayer
+                  audioSrc={AUDIO_MAP[AudioType.OH_MY_GOD]}
+                  volume={0.3}
+                />
               </div>
 
               <p className="text-base font-medium text-gray-500">

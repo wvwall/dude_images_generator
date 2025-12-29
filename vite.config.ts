@@ -29,6 +29,11 @@ export default defineConfig(({ mode }) => {
       react(),
       VitePWA({
         registerType: "autoUpdate",
+        workbox: {
+          globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
+          clientsClaim: true,
+          skipWaiting: true,
+        },
         includeAssets: ["favicon-32x32.png", "robots.txt"],
         manifest: {
           name: "Dude - AI Creative Studio",
@@ -63,8 +68,6 @@ export default defineConfig(({ mode }) => {
         },
       }),
     ],
-    // Do not inline secret environment variables into the client bundle.
-    // Secrets should be provided at runtime from server-side environment (Netlify env vars)
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "./src"),

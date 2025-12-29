@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   BrowserRouter,
   Navigate,
@@ -6,15 +6,18 @@ import {
   Routes,
   useLocation,
 } from "react-router-dom";
-import Header from "./components/Header/Header";
 import BottomBar from "./components/BottomBar/BottomBar";
+import FeatureTour from "./components/FeatureTour/FeatureTour";
+import Header from "./components/Header/Header";
+import PullToRefresh from "./components/PullToRefresh/PullToRefresh";
 import Gallery from "./pages/Gallery";
 import Home from "./pages/Home";
 import Image from "./pages/ImageView";
+import LoadingPage from "./pages/LoadingPage";
 import sqliteService from "./services/sqliteService";
-import FeatureTour from "./components/FeatureTour/FeatureTour";
 
 const App: React.FC = () => {
+  const [isLoading, setIsLoading] = useState(true);
   function ScrollToTop() {
     const { pathname } = useLocation();
 
@@ -30,13 +33,27 @@ const App: React.FC = () => {
         await sqliteService.initDB();
       } catch (err) {
         console.warn("Failed to init db", err);
+      } finally {
+        await document.fonts.ready;
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 1000); // Display loading page for 3 seconds
       }
     })();
   }, []);
 
+  if (isLoading) {
+    return <LoadingPage />;
+  }
+
   return (
     <BrowserRouter>
       <FeatureTour>
+        {/* <PullToRefresh
+          onRefresh={() => {
+            // Hard reload the current page so the current route is fully refreshed
+            window.location.reload();
+          }}> */}
         <Header />
         <ScrollToTop />
         <section className="pb-12 md:pb-0">
@@ -48,6 +65,7 @@ const App: React.FC = () => {
           </Routes>
         </section>
         <BottomBar />
+        {/* </PullToRefresh> */}
       </FeatureTour>
     </BrowserRouter>
   );

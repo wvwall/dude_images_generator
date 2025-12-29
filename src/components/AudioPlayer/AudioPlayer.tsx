@@ -1,28 +1,17 @@
 import { useRef, useState } from "react";
 import { Play, Pause, CirclePlay, CirclePause } from "lucide-react";
 
-export enum AudioType {
-  HOW_YOU_DOIN = "HOW_YOU_DOIN",
-  OH_MY_GOD = "OH_MY_GOD",
-  FRIENDS_THEME = "FRIENDS_THEME",
-}
-
-const AUDIO_MAP: Record<AudioType, string> = {
-  [AudioType.HOW_YOU_DOIN]: "audio/how_you_doin.mp3",
-  [AudioType.OH_MY_GOD]: "audio/oh_my_god.mp3",
-  [AudioType.FRIENDS_THEME]: "audio/friends_theme.mp3",
-};
-
 type AudioPlayerProps = {
-  type: AudioType;
+  audioSrc: string;
   volume?: number;
 };
 
-export default function AudioPlayer({ type, volume = 1 }: AudioPlayerProps) {
+export default function AudioPlayer({
+  audioSrc,
+  volume = 1,
+}: AudioPlayerProps) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [playing, setPlaying] = useState(false);
-
-  const src = AUDIO_MAP[type];
 
   const togglePlay = () => {
     if (!audioRef.current) return;
@@ -43,7 +32,7 @@ export default function AudioPlayer({ type, volume = 1 }: AudioPlayerProps) {
         {playing ? <CirclePause size={18} /> : <CirclePlay size={18} />}
       </button>
 
-      <audio ref={audioRef} src={src} onEnded={() => setPlaying(false)} />
+      <audio ref={audioRef} src={audioSrc} onEnded={() => setPlaying(false)} />
     </div>
   );
 }
