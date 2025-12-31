@@ -47,7 +47,11 @@ const App: React.FC = () => {
   }
 
   return (
-    <BrowserRouter>
+    <BrowserRouter
+      future={{
+        v7_startTransition: true,
+        v7_relativeSplatPath: true,
+      }}>
       <FeatureTour>
         {/* <PullToRefresh
           onRefresh={() => {

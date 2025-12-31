@@ -1,4 +1,4 @@
-import { Armchair, Loader2, Save, Video } from "lucide-react";
+import { Armchair, Download, Loader2, Save, Video } from "lucide-react";
 import React from "react";
 import { AUDIO_MAP, AudioType, GeneratedImage } from "../types";
 import AudioPlayer from "./AudioPlayer/AudioPlayer";
@@ -68,7 +68,7 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({
           </div>
         ) : isVideoReady ? (
           // Block 2: Video Completed and Ready
-          <div className="relative w-full h-full p-6 group bg-gray-50">
+          <div className="relative w-full h-full group bg-gray-50">
             <div className="relative flex flex-col items-center justify-center w-full h-full overflow-hidden border-8 border-white rounded-lg shadow-lg">
               <h4 className="p-4 text-xl text-friends-purple font-hand">
                 Video Generated Successfully! 🎉
@@ -85,15 +85,14 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({
             </div>
 
             {/* Download Link */}
-            <div className="absolute transition-opacity duration-300 opacity-0 top-10 right-10 group-hover:opacity-100">
+            <div className="absolute transition-opacity duration-300 opacity-0 top-12 right-12 group-hover:opacity-100">
               <a
                 href={completedVideoUri || ""}
                 download="video_generato_gemini.mp4"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 px-4 py-3 text-sm font-bold text-white transition-colors border-2 border-white rounded-full shadow-lg bg-friends-purple hover:bg-purple-800">
-                <Save size={18} />
-                Download Video
+                className="flex items-center gap-2 px-2 py-2 text-sm font-bold text-black transition-colors border-2 border-black rounded-full shadow-lg bg-friends-yellow hover:bg-yellow-400 hover:scale-105">
+                <Download size={18} />
               </a>
             </div>
           </div>
@@ -108,12 +107,11 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({
               />
             </div>
 
-            <div className="absolute transition-opacity duration-300 opacity-0 top-10 right-10 group-hover:opacity-100">
+            <div className="absolute transition-opacity duration-300 opacity-0 top-12 right-12 group-hover:opacity-100">
               <button
                 onClick={handleDownloadCurrent}
-                className="flex items-center gap-2 px-4 py-3 text-sm font-bold text-white transition-colors border-2 border-white rounded-full shadow-lg bg-friends-purple hover:bg-purple-800">
-                <Save size={18} />
-                Save This
+                className="flex items-center gap-2 px-2 py-2 text-sm font-bold text-black transition-colors border-2 border-black rounded-full shadow-lg bg-friends-yellow hover:bg-yellow-400 hover:scale-105">
+                <Download size={18} />
               </button>
             </div>
           </div>
