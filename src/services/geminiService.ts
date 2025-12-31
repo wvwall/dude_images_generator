@@ -3,7 +3,7 @@ import { AspectRatio } from "../types";
 export const generateImage = async (
   prompt: string,
   aspectRatio: AspectRatio,
-  referenceImageBase64?: string,
+  referenceImagesBase64?: string[],
   model:
     | "gemini-2.5-flash-image"
     | "gemini-3-pro-image-preview" = "gemini-2.5-flash-image"
@@ -15,7 +15,7 @@ export const generateImage = async (
       body: JSON.stringify({
         prompt,
         aspectRatio,
-        referenceImageBase64,
+        referenceImagesBase64,
         model,
       }),
     });

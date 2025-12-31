@@ -9,6 +9,7 @@ interface PreviewPanelProps {
   videoStatus?: string;
   videoProgress?: number;
   completedVideoUri?: string | null;
+  previewUrls: string[];
 }
 
 const PreviewPanel: React.FC<PreviewPanelProps> = ({
@@ -50,7 +51,7 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({
               {videoProgress !== undefined && videoProgress > 0 && (
                 <div className="w-full bg-gray-200 rounded-full h-3 mb-3 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                   <div
-                    className="h-full transition-all duration-500 rounded-full bg-friends-yellow"
+                    className="h-full transition-all duration-1000 rounded-full bg-friends-yellow"
                     style={{ width: `${videoProgress}%` }}
                   />
                 </div>

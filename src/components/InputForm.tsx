@@ -14,13 +14,14 @@ interface InputFormProps {
   setAspectRatio: (aspectRatio: AspectRatio) => void;
   isGenerating: boolean;
   mode: "text" | "image" | "video";
-  selectedFile: File | null;
-  previewUrl: string | null;
+  selectedFiles: File[];
+  previewUrls: string[];
   handleGenerate: (e: React.FormEvent) => void;
   error: string | null;
   fileInputRef: RefObject<HTMLInputElement>;
   handleFileSelect: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  clearFile: () => void;
+  clearFiles: () => void;
+  handleRemoveFile: (index: number) => void;
   isDragging: boolean;
   handleDragOver: (e: React.DragEvent) => void;
   handleDragLeave: (e: React.DragEvent) => void;
@@ -38,13 +39,14 @@ const InputForm: React.FC<InputFormProps> = ({
   setAspectRatio,
   isGenerating,
   mode,
-  selectedFile,
-  previewUrl,
+  selectedFiles,
+  previewUrls,
   handleGenerate,
   error,
   fileInputRef,
   handleFileSelect,
-  clearFile,
+  clearFiles,
+  handleRemoveFile,
   isDragging,
   handleDragOver,
   handleDragLeave,
@@ -53,17 +55,20 @@ const InputForm: React.FC<InputFormProps> = ({
   setModel,
 }) => {
   const isDisabled =
-    isGenerating || !prompt.trim() || (mode === "image" && !selectedFile);
+    isGenerating ||
+    !prompt.trim() ||
+    (mode === "image" && selectedFiles.length === 0);
 
   return (
     <form onSubmit={handleGenerate} className="flex flex-col flex-1 gap-6 p-6">
       {mode === "image" && (
         <ImageUploadArea
-          selectedFile={selectedFile}
-          previewUrl={previewUrl}
+          selectedFiles={selectedFiles}
+          previewUrls={previewUrls}
           fileInputRef={fileInputRef}
           handleFileSelect={handleFileSelect}
-          clearFile={clearFile}
+          clearFiles={clearFiles}
+          handleRemoveFile={handleRemoveFile}
           isDragging={isDragging}
           handleDragOver={handleDragOver}
           handleDragLeave={handleDragLeave}

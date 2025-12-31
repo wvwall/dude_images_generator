@@ -12,13 +12,14 @@ interface InputPanelProps {
   isGenerating: boolean;
   mode: "text" | "image" | "video";
   setMode: (mode: "text" | "image" | "video") => void;
-  selectedFile: File | null;
-  previewUrl: string | null;
+  selectedFiles: File[];
+  previewUrls: string[];
   handleGenerate: (e: React.FormEvent) => void;
   error: string | null;
   fileInputRef: RefObject<HTMLInputElement>;
   handleFileSelect: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  clearFile: () => void;
+  clearFiles: () => void;
+  handleRemoveFile: (index: number) => void;
   isDragging: boolean;
   handleDragOver: (e: React.DragEvent) => void;
   handleDragLeave: (e: React.DragEvent) => void;
@@ -37,22 +38,25 @@ const InputPanel: React.FC<InputPanelProps> = ({
   isGenerating,
   mode,
   setMode,
-  previewUrl,
+  previewUrls,
   handleGenerate,
   error,
   fileInputRef,
   handleFileSelect,
-  clearFile,
+  clearFiles,
+  handleRemoveFile,
   isDragging,
   handleDragOver,
   handleDragLeave,
   handleDrop,
-  selectedFile,
+  selectedFiles,
   model,
   setModel,
 }) => {
   const isDisabled =
-    isGenerating || !prompt.trim() || (mode === "image" && !selectedFile);
+    isGenerating ||
+    !prompt.trim() ||
+    (mode === "image" && selectedFiles.length === 0);
   return (
     <div className="flex flex-col w-full gap-6 lg:w-5/12">
       <InputHeader />
@@ -69,13 +73,14 @@ const InputPanel: React.FC<InputPanelProps> = ({
           setAspectRatio={setAspectRatio}
           isGenerating={isGenerating}
           mode={mode}
-          selectedFile={selectedFile}
-          previewUrl={previewUrl}
+          selectedFiles={selectedFiles}
+          previewUrls={previewUrls}
           handleGenerate={handleGenerate}
           error={error}
           fileInputRef={fileInputRef}
           handleFileSelect={handleFileSelect}
-          clearFile={clearFile}
+          clearFiles={clearFiles}
+          handleRemoveFile={handleRemoveFile}
           isDragging={isDragging}
           handleDragOver={handleDragOver}
           handleDragLeave={handleDragLeave}
