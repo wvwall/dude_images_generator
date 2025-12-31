@@ -21,7 +21,7 @@ const InputHeader: React.FC = () => {
   return (
     <div className="mb-2">
       <div className="flex items-start gap-2">
-        <h2 className="mb-3 text-4xl text-gray-800 cursor-pointer md:text-6xl font-hand drop-shadow-sm">
+        <h2 className="mb-3 text-4xl text-gray-800 cursor-pointer md:text-7xl font-hand drop-shadow-sm">
           {currentPhrase.text}
         </h2>
         <AudioPlayer audioSrc={currentPhrase.audioSrc} volume={0.3} />

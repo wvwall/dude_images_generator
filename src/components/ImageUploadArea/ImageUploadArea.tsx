@@ -1,12 +1,13 @@
-import React, { RefObject } from "react";
-import { Upload, X } from "lucide-react";
+import { BrushCleaning, Upload, X } from "lucide-react";
+import React, { RefObject, useState } from "react";
 
 interface ImageUploadAreaProps {
-  selectedFile: File | null;
-  previewUrl: string | null;
+  selectedFiles: File[];
+  previewUrls: string[];
   fileInputRef: RefObject<HTMLInputElement>;
   handleFileSelect: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  clearFile: () => void;
+  clearFiles: () => void;
+  handleRemoveFile: (index: number) => void;
   isDragging: boolean;
   handleDragOver: (e: React.DragEvent) => void;
   handleDragLeave: (e: React.DragEvent) => void;
@@ -14,71 +15,98 @@ interface ImageUploadAreaProps {
 }
 
 const ImageUploadArea: React.FC<ImageUploadAreaProps> = ({
-  previewUrl,
+  previewUrls,
   fileInputRef,
   handleFileSelect,
-  clearFile,
+  clearFiles,
+  handleRemoveFile,
   isDragging,
   handleDragOver,
   handleDragLeave,
   handleDrop,
 }) => {
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+
   return (
     <div className="space-y-3 duration-200 animate-in fade-in zoom-in-95">
-      <label className="block text-sm font-bold tracking-wide text-gray-700 uppercase">
-        Your Reference
-      </label>
+      <div className="flex items-center justify-between">
+        <label className="block text-sm font-bold tracking-wide text-gray-700 uppercase">
+          Your Reference
+        </label>
+        {previewUrls.length > 0 && (
+          <div className="flex items-center gap-2">
+            <div className="flex flex-wrap gap-1">
+              {previewUrls.map((url, index) => (
+                <div
+                  key={index}
+                  className="relative w-8 h-8 overflow-hidden transition-transform rounded-md group hover:scale-105"
+                  onMouseEnter={() => setHoveredIndex(index)}
+                  onMouseLeave={() => setHoveredIndex(null)}>
+                  <img
+                    src={url}
+                    alt={`Preview ${index}`}
+                    className="object-cover w-full h-full"
+                  />
+                  {hoveredIndex === index && (
+                    <div
+                      className="absolute inset-0 flex items-center justify-center cursor-pointer bg-black/50"
+                      onClick={() => handleRemoveFile(index)}>
+                      <X size={16} className="text-white" />
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+            {previewUrls.length > 1 && (
+              <button
+                type="button"
+                onClick={clearFiles}
+                className="p-1.5 text-black transition-colors border-2 border-black rounded-full shadow-md bg-friends-red hover:bg-red-600">
+                <BrushCleaning size={14} />
+              </button>
+            )}
+          </div>
+        )}
+      </div>
 
-      {!previewUrl ? (
-        <div
-          onClick={() => fileInputRef.current?.click()}
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
-          onDrop={handleDrop}
-          className={`
-                  flex flex-col items-center justify-center h-32 gap-2 transition-colors border-2 border-dashed cursor-pointer rounded-xl group
-                  ${
-                    isDragging
-                      ? "border-friends-purple bg-friends-cream"
-                      : "border-friends-purple/30 bg-friends-cream/30 hover:bg-friends-cream"
-                  }
-                `}>
-          <Upload
-            className={`transition-transform text-friends-purple ${
-              isDragging ? "scale-110" : "group-hover:scale-110"
-            }`}
-            size={24}
-          />
+      <div
+        onClick={() => fileInputRef.current?.click()}
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
+        className={`
+                flex flex-col items-center justify-center h-32 gap-2 transition-colors border-2 border-dashed cursor-pointer rounded-xl group
+                ${
+                  isDragging
+                    ? "border-friends-purple bg-friends-cream"
+                    : "border-friends-purple/30 bg-friends-cream/30 hover:bg-friends-cream"
+                }
+              `}>
+        <Upload
+          className={`transition-transform text-friends-purple ${
+            isDragging ? "scale-110" : "group-hover:scale-110"
+          }`}
+          size={24}
+        />
 
-          <span className="text-sm font-bold text-friends-purple">
-            {isDragging ? "Drop it!" : "Upload a photo to pivot"}
+        <span className="text-sm font-bold text-friends-purple">
+          {isDragging ? "Drop it!" : "Upload photos to pivot"}
+        </span>
+
+        {!isDragging && (
+          <span className="text-xs text-gray-500">
+            JPG or PNG, max 4MB per image
           </span>
+        )}
+      </div>
 
-          {!isDragging && (
-            <span className="text-xs text-gray-500">JPG or PNG, max 4MB</span>
-          )}
-        </div>
-      ) : (
-        <div className="relative w-full h-32 overflow-hidden bg-gray-100 border-2 rounded-xl border-friends-purple">
-          <img
-            src={previewUrl}
-            alt="Preview"
-            className="object-cover w-full h-full"
-          />
-          <button
-            type="button"
-            onClick={clearFile}
-            className="absolute top-2 right-2 bg-red-500 text-white p-1.5 rounded-full shadow-md hover:bg-red-600 transition-colors">
-            <X size={14} />
-          </button>
-        </div>
-      )}
       <input
         type="file"
         ref={fileInputRef}
         onChange={handleFileSelect}
         accept="image/png, image/jpeg"
         className="hidden"
+        multiple
       />
     </div>
   );

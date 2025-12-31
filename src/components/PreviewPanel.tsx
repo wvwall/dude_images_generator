@@ -9,6 +9,7 @@ interface PreviewPanelProps {
   videoStatus?: string;
   videoProgress?: number;
   completedVideoUri?: string | null;
+  previewUrls: string[];
 }
 
 const PreviewPanel: React.FC<PreviewPanelProps> = ({
@@ -24,7 +25,7 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({
 
   return (
     <div
-      className="w-full lg:w-7/12 min-h[350px] sm:min-h-[500px] mt-[12px]"
+      className="w-full lg:w-7/12 min-h[350px] sm:min-h-[500px] "
       data-tour="preview-panel">
       <div
         className={`
@@ -50,7 +51,7 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({
               {videoProgress !== undefined && videoProgress > 0 && (
                 <div className="w-full bg-gray-200 rounded-full h-3 mb-3 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                   <div
-                    className="h-full transition-all duration-500 rounded-full bg-friends-yellow"
+                    className="h-full transition-all duration-1000 rounded-full bg-friends-yellow"
                     style={{ width: `${videoProgress}%` }}
                   />
                 </div>
@@ -85,7 +86,7 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({
             </div>
 
             {/* Download Link */}
-            <div className="absolute transition-opacity duration-300 opacity-0 top-12 right-12 group-hover:opacity-100">
+            <div className="absolute transition-opacity duration-300 opacity-0 top-8 right-8 group-hover:opacity-100">
               <a
                 href={completedVideoUri || ""}
                 download="video_generato_gemini.mp4"
@@ -98,7 +99,7 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({
           </div>
         ) : currentImage ? (
           // Block 3: Generated Static Image
-          <div className="relative w-full h-full p-6 group bg-gray-50">
+          <div className="relative w-full h-full group bg-gray-50">
             <div className="relative w-full h-full overflow-hidden border-8 border-white rounded-lg shadow-lg">
               <img
                 src={currentImage.url}

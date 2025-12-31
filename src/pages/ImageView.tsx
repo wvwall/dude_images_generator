@@ -57,7 +57,7 @@ const Gallery: React.FC = () => {
               <img
                 src={image?.url}
                 alt={image?.prompt}
-                className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105"
+                className="object-cover w-full h-full transition-transform duration-1000 group-hover:scale-105"
               />
 
               <div className="absolute *:mb-3 *:mr-3 inset-0 flex items-end justify-end  transition-opacity duration-300 opacity-0 bg-black/40 group-hover:opacity-100">

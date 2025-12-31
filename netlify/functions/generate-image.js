@@ -26,7 +26,7 @@ export const handler = async (event) => {
     return { statusCode: 400, body: JSON.stringify({ error: "Invalid JSON" }) };
   }
 
-  const { prompt, aspectRatio, referenceImageBase64, model } = body;
+  const { prompt, aspectRatio, referenceImagesBase64, model } = body;
   if (!prompt) {
     return {
       statusCode: 400,
@@ -47,14 +47,18 @@ export const handler = async (event) => {
     const parts = [];
 
     // If a reference image is provided, add it to the parts
-    if (referenceImageBase64) {
-      // Extract the base64 data from the data URL (remove "data:image/xxx;base64,")
-      const base64Data = referenceImageBase64.split(",")[1];
-      parts.push({
-        inlineData: {
-          mimeType: "image/jpeg", // Assuming jpeg/png, the API is flexible
-          data: base64Data,
-        },
+    if (referenceImagesBase64 && Array.isArray(referenceImagesBase64)) {
+      referenceImagesBase64.forEach((base64String) => {
+        const mimeType =
+          base64String.match(/data:([^;]+);base64/)?.[1] || "image/jpeg";
+        const base64Data = base64String.split(",")[1];
+
+        parts.push({
+          inlineData: {
+            mimeType: mimeType,
+            data: base64Data,
+          },
+        });
       });
     }
 

@@ -11,6 +11,7 @@ import {
 import * as sqliteService from "../services/sqliteService";
 import { AspectRatio, GeneratedImage } from "../types";
 import { useTour } from "@reactour/tour";
+import InputHeader from "../components/InputHeader/InputHeader";
 
 const Home: React.FC = () => {
   const location = useLocation();
@@ -24,8 +25,8 @@ const Home: React.FC = () => {
 
   // New state for Image-to-Image mode
   const [mode, setMode] = useState<"text" | "image" | "video">("text");
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const [model, setModel] = useState<
     "gemini-2.5-flash-image" | "gemini-3-pro-image-preview"
   >("gemini-2.5-flash-image");
@@ -55,36 +56,75 @@ const Home: React.FC = () => {
     e.preventDefault();
     setIsDragging(false);
 
-    const file = e.dataTransfer.files?.[0];
-    if (!file) return;
+    const files = Array.from(e.dataTransfer.files);
+    if (files.length === 0) return;
 
-    if (file.size > 4 * 1024 * 1024) {
-      setError("File too large! Please keep it under 4MB.");
-      return;
+    const newSelectedFiles: File[] = [];
+    const newPreviewUrls: string[] = [];
+    let hasError = false;
+
+    files.forEach((file) => {
+      if (file.size > 4 * 1024 * 1024) {
+        setError(`File ${file.name} is too large! Please keep it under 4MB.`);
+        hasError = true;
+      } else {
+        newSelectedFiles.push(file);
+        newPreviewUrls.push(URL.createObjectURL(file));
+      }
+    });
+
+    if (!hasError) {
+      setSelectedFiles((prev) => [...prev, ...newSelectedFiles]);
+      setPreviewUrls((prev) => [...prev, ...newPreviewUrls]);
+      setError(null);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
     }
-
-    setSelectedFile(file);
-    setPreviewUrl(URL.createObjectURL(file));
-    setError(null);
   };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      if (file.size > 4 * 1024 * 1024) {
-        setError("File too large! Please keep it under 4MB.");
-        return;
+    if (e.target.files) {
+      const files = Array.from(e.target.files);
+      const newSelectedFiles: File[] = [];
+      const newPreviewUrls: string[] = [];
+      let hasError = false;
+
+      files.forEach((file) => {
+        if (file.size > 4 * 1024 * 1024) {
+          setError(`File ${file.name} is too large! Please keep it under 4MB.`);
+          hasError = true;
+        } else {
+          newSelectedFiles.push(file);
+          newPreviewUrls.push(URL.createObjectURL(file));
+        }
+      });
+
+      if (!hasError) {
+        setSelectedFiles((prev) => [...prev, ...newSelectedFiles]);
+        setPreviewUrls((prev) => [...prev, ...newPreviewUrls]);
+        setError(null);
+        e.target.value = "";
       }
-      setSelectedFile(file);
-      setPreviewUrl(URL.createObjectURL(file));
-      setError(null);
     }
   };
 
-  const clearFile = () => {
-    setSelectedFile(null);
-    setPreviewUrl(null);
-    if (fileInputRef.current) fileInputRef.current.value = "";
+  const clearFiles = () => {
+    selectedFiles.forEach((file) =>
+      URL.revokeObjectURL(URL.createObjectURL(file))
+    ); // Revoke object URLs
+    setSelectedFiles([]);
+    setPreviewUrls([]);
+  };
+
+  const handleRemoveFile = (index: number) => {
+    const newSelectedFiles = [...selectedFiles];
+    const newPreviewUrls = [...previewUrls];
+    URL.revokeObjectURL(newPreviewUrls[index]); // Clean up memory
+    newSelectedFiles.splice(index, 1);
+    newPreviewUrls.splice(index, 1);
+    setSelectedFiles(newSelectedFiles);
+    setPreviewUrls(newPreviewUrls);
   };
 
   const fileToBase64 = (file: File): Promise<string> => {
@@ -94,6 +134,10 @@ const Home: React.FC = () => {
       reader.onload = () => resolve(reader.result as string);
       reader.onerror = (error) => reject(error);
     });
+  };
+
+  const filesToBase64 = async (files: File[]): Promise<string[]> => {
+    return Promise.all(files.map((file) => fileToBase64(file)));
   };
 
   const handleGenerate = async (e: React.FormEvent) => {
@@ -113,16 +157,17 @@ const Home: React.FC = () => {
     setCurrentImage(null);
 
     try {
-      let referenceImageBase64: string | undefined = undefined;
+      let referenceImagesBase64: string[] = [];
 
-      if (mode === "image" && selectedFile) {
-        referenceImageBase64 = await fileToBase64(selectedFile);
+      if (mode === "image" && selectedFiles.length > 0) {
+        const promises = selectedFiles.map((file) => fileToBase64(file));
+        referenceImagesBase64 = await Promise.all(promises);
       }
 
       const imageUrl = await generateImage(
         prompt,
         aspectRatio,
-        referenceImageBase64,
+        referenceImagesBase64,
         model
       );
 
@@ -259,8 +304,8 @@ const Home: React.FC = () => {
       if (!imgToEdit) return;
       const file = await urlToFile(imgToEdit.url);
       setPrompt(imgToEdit.prompt);
-      setSelectedFile(file);
-      setPreviewUrl(URL.createObjectURL(file));
+      setSelectedFiles([file]);
+      setPreviewUrls([URL.createObjectURL(file)]);
       setError(null);
       window.scrollTo({ top: 0, behavior: "smooth" });
     },
@@ -281,8 +326,8 @@ const Home: React.FC = () => {
       .then((res) => res.blob())
       .then((blob) => {
         const file = new File([blob], "edit.jpg", { type: blob.type });
-        setSelectedFile(file);
-        setPreviewUrl(imgToEdit.url);
+        setSelectedFiles([file]);
+        setPreviewUrls([imgToEdit.url]);
       });
 
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -312,7 +357,8 @@ const Home: React.FC = () => {
   return (
     <section className="min-h-screen pb-12 font-sans bg-friends-purple-light">
       <main className="px-4 pt-12 mx-auto md:pt-16 max-w-7xl">
-        <div className="flex flex-col items-stretch gap-8 lg:flex-row">
+        <InputHeader />
+        <div className="flex flex-col gap-8 mt-12 lg:items-start lg:flex-row">
           <InputPanel
             prompt={prompt}
             setPrompt={setPrompt}
@@ -321,13 +367,14 @@ const Home: React.FC = () => {
             isGenerating={isGenerating}
             mode={mode}
             setMode={setMode}
-            selectedFile={selectedFile}
-            previewUrl={previewUrl}
+            selectedFiles={selectedFiles}
+            previewUrls={previewUrls}
             handleGenerate={handleGenerate}
             error={error}
             fileInputRef={fileInputRef}
             handleFileSelect={handleFileSelect}
-            clearFile={clearFile}
+            clearFiles={clearFiles}
+            handleRemoveFile={handleRemoveFile}
             isDragging={isDragging}
             handleDragOver={handleDragOver}
             handleDragLeave={handleDragLeave}
@@ -341,6 +388,7 @@ const Home: React.FC = () => {
             videoStatus={mode === "video" ? videoStatus : undefined}
             videoProgress={mode === "video" ? videoProgress : undefined}
             completedVideoUri={completedVideoUri}
+            previewUrls={previewUrls}
           />
         </div>
         {history.length > 0 && (
