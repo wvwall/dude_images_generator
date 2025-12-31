@@ -86,7 +86,7 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({
             </div>
 
             {/* Download Link */}
-            <div className="absolute transition-opacity duration-300 opacity-0 top-12 right-12 group-hover:opacity-100">
+            <div className="absolute transition-opacity duration-300 opacity-0 top-10 right-10 group-hover:opacity-100">
               <a
                 href={completedVideoUri || ""}
                 download="video_generato_gemini.mp4"
