@@ -11,6 +11,7 @@ import {
 import * as sqliteService from "../services/sqliteService";
 import { AspectRatio, GeneratedImage } from "../types";
 import { useTour } from "@reactour/tour";
+import InputHeader from "../components/InputHeader/InputHeader";
 
 const Home: React.FC = () => {
   const location = useLocation();
@@ -356,7 +357,8 @@ const Home: React.FC = () => {
   return (
     <section className="min-h-screen pb-12 font-sans bg-friends-purple-light">
       <main className="px-4 pt-12 mx-auto md:pt-16 max-w-7xl">
-        <div className="flex flex-col items-stretch gap-8 lg:flex-row">
+        <InputHeader />
+        <div className="flex flex-col gap-8 mt-12 lg:items-start lg:flex-row">
           <InputPanel
             prompt={prompt}
             setPrompt={setPrompt}

@@ -25,7 +25,7 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({
 
   return (
     <div
-      className="w-full lg:w-7/12 min-h[350px] sm:min-h-[500px] mt-[12px]"
+      className="w-full lg:w-7/12 min-h[350px] sm:min-h-[500px] "
       data-tour="preview-panel">
       <div
         className={`
@@ -99,7 +99,7 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({
           </div>
         ) : currentImage ? (
           // Block 3: Generated Static Image
-          <div className="relative w-full h-full p-6 group bg-gray-50">
+          <div className="relative w-full h-full group bg-gray-50">
             <div className="relative w-full h-full overflow-hidden border-8 border-white rounded-lg shadow-lg">
               <img
                 src={currentImage.url}
