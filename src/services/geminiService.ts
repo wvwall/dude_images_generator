@@ -37,13 +37,20 @@ export const generateImage = async (
 
 export const generateVideo = async (
   prompt: string,
-  duration: number = 5
+  image?: string,
+  mimeType?: string,
+  duration: number = 4
 ): Promise<{ operationName: string }> => {
+  console.log("Generating video with prompt:", prompt, "duration:", duration);
+  console.log(
+    "Using image:",
+    image ? "provided with mimeType " + mimeType : "none"
+  );
   try {
     const res = await fetch("/.netlify/functions/generate-video", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ prompt, duration }),
+      body: JSON.stringify({ prompt, duration, image, mimeType }),
     });
     if (!res.ok) {
       const txt = await res.text();
@@ -68,7 +75,6 @@ export const checkVideoStatus = async (operationName: string) => {
 
   const contentType = res.headers.get("Content-Type");
 
-  // Se il server sta restituendo un file video, leggi arraybuffer
   if (contentType === "video/mp4") {
     const buffer = await res.arrayBuffer();
     return {

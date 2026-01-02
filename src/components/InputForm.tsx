@@ -63,7 +63,13 @@ const InputForm: React.FC<InputFormProps> = ({
 
   return (
     <form onSubmit={handleGenerate} className="flex flex-col flex-1 gap-6 p-6">
-      {mode === "image" && (
+      {mode === "video" && (
+        <div className="p-4 text-sm font-medium text-yellow-800 bg-yellow-100 border-2 border-yellow-200 rounded-xl">
+          <strong className="font-bold">Note:</strong> Video generation may take
+          longer to process.
+        </div>
+      )}
+      {(mode === "image" || mode === "video") && (
         <ImageUploadArea
           selectedFiles={selectedFiles}
           previewUrls={previewUrls}
@@ -76,13 +82,6 @@ const InputForm: React.FC<InputFormProps> = ({
           handleDragLeave={handleDragLeave}
           handleDrop={handleDrop}
         />
-      )}
-
-      {mode === "video" && (
-        <div className="p-4 text-sm font-medium text-yellow-800 bg-yellow-100 border-2 border-yellow-200 rounded-xl">
-          <strong className="font-bold">Note:</strong> Video generation may take
-          longer to process.
-        </div>
       )}
 
       <PromptInput

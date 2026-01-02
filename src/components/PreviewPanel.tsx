@@ -69,24 +69,20 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({
           </div>
         ) : isVideoReady ? (
           // Block 2: Video Completed and Ready
-          <div className="relative w-full h-full group bg-gray-50">
-            <div className="relative flex flex-col items-center justify-center w-full h-full overflow-hidden border-8 border-white rounded-lg shadow-lg">
-              <h4 className="p-4 text-xl text-friends-purple font-hand">
-                Video Generated Successfully! 🎉
-              </h4>
-
+          <div className="relative w-full h-full group">
+            <div className="relative flex flex-col items-center justify-center w-full h-full overflow-hidden ">
               {/* HTML5 Video Player */}
               <video
                 controls
-                width="80%"
+                width="100%"
                 src={completedVideoUri || ""}
-                className="max-h-[80%] rounded-lg shadow-md">
+                className="">
                 Your browser does not support the video tag.
               </video>
             </div>
 
             {/* Download Link */}
-            <div className="absolute transition-opacity duration-300 opacity-0 top-8 right-8 group-hover:opacity-100">
+            <div className="absolute transition-opacity duration-300 opacity-0 top-4 right-4 group-hover:opacity-100">
               <a
                 href={completedVideoUri || ""}
                 download="video_generato_gemini.mp4"
