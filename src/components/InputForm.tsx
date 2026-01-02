@@ -56,10 +56,27 @@ const InputForm: React.FC<InputFormProps> = ({
   model,
   setModel,
 }) => {
+  const isMaxImagesReached = (
+    mode: "image" | "video" | "text"
+  ): { isReached: boolean; limit: number } => {
+    if (mode === "image") {
+      return {
+        isReached: selectedFiles.length >= 4,
+        limit: 4,
+      };
+    }
+    if (mode === "video") {
+      return {
+        isReached: selectedFiles.length >= 1,
+        limit: 1,
+      };
+    }
+  };
   const isDisabled =
     isGenerating ||
     !prompt.trim() ||
-    (mode === "image" && selectedFiles.length === 0);
+    (mode === "image" && selectedFiles.length === 0) ||
+    isMaxImagesReached(mode).isReached;
 
   return (
     <form onSubmit={handleGenerate} className="flex flex-col flex-1 gap-6 p-6">
@@ -81,6 +98,7 @@ const InputForm: React.FC<InputFormProps> = ({
           handleDragOver={handleDragOver}
           handleDragLeave={handleDragLeave}
           handleDrop={handleDrop}
+          maxImages={isMaxImagesReached(mode)}
         />
       )}
 

@@ -1,4 +1,4 @@
-import { BrushCleaning, Upload, X } from "lucide-react";
+import { BrushCleaning, MessageSquareWarning, Upload, X } from "lucide-react";
 import React, { RefObject, useState } from "react";
 
 interface ImageUploadAreaProps {
@@ -12,6 +12,10 @@ interface ImageUploadAreaProps {
   handleDragOver: (e: React.DragEvent) => void;
   handleDragLeave: (e: React.DragEvent) => void;
   handleDrop: (e: React.DragEvent) => void;
+  maxImages: {
+    isReached: boolean;
+    limit: number;
+  };
 }
 
 const ImageUploadArea: React.FC<ImageUploadAreaProps> = ({
@@ -24,6 +28,7 @@ const ImageUploadArea: React.FC<ImageUploadAreaProps> = ({
   handleDragOver,
   handleDragLeave,
   handleDrop,
+  maxImages,
 }) => {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
@@ -82,20 +87,32 @@ const ImageUploadArea: React.FC<ImageUploadAreaProps> = ({
                     : "border-friends-purple/30 bg-friends-cream/30 hover:bg-friends-cream"
                 }
               `}>
-        <Upload
-          className={`transition-transform text-friends-purple ${
-            isDragging ? "scale-110" : "group-hover:scale-110"
-          }`}
-          size={24}
-        />
-
+        {maxImages.isReached ? (
+          <MessageSquareWarning className="text-friends-red" />
+        ) : (
+          <Upload
+            className={`transition-transform text-friends-purple ${
+              isDragging ? "scale-110" : "group-hover:scale-110"
+            }`}
+            size={24}
+          />
+        )}
         <span className="text-sm font-bold text-friends-purple">
-          {isDragging ? "Drop it!" : "Upload photos to pivot"}
+          {!maxImages.isReached &&
+            (isDragging ? "Drop it!" : "Upload photos to pivot")}
         </span>
 
-        {!isDragging && (
+        {!isDragging && !maxImages.isReached && (
           <span className="text-xs text-gray-500">
             JPG or PNG, max 4MB per image
+          </span>
+        )}
+        {maxImages.isReached && (
+          <span className="text-sm font-semibold text-friends-purple">
+            Images limit reached.
+            <span className="text-[10px] text-friends-red ml-1">
+              ( {maxImages.limit} )
+            </span>
           </span>
         )}
       </div>
@@ -107,6 +124,7 @@ const ImageUploadArea: React.FC<ImageUploadAreaProps> = ({
         accept="image/png, image/jpeg"
         className="hidden"
         multiple
+        disabled={maxImages.isReached}
       />
     </div>
   );
