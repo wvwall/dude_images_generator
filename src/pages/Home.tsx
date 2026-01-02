@@ -197,7 +197,7 @@ const Home: React.FC = () => {
       );
     } finally {
       setIsGenerating(false);
-      setTimeout(() => setSuccess(null), 3000);
+      setTimeout(() => setSuccess(null), 5000);
     }
   };
 
