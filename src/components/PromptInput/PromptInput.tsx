@@ -30,7 +30,7 @@ const PromptInput: React.FC<PromptInputProps> = ({
           className="w-full min-h-[120px] p-4 bg-gray-50 border-2 border-gray-200 rounded-xl text-gray-800 focus:border-friends-purple focus:bg-white focus:ring-0 transition-all outline-none resize-none placeholder:text-gray-400"
           disabled={isGenerating}
         />
-        <div className="absolute flex items-center space-x-2 bottom-3 right-3">
+        <div className="absolute top-[-20px] flex items-center space-x-2 right-2">
           {prompt.length > 0 && (
             <button
               type="button"

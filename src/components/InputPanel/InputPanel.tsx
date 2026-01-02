@@ -1,7 +1,6 @@
-import React, { RefObject } from "react";
 import { AspectRatio } from "@/src/types";
+import React, { RefObject } from "react";
 import InputForm from "../InputForm";
-import InputHeader from "../InputHeader/InputHeader";
 import ModeSelector from "../ModeSelector/ModeSelector";
 
 interface InputPanelProps {
@@ -16,6 +15,7 @@ interface InputPanelProps {
   previewUrls: string[];
   handleGenerate: (e: React.FormEvent) => void;
   error: string | null;
+  success: string | null;
   fileInputRef: RefObject<HTMLInputElement>;
   handleFileSelect: (e: React.ChangeEvent<HTMLInputElement>) => void;
   clearFiles: () => void;
@@ -41,6 +41,7 @@ const InputPanel: React.FC<InputPanelProps> = ({
   previewUrls,
   handleGenerate,
   error,
+  success,
   fileInputRef,
   handleFileSelect,
   clearFiles,
@@ -75,6 +76,7 @@ const InputPanel: React.FC<InputPanelProps> = ({
           previewUrls={previewUrls}
           handleGenerate={handleGenerate}
           error={error}
+          success={success}
           fileInputRef={fileInputRef}
           handleFileSelect={handleFileSelect}
           clearFiles={clearFiles}

@@ -22,6 +22,7 @@ const Home: React.FC = () => {
   const [currentImage, setCurrentImage] = useState<GeneratedImage | null>(null);
   const [history, setHistory] = useState<GeneratedImage[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
   // New state for Image-to-Image mode
   const [mode, setMode] = useState<"text" | "image" | "video">("text");
@@ -187,6 +188,7 @@ const Home: React.FC = () => {
 
       setCurrentImage(newImage);
       setHistory((prev) => [newImage, ...prev]);
+      setSuccess("Generated successfully!");
     } catch (err: any) {
       console.error(err);
       setError(
@@ -195,6 +197,7 @@ const Home: React.FC = () => {
       );
     } finally {
       setIsGenerating(false);
+      setTimeout(() => setSuccess(null), 5000);
     }
   };
 
@@ -371,6 +374,7 @@ const Home: React.FC = () => {
             previewUrls={previewUrls}
             handleGenerate={handleGenerate}
             error={error}
+            success={success}
             fileInputRef={fileInputRef}
             handleFileSelect={handleFileSelect}
             clearFiles={clearFiles}

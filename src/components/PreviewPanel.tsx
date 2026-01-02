@@ -25,11 +25,11 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({
 
   return (
     <div
-      className="w-full lg:w-7/12 min-h[350px] sm:min-h-[500px] "
+      className="w-full lg:w-7/12 md:min-h-[500px] relative "
       data-tour="preview-panel">
       <div
         className={`
-          relative w-full h-full bg-white border-4 border-friends-purple rounded-2xl flex flex-col items-center justify-center overflow-hidden shadow-xl
+           w-full md:min-h-[510px] bg-white border-4 border-friends-purple rounded-2xl flex flex-col items-center justify-center overflow-hidden shadow-xl
           ${
             !currentImage && !isGeneratingVideo && !isVideoReady
               ? 'bg-[url("https://www.transparenttextures.com/patterns/cubes.png")]'
@@ -108,7 +108,7 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({
               />
             </div>
 
-            <div className="absolute transition-opacity duration-300 opacity-0 top-12 right-12 group-hover:opacity-100">
+            <div className="absolute transition-opacity duration-300 opacity-0 top-6 right-6 group-hover:opacity-100">
               <button
                 onClick={handleDownloadCurrent}
                 className="flex items-center gap-2 px-2 py-2 text-sm font-bold text-black transition-colors border-2 border-black rounded-full shadow-lg bg-friends-yellow hover:bg-yellow-400 hover:scale-105">
