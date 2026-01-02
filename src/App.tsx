@@ -34,10 +34,9 @@ const App: React.FC = () => {
       } catch (err) {
         console.warn("Failed to init db", err);
       } finally {
-        await document.fonts.ready;
-        setTimeout(() => {
-          setIsLoading(false);
-        }, 1000); // Display loading page for 3 seconds
+        // Do not block initial render on font loading or an artificial timeout.
+        // Ending the loading state as soon as DB init completes improves LCP.
+        setIsLoading(false);
       }
     })();
   }, []);
