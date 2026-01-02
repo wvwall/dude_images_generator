@@ -1,4 +1,4 @@
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, CheckCircle } from "lucide-react";
 import React, { RefObject } from "react";
 import { AspectRatio } from "../types";
 import AspectRatioSelector from "./AspectRatioSelector/AspectRatioSelector";
@@ -18,6 +18,7 @@ interface InputFormProps {
   previewUrls: string[];
   handleGenerate: (e: React.FormEvent) => void;
   error: string | null;
+  success: string | null;
   fileInputRef: RefObject<HTMLInputElement>;
   handleFileSelect: (e: React.ChangeEvent<HTMLInputElement>) => void;
   clearFiles: () => void;
@@ -43,6 +44,7 @@ const InputForm: React.FC<InputFormProps> = ({
   previewUrls,
   handleGenerate,
   error,
+  success,
   fileInputRef,
   handleFileSelect,
   clearFiles,
@@ -127,6 +129,12 @@ const InputForm: React.FC<InputFormProps> = ({
         <div className="flex items-start gap-3 p-4 text-sm font-medium border-2 border-red-100 bg-red-50 rounded-xl text-friends-red">
           <AlertCircle size={18} className="shrink-0 mt-0.5" />
           <span>Error, try again later.</span>
+        </div>
+      )}
+      {success && (
+        <div className="flex items-start gap-3 p-4 text-sm font-medium text-green-600 border-2 border-green-100 bg-green-50 rounded-xl">
+          <CheckCircle size={18} className="shrink-0 mt-0.5" />
+          <span>{success}</span>
         </div>
       )}
     </form>
