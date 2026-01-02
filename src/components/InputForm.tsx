@@ -61,13 +61,13 @@ const InputForm: React.FC<InputFormProps> = ({
   ): { isReached: boolean; limit: number } => {
     if (mode === "image") {
       return {
-        isReached: selectedFiles.length >= 4,
-        limit: 4,
+        isReached: selectedFiles.length > 3,
+        limit: 3,
       };
     }
     if (mode === "video") {
       return {
-        isReached: selectedFiles.length >= 1,
+        isReached: selectedFiles.length > 1,
         limit: 1,
       };
     }
