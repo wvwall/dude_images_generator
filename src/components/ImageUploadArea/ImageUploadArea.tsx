@@ -80,11 +80,16 @@ const ImageUploadArea: React.FC<ImageUploadAreaProps> = ({
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
         className={`
-                flex flex-col items-center justify-center h-32 gap-2 transition-colors border-2 border-dashed cursor-pointer rounded-xl group
+                flex flex-col items-center justify-center h-32 gap-2 transition-colors border-2 border-dashed rounded-xl group
                 ${
                   isDragging
                     ? "border-friends-purple bg-friends-cream"
                     : "border-friends-purple/30 bg-friends-cream/30 hover:bg-friends-cream"
+                }
+                ${
+                  maxImages.isReached
+                    ? "cursor-not-allowed opacity-70"
+                    : "cursor-pointer "
                 }
               `}>
         {maxImages.isReached ? (
