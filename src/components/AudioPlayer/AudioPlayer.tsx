@@ -28,7 +28,7 @@ export default function AudioPlayer({
 
   return (
     <div className="flex items-center gap-2 transition-colors hover:text-friends-yellow">
-      <button onClick={togglePlay}>
+      <button aria-label="toggle audio" onClick={togglePlay}>
         {playing ? <CirclePause size={18} /> : <CirclePlay size={18} />}
       </button>
 
