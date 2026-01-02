@@ -27,11 +27,11 @@ const InputHeader: React.FC = () => {
         <AudioPlayer audioSrc={currentPhrase.audioSrc} volume={0.3} />
       </div>
       <div className="flex items-start gap-2">
-        <div className="flex flex-col">
+        <div className="flex flex-col md:flex-row md:items-center md:gap-1">
           <p className="font-medium text-gray-600">
             Describe what you want to generate.
           </p>
-          <div className="flex items-start gap-2 mt-1">
+          <div className="flex items-start gap-2 mt-1 md:mt-0">
             <p className="font-medium text-gray-600">
               I'll be there for youuu…
             </p>
