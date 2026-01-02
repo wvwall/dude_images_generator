@@ -25,7 +25,16 @@ export const handler = async (event) => {
     return { statusCode: 400, body: JSON.stringify({ error: "Invalid JSON" }) };
   }
 
-  const { prompt, duration = 5 } = body;
+  const {
+    prompt,
+    image = null,
+    duration = 4,
+    mimeType = "image/png",
+    aspectRatio = "16:9",
+    resolution = "720p",
+  } = body;
+
+  // Validate prompt
   if (!prompt) {
     return {
       statusCode: 400,
@@ -33,20 +42,54 @@ export const handler = async (event) => {
     };
   }
 
+  // Validate duration: Gemini expects durationSeconds between 4 and 8 (inclusive)
+  const durationNum = Number(duration);
+  if (!Number.isFinite(durationNum) || durationNum < 4 || durationNum > 8) {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({
+        error:
+          "Invalid duration: `duration` must be a number between 4 and 8 (seconds).",
+      }),
+    };
+  }
+  const durationSeconds = Math.round(durationNum);
+
   const ai = new GoogleGenAI({ apiKey });
 
   try {
-    const finalPrompt = `Generate a video based on this description: ${prompt}. The video must be ${duration} seconds long.`;
+    const finalPrompt = `Generate a video based on this description: ${prompt}.`;
 
-    console.log("Starting video generation with prompt:", finalPrompt);
+    console.debug("🚀 ~ Starting video generation with prompt:", finalPrompt);
+
+    const base64StringImg = image.includes("base64,")
+      ? image.split("base64,")[1]
+      : image;
+
+    const configBody = {
+      durationSeconds: durationSeconds,
+      resolution: resolution,
+      aspectRatio: aspectRatio,
+    };
+    const imageBody = {
+      imageBytes: base64StringImg,
+      mimeType: mimeType,
+    };
+
+    console.debug("🚀 ~ handler ~ configBody:", configBody);
 
     // Only start the generation, DO NOT wait for completion
     const operation = await ai.models.generateVideos({
       model: "veo-3.1-generate-preview",
       prompt: finalPrompt,
+      image: imageBody,
+      config: configBody,
     });
 
-    console.log("Video generation started, operation name:", operation.name);
+    console.debug(
+      "🚀 ~ Video generation started, operation name:",
+      operation.name
+    );
 
     // Immediately return the operation name for client-side polling
     return {
@@ -57,7 +100,7 @@ export const handler = async (event) => {
       }),
     };
   } catch (error) {
-    console.error("Error starting video generation:", error);
+    console.error("🚀 ~ Error starting video generation:", error);
     return {
       statusCode: 500,
       body: JSON.stringify({

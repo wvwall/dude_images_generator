@@ -188,7 +188,7 @@ const Home: React.FC = () => {
 
       setCurrentImage(newImage);
       setHistory((prev) => [newImage, ...prev]);
-      setSuccess("Generated successfully!");
+      setSuccess("Image generated successfully!");
     } catch (err: any) {
       console.error(err);
       setError(
@@ -218,12 +218,14 @@ const Home: React.FC = () => {
 
         // Show in preview
         setCompletedVideoUri(url);
+        setSuccess("Video generated successfully!");
 
         // Download
         const link = document.createElement("a");
         link.href = url;
         link.download = "generated_video.mp4";
         link.click();
+        setTimeout(() => setSuccess(null), 5000);
       }
     } else {
       // Still processing
@@ -239,9 +241,20 @@ const Home: React.FC = () => {
     setCompletedVideoUri(null);
     setVideoStatus("Starting video generation...");
     setVideoProgress(0);
+    let referenceImageBase64: string | undefined = undefined;
+    let mimeType: string | undefined = undefined;
+
+    if (selectedFiles.length > 0) {
+      referenceImageBase64 = await fileToBase64(selectedFiles[0]);
+      mimeType = selectedFiles[0].type;
+    }
 
     try {
-      const { operationName } = await generateVideo(prompt);
+      const { operationName } = await generateVideo(
+        prompt,
+        referenceImageBase64,
+        mimeType
+      );
 
       // Start polling every 10 seconds
       pollingIntervalRef.current = setInterval(() => {
