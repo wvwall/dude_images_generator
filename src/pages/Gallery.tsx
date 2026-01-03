@@ -7,6 +7,7 @@ import { GeneratedImage } from "../types";
 const Gallery: React.FC = () => {
   const navigate = useNavigate();
   const [images, setImages] = useState<GeneratedImage[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     (async () => {
@@ -15,6 +16,8 @@ const Gallery: React.FC = () => {
         setImages(imgs);
       } catch (err) {
         console.warn("Failed to load images for gallery", err);
+      } finally {
+        setIsLoading(false);
       }
     })();
   }, []);
@@ -41,11 +44,12 @@ const Gallery: React.FC = () => {
             Every masterpiece you've created.
           </p>
         </div>
-        {images.length > 0 ? (
+        {isLoading || images.length > 0 ? (
           <ImageHistory
             images={images}
             onDelete={handleDelete}
             onEdit={handleEdit}
+            isLoading={isLoading}
           />
         ) : (
           <div className="py-20 text-center bg-white border-2 border-gray-300 border-dashed rounded-2xl">
