@@ -52,6 +52,7 @@ const App: React.FC = () => {
         v7_relativeSplatPath: true,
       }}>
       <FeatureTour>
+        {/* TODO: implement pull to refresh */}
         {/* <PullToRefresh
           onRefresh={() => {
             // Hard reload the current page so the current route is fully refreshed
