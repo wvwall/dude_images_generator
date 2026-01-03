@@ -81,7 +81,7 @@ const InputForm: React.FC<InputFormProps> = ({
   return (
     <form onSubmit={handleGenerate} className="flex flex-col flex-1 gap-6 p-6">
       {mode === "video" && (
-        <div className="p-4 text-sm font-medium text-yellow-800 bg-yellow-100 border-2 border-yellow-200 rounded-xl">
+        <div className="p-4 text-sm font-medium text-yellow-800 bg-yellow-100 rounded-xl border-2 border-yellow-200">
           <strong className="font-bold">Note:</strong> Video generation may take
           longer to process.
         </div>
@@ -110,7 +110,7 @@ const InputForm: React.FC<InputFormProps> = ({
       />
 
       {(mode === "text" || mode === "image") && (
-        <div className="flex flex-col justify-between gap-5 md:flex-row">
+        <div className="flex flex-col gap-5 justify-between md:flex-row">
           <div className="w-[250px] space-y-3">
             <span className="block text-sm font-bold tracking-wide text-gray-700 uppercase">
               The Shape
@@ -143,13 +143,13 @@ const InputForm: React.FC<InputFormProps> = ({
       </div>
 
       {error && (
-        <div className="flex items-start gap-3 p-4 text-sm font-medium border-2 border-red-100 bg-red-50 rounded-xl text-friends-red">
+        <div className="flex gap-3 items-start p-4 text-sm font-medium bg-red-50 rounded-xl border-2 border-red-100 text-friends-red">
           <AlertCircle size={18} className="shrink-0 mt-0.5" />
           <span>Error, try again later.</span>
         </div>
       )}
       {success && (
-        <div className="flex items-start gap-3 p-4 text-sm font-medium text-green-600 border-2 border-green-100 bg-green-50 rounded-xl">
+        <div className="flex gap-3 items-start p-4 text-sm font-medium text-green-600 bg-green-50 rounded-xl border-2 border-green-100">
           <CheckCircle size={18} className="shrink-0 mt-0.5" />
           <span>{success}</span>
         </div>

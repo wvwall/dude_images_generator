@@ -374,8 +374,8 @@ const Home: React.FC = () => {
   };
 
   return (
-    <section className="min-h-screen pb-12 font-sans bg-friends-purple-light">
-      <main className="px-4 pt-12 mx-auto md:pt-16 max-w-7xl">
+    <section className="pb-24 min-h-screen font-sans bg-friends-purple-light">
+      <main className="px-4 pt-12 mx-auto max-w-7xl md:pt-16">
         <InputHeader />
         <div className="flex flex-col gap-8 mt-12 lg:items-start lg:flex-row">
           <InputPanel
