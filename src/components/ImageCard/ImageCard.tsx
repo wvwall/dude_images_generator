@@ -32,6 +32,7 @@ const ImageCard: React.FC<ImageCardProps> = ({ image, onDelete, onEdit }) => {
       className="group cursor-pointer bg-white p-3 pb-4 rounded-xl border-2 border-gray-200 hover:border-friends-purple transition-all duration-300 shadow-md hover:shadow-[5px_5px_0px_0px_rgba(93,63,106,0.2)]">
       <div className="relative w-full overflow-hidden bg-gray-100 border border-gray-200 rounded-lg aspect-square">
         <img
+          loading="lazy"
           src={image.url}
           alt={image.prompt}
           className="object-cover w-full h-full transition-transform duration-1000 group-hover:scale-105"
@@ -41,6 +42,7 @@ const ImageCard: React.FC<ImageCardProps> = ({ image, onDelete, onEdit }) => {
         </div>
         <div className="absolute *:mb-3 *:mr-3 inset-0 flex items-end justify-end  transition-opacity duration-300 opacity-0 bg-black/40 group-hover:opacity-100">
           <button
+            aria-label="Delete image"
             onClick={(e) => {
               e.stopPropagation();
               onDelete(image.id);
@@ -51,6 +53,7 @@ const ImageCard: React.FC<ImageCardProps> = ({ image, onDelete, onEdit }) => {
           </button>
 
           <button
+            aria-label="Edit image"
             onClick={(e) => {
               e.stopPropagation();
               onEdit(image.id);
@@ -60,6 +63,7 @@ const ImageCard: React.FC<ImageCardProps> = ({ image, onDelete, onEdit }) => {
             <Edit2 size={16} />
           </button>
           <button
+            aria-label="Download image"
             onClick={(e) => {
               e.stopPropagation();
               handleDownload(image);

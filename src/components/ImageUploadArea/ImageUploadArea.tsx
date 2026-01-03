@@ -48,6 +48,7 @@ const ImageUploadArea: React.FC<ImageUploadAreaProps> = ({
                   onMouseEnter={() => setHoveredIndex(index)}
                   onMouseLeave={() => setHoveredIndex(null)}>
                   <img
+                    loading="lazy"
                     src={url}
                     alt={`Preview ${index}`}
                     className="object-cover w-full h-full"
@@ -64,6 +65,7 @@ const ImageUploadArea: React.FC<ImageUploadAreaProps> = ({
             </div>
             {previewUrls.length > 1 && (
               <button
+                aria-label="Clear all images"
                 type="button"
                 onClick={clearFiles}
                 className="p-1.5 text-black transition-colors border-2 border-black rounded-full shadow-md bg-friends-red hover:bg-red-600">

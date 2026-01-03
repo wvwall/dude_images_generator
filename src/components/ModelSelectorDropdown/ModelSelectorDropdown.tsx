@@ -25,6 +25,7 @@ const ModelSelectorDropdown: React.FC<ModelSelectorDropdownProps> = ({
   return (
     <div className="relative" data-tour="model-selector">
       <select
+        aria-label="Select model"
         value={model}
         onChange={(e) =>
           setModel(

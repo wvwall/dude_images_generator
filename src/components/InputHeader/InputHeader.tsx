@@ -3,10 +3,11 @@ import AudioPlayer from "../AudioPlayer/AudioPlayer";
 import { AUDIO_MAP, AudioType } from "../../types";
 import { phrases } from "../AudioPlayer/phrases";
 
-const DURATION_MS = 30000; // Duration per phrase (30s)
+const DURATION_MS = 10000; // Duration per phrase (10s)
 
 const InputHeader: React.FC = () => {
   const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
   const [elapsed, setElapsed] = useState(0);
 
   const dynamicPhrases = phrases.filter((phrase) => phrase.dynamic);
@@ -16,28 +17,38 @@ const InputHeader: React.FC = () => {
 
   // advance phrase every DURATION_MS
   useEffect(() => {
-    if (dynamicPhrases.length === 0) return;
+    if (dynamicPhrases.length === 0 || isPlaying) return;
     const interval = setInterval(() => {
       setCurrentPhraseIndex(
         (prevIndex) => (prevIndex + 1) % dynamicPhrases.length
       );
-    }, DURATION_MS);
+    }, DURATION_MS - elapsed);
 
     return () => clearInterval(interval);
-  }, [dynamicPhrases.length]);
+  }, [dynamicPhrases.length, isPlaying, elapsed]);
 
   // countdown timer that resets on phrase change
   useEffect(() => {
     if (dynamicPhrases.length === 0) return;
-    setElapsed(0);
-    const start = Date.now();
-    const tick = setInterval(() => {
-      const e = Date.now() - start;
-      setElapsed(e >= DURATION_MS ? DURATION_MS : e);
-    }, 100);
 
-    return () => clearInterval(tick);
-  }, [currentPhraseIndex, dynamicPhrases.length]);
+    let tick: NodeJS.Timeout;
+    if (!isPlaying) {
+      const start = Date.now() - elapsed;
+      tick = setInterval(() => {
+        const e = Date.now() - start;
+        setElapsed(e >= DURATION_MS ? DURATION_MS : e);
+      }, 100);
+    }
+
+    return () => {
+      if (tick) clearInterval(tick);
+    };
+  }, [currentPhraseIndex, isPlaying, dynamicPhrases.length]);
+
+  // Reset elapsed when phrase changes
+  useEffect(() => {
+    setElapsed(0);
+  }, [currentPhraseIndex]);
 
   const percent = Math.min(1, elapsed / DURATION_MS);
   const remainingSec = Math.max(0, Math.ceil((DURATION_MS - elapsed) / 1000));
@@ -48,12 +59,12 @@ const InputHeader: React.FC = () => {
 
   return (
     <div className="mb-2">
-      <div className="flex items-start gap-2">
-        <h2 className="mb-3 text-4xl text-gray-800 cursor-pointer md:text-7xl font-hand drop-shadow-sm">
+      <div className="flex gap-2 items-start">
+        <h2 className="mb-3 text-4xl text-gray-800 drop-shadow-sm cursor-pointer md:text-7xl font-hand">
           {currentPhrase ? currentPhrase.text : "..."}
         </h2>
 
-        <div className="flex items-center gap-2">
+        <div className="flex gap-2 items-center">
           <div className="relative w-6 h-6">
             <svg className="w-6 h-6 transform -rotate-90" viewBox="0 0 36 36">
               <circle
@@ -77,21 +88,25 @@ const InputHeader: React.FC = () => {
                 style={{ transition: "stroke-dashoffset 100ms linear" }}
               />
             </svg>
-            <div className="absolute inset-0 flex items-center justify-center text-xs font-medium text-gray-700">
+            <div className="flex absolute inset-0 justify-center items-center text-xs font-medium text-gray-700">
               {currentPhrase && (
-                <AudioPlayer audioSrc={currentPhrase.audioSrc} volume={0.3} />
+                <AudioPlayer
+                  audioSrc={currentPhrase.audioSrc}
+                  volume={0.3}
+                  onToggle={setIsPlaying}
+                />
               )}
             </div>
           </div>
         </div>
       </div>
 
-      <div className="flex items-start gap-2">
+      <div className="flex gap-2 items-start">
         <div className="flex flex-col md:flex-row md:items-center md:gap-1">
           <p className="font-medium text-gray-600">
             Describe what you want to generate.
           </p>
-          <div className="flex items-start gap-2 mt-1 md:mt-0">
+          <div className="flex gap-2 items-start mt-1 md:mt-0">
             <p className="font-medium text-gray-600">
               I'll be there for youuu…
             </p>

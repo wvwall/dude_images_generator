@@ -3,17 +3,20 @@ import { GalleryHorizontalEnd } from "lucide-react";
 import ImageCard from "../ImageCard/ImageCard";
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import SkeletonCard from "../ImageCard/SkeletonCard";
 
 interface ImageHistoryProps {
   images: GeneratedImage[];
   onDelete: (id: string) => void;
   onEdit: (id: string) => void;
+  isLoading?: boolean;
 }
 
 const ImageHistory: React.FC<ImageHistoryProps> = ({
   images,
   onDelete,
   onEdit,
+  isLoading = false,
 }) => {
   const navigate = useNavigate();
   const isHomePath = window.location.pathname === "/";
@@ -46,14 +49,18 @@ const ImageHistory: React.FC<ImageHistoryProps> = ({
       </div>
 
       <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-        {IMAGES.map((image) => (
-          <ImageCard
-            key={image.id}
-            image={image}
-            onDelete={onDelete}
-            onEdit={onEdit}
-          />
-        ))}
+        {isLoading
+          ? Array.from({ length: isHomePath ? 3 : 6 }).map((_, i) => (
+              <SkeletonCard key={i} />
+            ))
+          : IMAGES.map((image) => (
+              <ImageCard
+                key={image.id}
+                image={image}
+                onDelete={onDelete}
+                onEdit={onEdit}
+              />
+            ))}
       </div>
     </div>
   );

@@ -23,6 +23,7 @@ const Home: React.FC = () => {
   const [history, setHistory] = useState<GeneratedImage[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [isLoadingHistory, setIsLoadingHistory] = useState(true);
 
   // New state for Image-to-Image mode
   const [mode, setMode] = useState<"text" | "image" | "video">("text");
@@ -356,6 +357,8 @@ const Home: React.FC = () => {
         setHistory(imgs);
       } catch (err) {
         console.warn("Failed to load images from local sqlite DB", err);
+      } finally {
+        setIsLoadingHistory(false);
       }
     })();
   }, []);
@@ -408,11 +411,12 @@ const Home: React.FC = () => {
             previewUrls={previewUrls}
           />
         </div>
-        {history.length > 0 && (
+        {(isLoadingHistory || history.length > 0) && (
           <ImageHistory
             images={history}
             onDelete={handleDelete}
             onEdit={handleEdit}
+            isLoading={isLoadingHistory}
           />
         )}
       </main>

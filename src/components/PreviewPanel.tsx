@@ -98,6 +98,7 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({
           <div className="relative w-full h-full group bg-gray-50">
             <div className="relative w-full h-full overflow-hidden border-8 border-white rounded-lg shadow-lg">
               <img
+                loading="lazy"
                 src={currentImage.url}
                 alt="Generated result"
                 className="object-contain w-full h-full bg-gray-200"
@@ -106,6 +107,7 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({
 
             <div className="absolute transition-opacity duration-300 opacity-0 top-6 right-6 group-hover:opacity-100">
               <button
+                aria-label="Download current image"
                 onClick={handleDownloadCurrent}
                 className="flex items-center gap-2 px-2 py-2 text-sm font-bold text-black transition-colors border-2 border-black rounded-full shadow-lg bg-friends-yellow hover:bg-yellow-400 hover:scale-105">
                 <Download size={18} />
