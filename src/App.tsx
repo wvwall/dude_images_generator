@@ -60,7 +60,7 @@ const App: React.FC = () => {
           }}> */}
         <Header />
         <ScrollToTop />
-        <section className="pb-12 md:pb-0">
+        <section className="pb-12 md:pb-0 bg-friends-purple-light">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/gallery" element={<Gallery />} />
