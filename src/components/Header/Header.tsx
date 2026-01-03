@@ -11,8 +11,8 @@ const Header: React.FC = () => {
     }`;
 
   return (
-    <header className="px-2 w-full bg-friends-purple-light">
-      <div className="flex relative top-2 justify-between items-center px-4 py-4 w-full bg-white rounded-2xl border-b-4 shadow-sm md:px-24 border-friends-purple">
+    <header className="w-full bg-friends-purple-light">
+      <div className="flex justify-between items-center px-4 py-4 w-full bg-white rounded-b-2xl border-b-4 shadow-sm md:px-24 border-friends-purple">
         <div className="flex gap-4 items-center">
           <div className="flex justify-center items-center w-12 h-12 rounded-full border-2 shadow-lg bg-friends-purple border-friends-yellow">
             <Coffee size={24} className="text-white" />

@@ -11,7 +11,7 @@ const BottomBar: React.FC = () => {
     }`;
 
   return (
-    <section className="fixed rounded-2xl inset-x-0 bottom-2 z-[99] flex justify-around mx-2 bg-white border-t-4 shadow-lg md:hidden border-friends-purple">
+    <section className="fixed rounded-t-2xl inset-x-0 bottom-0 z-[99] flex justify-around  bg-white border-t-4 shadow-lg md:hidden border-friends-purple">
       <NavLink to="/" className={navClasses}>
         <Home size={18} />
         <span>Home</span>
