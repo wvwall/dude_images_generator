@@ -3,9 +3,9 @@ import React, { RefObject } from "react";
 import { AspectRatio } from "../types";
 import AspectRatioSelector from "./AspectRatioSelector/AspectRatioSelector";
 import ImageUploadArea from "./ImageUploadArea/ImageUploadArea";
+import ModelSelectorDropdown from "./ModelSelectorDropdown/ModelSelectorDropdown";
 import PivotButton from "./PivotButton/PivotButton";
 import PromptInput from "./PromptInput/PromptInput";
-import ModelSelectorDropdown from "./ModelSelectorDropdown/ModelSelectorDropdown";
 
 interface InputFormProps {
   prompt: string;

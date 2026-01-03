@@ -1,7 +1,7 @@
+import type { Database, SqlJsStatic } from "sql.js";
 import initSqlJs from "sql.js";
 import wasmUrl from "sql.js/dist/sql-wasm.wasm?url";
 import { GeneratedImage } from "../types";
-import type { SqlJsStatic, Database } from "sql.js";
 
 let SQL: SqlJsStatic | null = null;
 let db: Database | null = null;

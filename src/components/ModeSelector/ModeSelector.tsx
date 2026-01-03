@@ -1,5 +1,5 @@
+import { Image, Type, Video } from "lucide-react";
 import React from "react";
-import { Type, Image, Video } from "lucide-react";
 
 interface ModeSelectorProps {
   mode: "text" | "image" | "video";

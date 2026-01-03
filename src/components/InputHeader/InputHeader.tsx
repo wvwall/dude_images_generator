@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import AudioPlayer from "../AudioPlayer/AudioPlayer";
+import React, { useEffect, useState } from "react";
 import { AUDIO_MAP, AudioType } from "../../types";
+import AudioPlayer from "../AudioPlayer/AudioPlayer";
 import { phrases } from "../AudioPlayer/phrases";
 
 const DURATION_MS = 10000; // Duration per phrase (10s)
@@ -59,12 +59,12 @@ const InputHeader: React.FC = () => {
 
   return (
     <div className="mb-2">
-      <div className="flex gap-2 items-start">
-        <h2 className="mb-3 text-4xl text-gray-800 drop-shadow-sm cursor-pointer md:text-7xl font-hand">
+      <div className="flex items-start gap-2">
+        <h2 className="mb-3 text-4xl text-gray-800 cursor-pointer drop-shadow-sm md:text-7xl font-hand">
           {currentPhrase ? currentPhrase.text : "..."}
         </h2>
 
-        <div className="flex gap-2 items-center">
+        <div className="flex items-center gap-2">
           <div className="relative w-6 h-6">
             <svg className="w-6 h-6 transform -rotate-90" viewBox="0 0 36 36">
               <circle
@@ -88,7 +88,7 @@ const InputHeader: React.FC = () => {
                 style={{ transition: "stroke-dashoffset 100ms linear" }}
               />
             </svg>
-            <div className="flex absolute inset-0 justify-center items-center text-xs font-medium text-gray-700">
+            <div className="absolute inset-0 flex items-center justify-center text-xs font-medium text-gray-700">
               {currentPhrase && (
                 <AudioPlayer
                   audioSrc={currentPhrase.audioSrc}
@@ -101,12 +101,12 @@ const InputHeader: React.FC = () => {
         </div>
       </div>
 
-      <div className="flex gap-2 items-start">
+      <div className="flex items-start gap-2">
         <div className="flex flex-col md:flex-row md:items-center md:gap-1">
           <p className="font-medium text-gray-600">
             Describe what you want to generate.
           </p>
-          <div className="flex gap-2 items-start mt-1 md:mt-0">
+          <div className="flex items-start gap-2 mt-1 md:mt-0">
             <p className="font-medium text-gray-600">
               I'll be there for youuu…
             </p>

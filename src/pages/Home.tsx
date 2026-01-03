@@ -1,6 +1,8 @@
+import { useTour } from "@reactour/tour";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import ImageHistory from "../components/ImageHistory/ImageHistory";
+import InputHeader from "../components/InputHeader/InputHeader";
 import InputPanel from "../components/InputPanel/InputPanel";
 import PreviewPanel from "../components/PreviewPanel";
 import {
@@ -10,8 +12,6 @@ import {
 } from "../services/geminiService";
 import * as sqliteService from "../services/sqliteService";
 import { AspectRatio, GeneratedImage } from "../types";
-import { useTour } from "@reactour/tour";
-import InputHeader from "../components/InputHeader/InputHeader";
 
 const Home: React.FC = () => {
   const location = useLocation();
@@ -136,10 +136,6 @@ const Home: React.FC = () => {
       reader.onload = () => resolve(reader.result as string);
       reader.onerror = (error) => reject(error);
     });
-  };
-
-  const filesToBase64 = async (files: File[]): Promise<string[]> => {
-    return Promise.all(files.map((file) => fileToBase64(file)));
   };
 
   const handleGenerate = async (e: React.FormEvent) => {
@@ -374,7 +370,7 @@ const Home: React.FC = () => {
   };
 
   return (
-    <section className="pb-24 min-h-screen font-sans bg-friends-purple-light">
+    <section className="min-h-screen pb-24 font-sans bg-friends-purple-light">
       <main className="px-4 pt-12 mx-auto max-w-7xl md:pt-16">
         <InputHeader />
         <div className="flex flex-col gap-8 mt-12 lg:items-start lg:flex-row">

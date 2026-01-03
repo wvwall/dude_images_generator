@@ -9,7 +9,6 @@ import {
 import BottomBar from "./components/BottomBar/BottomBar";
 import FeatureTour from "./components/FeatureTour/FeatureTour";
 import Header from "./components/Header/Header";
-import PullToRefresh from "./components/PullToRefresh/PullToRefresh";
 import Gallery from "./pages/Gallery";
 import Home from "./pages/Home";
 import Image from "./pages/ImageView";
