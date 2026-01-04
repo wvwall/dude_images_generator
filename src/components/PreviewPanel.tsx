@@ -1,24 +1,27 @@
 import { Armchair, Download, Loader2, Video } from "lucide-react";
 import React from "react";
-import { AUDIO_MAP, AudioType, GeneratedImage } from "../types";
+import { useGenerationLogic } from "../hooks/useGenerationLogic";
+import { AUDIO_MAP, AudioType } from "../types";
 import AudioPlayer from "./AudioPlayer/AudioPlayer";
 
+type UseGenerationLogicReturn = ReturnType<typeof useGenerationLogic>;
+
 interface PreviewPanelProps {
-  currentImage: GeneratedImage | null;
-  handleDownloadCurrent: () => void;
-  videoStatus?: string;
-  videoProgress?: number;
-  completedVideoUri?: string | null;
-  previewUrls: string[];
+  state: UseGenerationLogicReturn["state"];
+  actions: UseGenerationLogicReturn["actions"];
 }
 
-const PreviewPanel: React.FC<PreviewPanelProps> = ({
-  currentImage,
-  handleDownloadCurrent,
-  videoStatus,
-  videoProgress,
-  completedVideoUri,
-}) => {
+const PreviewPanel: React.FC<PreviewPanelProps> = ({ state, actions }) => {
+  const {
+    currentImage,
+    videoStatus,
+    videoProgress,
+    completedVideoUri,
+    previewUrls,
+  } = state;
+
+  const { handleDownloadCurrent } = actions;
+
   const isGeneratingVideo = videoStatus && videoStatus !== "Video ready!";
   // Variable to determine if the video is ready for display
   const isVideoReady = !!completedVideoUri;

@@ -1,61 +1,48 @@
 import { AlertCircle, CheckCircle } from "lucide-react";
-import React, { RefObject } from "react";
-import { AspectRatio } from "../types";
+import React from "react";
+import { useGenerationLogic } from "../hooks/useGenerationLogic";
 import AspectRatioSelector from "./AspectRatioSelector/AspectRatioSelector";
+
 import ImageUploadArea from "./ImageUploadArea/ImageUploadArea";
 import ModelSelectorDropdown from "./ModelSelectorDropdown/ModelSelectorDropdown";
 import PivotButton from "./PivotButton/PivotButton";
 import PromptInput from "./PromptInput/PromptInput";
 
+type UseGenerationLogicReturn = ReturnType<typeof useGenerationLogic>;
+
 interface InputFormProps {
-  prompt: string;
-  setPrompt: (prompt: string) => void;
-  aspectRatio: AspectRatio;
-  setAspectRatio: (aspectRatio: AspectRatio) => void;
-  isGenerating: boolean;
-  mode: "text" | "image" | "video";
-  selectedFiles: File[];
-  previewUrls: string[];
-  handleGenerate: (e: React.FormEvent) => void;
-  error: string | null;
-  success: string | null;
-  fileInputRef: RefObject<HTMLInputElement>;
-  handleFileSelect: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  clearFiles: () => void;
-  handleRemoveFile: (index: number) => void;
-  isDragging: boolean;
-  handleDragOver: (e: React.DragEvent) => void;
-  handleDragLeave: (e: React.DragEvent) => void;
-  handleDrop: (e: React.DragEvent) => void;
-  model: "gemini-2.5-flash-image" | "gemini-3-pro-image-preview";
-  setModel: (
-    model: "gemini-2.5-flash-image" | "gemini-3-pro-image-preview"
-  ) => void;
+  state: UseGenerationLogicReturn["state"];
+  actions: UseGenerationLogicReturn["actions"];
 }
 
-const InputForm: React.FC<InputFormProps> = ({
-  prompt,
-  setPrompt,
-  aspectRatio,
-  setAspectRatio,
-  isGenerating,
-  mode,
-  selectedFiles,
-  previewUrls,
-  handleGenerate,
-  error,
-  success,
-  fileInputRef,
-  handleFileSelect,
-  clearFiles,
-  handleRemoveFile,
-  isDragging,
-  handleDragOver,
-  handleDragLeave,
-  handleDrop,
-  model,
-  setModel,
-}) => {
+const InputForm: React.FC<InputFormProps> = ({ state, actions }) => {
+  const {
+    prompt,
+    aspectRatio,
+    isGenerating,
+    mode,
+    selectedFiles,
+    previewUrls,
+    error,
+    success,
+    fileInputRef,
+    isDragging,
+    model,
+  } = state;
+
+  const {
+    setPrompt,
+    setAspectRatio,
+    handleGenerate,
+    handleFileSelect,
+    clearFiles,
+    handleRemoveFile,
+    handleDragOver,
+    handleDragLeave,
+    handleDrop,
+    setModel,
+  } = actions;
+
   const LIMITS: Record<"image" | "video" | "text", number> = {
     image: 3,
     video: 1,
