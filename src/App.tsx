@@ -14,6 +14,8 @@ import Home from "./pages/Home";
 import Image from "./pages/ImageView";
 import LoadingPage from "./pages/LoadingPage";
 import sqliteService from "./services/sqliteService";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+const queryClient = new QueryClient();
 
 const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -45,32 +47,34 @@ const App: React.FC = () => {
   }
 
   return (
-    <BrowserRouter
-      future={{
-        v7_startTransition: true,
-        v7_relativeSplatPath: true,
-      }}>
-      <FeatureTour>
-        {/* TODO: implement pull to refresh */}
-        {/* <PullToRefresh
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter
+        future={{
+          v7_startTransition: true,
+          v7_relativeSplatPath: true,
+        }}>
+        <FeatureTour>
+          {/* TODO: implement pull to refresh */}
+          {/* <PullToRefresh
           onRefresh={() => {
             // Hard reload the current page so the current route is fully refreshed
             window.location.reload();
           }}> */}
-        <Header />
-        <ScrollToTop />
-        <section className="pb-12 md:pb-0 bg-friends-purple-light">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/gallery" element={<Gallery />} />
-            <Route path="/image/:id" element={<Image />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </section>
-        <BottomBar />
-        {/* </PullToRefresh> */}
-      </FeatureTour>
-    </BrowserRouter>
+          <Header />
+          <ScrollToTop />
+          <section className="pb-12 md:pb-0 bg-friends-purple-light">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/gallery" element={<Gallery />} />
+              <Route path="/image/:id" element={<Image />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </section>
+          <BottomBar />
+          {/* </PullToRefresh> */}
+        </FeatureTour>
+      </BrowserRouter>
+    </QueryClientProvider>
   );
 };
 

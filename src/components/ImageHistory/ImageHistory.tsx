@@ -24,15 +24,15 @@ const ImageHistory: React.FC<ImageHistoryProps> = ({
   const IMAGES = isHomePath ? images.slice(0, 3) : images;
 
   return (
-    <div className="mt-8 ">
-      <div className="flex items-center gap-1 pb-4 mb-8 border-b-2 border-dashed border-friends-purple/70">
+    <div className="mt-8">
+      <div className="flex gap-1 items-center pb-4 mb-8 border-b-2 border-dashed border-friends-purple/70">
         {isHomePath ? (
           <span className="px-3 py-1 text-xs font-bold rounded-lg shadow-sm text-friends-yellow bg-friends-purple">
-            {images.length >= 3 ? 3 : images.length} of {images.length} SNAPS
+            {images?.length >= 3 ? 3 : images?.length} of {images?.length} SNAPS
           </span>
         ) : (
           <span className="px-3 py-1 text-xs font-bold rounded-lg shadow-sm text-friends-yellow bg-friends-purple">
-            {images.length} SNAPS
+            {images?.length} SNAPS
           </span>
         )}
         {isHomePath && (
@@ -55,7 +55,7 @@ const ImageHistory: React.FC<ImageHistoryProps> = ({
             ))
           : IMAGES.map((image) => (
               <ImageCard
-                key={image.id}
+                key={image?.id}
                 image={image}
                 onDelete={onDelete}
                 onEdit={onEdit}
