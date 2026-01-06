@@ -60,7 +60,7 @@ const Header: React.FC = () => {
               <NavLink to="/gallery" className={navClasses}>
                 Gallery
               </NavLink>
-              <div className="flex gap-4 items-center">
+              <div className="flex gap-1 items-center">
                 <div className="flex gap-2 items-center px-2 py-1 rounded-full border bg-friends-yellow-light border-friends-purple/20">
                   <span className="text-xs font-bold tracking-tighter uppercase text-friends-purple">
                     {user?.username}
