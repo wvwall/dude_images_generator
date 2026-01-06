@@ -12,9 +12,11 @@ import Header from "./components/Header/Header";
 import Gallery from "./pages/Gallery";
 import Home from "./pages/Home";
 import Image from "./pages/ImageView";
+import Auth from "./pages/Auth";
 import LoadingPage from "./pages/LoadingPage";
 import sqliteService from "./services/sqliteService";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { AuthProvider } from "./context/AuthContext";
 const queryClient = new QueryClient();
 
 const App: React.FC = () => {
@@ -48,12 +50,13 @@ const App: React.FC = () => {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter
-        future={{
-          v7_startTransition: true,
-          v7_relativeSplatPath: true,
-        }}>
-        <FeatureTour>
+      <AuthProvider>
+        <BrowserRouter
+          future={{
+            v7_startTransition: true,
+            v7_relativeSplatPath: true,
+          }}>
+          {/* <FeatureTour> not needed anymore */}
           {/* TODO: implement pull to refresh */}
           {/* <PullToRefresh
           onRefresh={() => {
@@ -67,13 +70,16 @@ const App: React.FC = () => {
               <Route path="/" element={<Home />} />
               <Route path="/gallery" element={<Gallery />} />
               <Route path="/image/:id" element={<Image />} />
+              <Route path="/login" element={<Auth />} />
+              <Route path="/register" element={<Auth />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </section>
           <BottomBar />
           {/* </PullToRefresh> */}
-        </FeatureTour>
-      </BrowserRouter>
+          {/* </FeatureTour> */}
+        </BrowserRouter>
+      </AuthProvider>
     </QueryClientProvider>
   );
 };

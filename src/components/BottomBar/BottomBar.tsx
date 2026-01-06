@@ -1,8 +1,11 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import { Home, Image } from "lucide-react";
+import { Home, Image, User, LogIn } from "lucide-react";
+import { useAuth } from "../../context/AuthContext";
 
 const BottomBar: React.FC = () => {
+  const { isAuthenticated } = useAuth();
+
   const navClasses = ({ isActive }: { isActive: boolean }) =>
     `flex flex-col items-center p-3 text-sm font-hand transition-colors ${
       isActive
@@ -20,6 +23,17 @@ const BottomBar: React.FC = () => {
         <Image size={18} />
         <span>Gallery</span>
       </NavLink>
+      {isAuthenticated ? (
+        <NavLink to="/profile" className={navClasses}>
+          <User size={18} />
+          <span>Profile</span>
+        </NavLink>
+      ) : (
+        <NavLink to="/login" className={navClasses}>
+          <LogIn size={18} />
+          <span>Login</span>
+        </NavLink>
+      )}
     </section>
   );
 };
