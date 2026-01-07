@@ -26,11 +26,11 @@ const Header: React.FC = () => {
           <NavLink
             to="/"
             className="flex items-center gap-4 transition-opacity hover:opacity-80">
-            <div className="flex items-center justify-center w-12 h-12 border-2 rounded-full shadow-lg bg-friends-purple border-friends-yellow">
-              <Coffee size={24} className="text-white" />
+            <div className="flex items-center justify-center w-10 h-10 border-2 rounded-full shadow-lg bg-friends-purple border-friends-yellow">
+              <Coffee size={20} className="text-white" />
             </div>
             <div className="flex flex-col">
-              <h1 className="flex items-center gap-1 text-4xl tracking-wider text-black font-hand">
+              <h1 className="flex items-center gap-1 text-3xl tracking-wider text-black font-hand">
                 D
                 <span className="w-2 h-2 mt-2 rounded-full bg-friends-red"></span>
                 U
@@ -40,7 +40,7 @@ const Header: React.FC = () => {
                 E
               </h1>
               <div className="flex items-center gap-1">
-                <span className="text-[8px] font-bold tracking-widest uppercase  text-friends-purple sm:text-xs">
+                <span className="text-[7px] font-bold tracking-widest uppercase  text-friends-purple sm:text-[10px]">
                   Central Perk Studio
                 </span>
                 <span className="text-[8px] text-gray-500 font-hand">
@@ -69,15 +69,15 @@ const Header: React.FC = () => {
 
             <div className="flex items-center justify-end flex-1 md:justify-center md:gap-3 ">
               <div className="flex items-center justify-center w-10 h-10 gap-2 px-2 py-2 text-center border rounded-full bg-friends-yellow-light border-friends-yellow">
-                <span className="text-sm font-bold tracking-tighter uppercase text-friends-purple">
+                <span className="text-sm font-bold tracking-tighter uppercase font-hand text-friends-purple">
                   {user?.username[0].toUpperCase()}
                 </span>
               </div>
               <button
                 onClick={handleLogout}
-                className="p-2 transition-colors rounded-full text-friends-purple hover:bg-friends-red/10"
+                className="p-2 transition-colors rounded-full text-friends-purple hover:text-friends-red hover:bg-friends-red/10 hover:scale-110"
                 title="Logout">
-                <LogOut size={16} />
+                <LogOut size={14} />
               </button>
             </div>
           </>
