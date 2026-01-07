@@ -5,13 +5,20 @@ import * as sqliteService from "../services/sqliteService";
 import { GeneratedImage } from "../types";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "../services/api";
+import { authService } from "../services/authService";
 
 const Gallery: React.FC = () => {
+  const token = authService.getToken();
   const navigate = useNavigate();
   const [images, setImages] = useState<GeneratedImage[]>([]);
   const { data, isPending, error } = useQuery({
     queryKey: ["images"],
-    queryFn: () => fetch(api.backend.images.getAll()).then((r) => r.json()),
+    queryFn: () =>
+      fetch(api.backend.images.getAll(), {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }).then((r) => r.json()),
   });
 
   useEffect(() => {
@@ -32,7 +39,7 @@ const Gallery: React.FC = () => {
   }, []);
 
   return (
-    <div className="pb-12 min-h-screen font-sans bg-friends-purple-light">
+    <div className="min-h-screen pb-12 font-sans bg-friends-purple-light">
       <main className="px-4 pt-10 mx-auto max-w-7xl">
         <div className="mb-8 text-center">
           <h2 className="mb-2 text-4xl text-gray-800 font-hand">The Gallery</h2>
@@ -48,7 +55,7 @@ const Gallery: React.FC = () => {
             isLoading={isPending}
           />
         ) : (
-          <div className="py-20 text-center bg-white rounded-2xl border-2 border-gray-300 border-dashed">
+          <div className="py-20 text-center bg-white border-2 border-gray-300 border-dashed rounded-2xl">
             <p className="text-xl text-gray-400 font-hand">
               No memories yet...
             </p>

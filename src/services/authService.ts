@@ -30,7 +30,10 @@ class AuthService {
     localStorage.removeItem(TOKEN_KEY);
   }
 
-  async login(credentials: any): Promise<AuthResponse> {
+  async login(credentials: {
+    username: string;
+    password: string;
+  }): Promise<AuthResponse> {
     const response = await fetch(api.backend.auth.login(), {
       method: "POST",
       headers: {
@@ -48,7 +51,10 @@ class AuthService {
     return data;
   }
 
-  async register(userData: any): Promise<AuthResponse> {
+  async register(userData: {
+    username: string;
+    password: string;
+  }): Promise<AuthResponse> {
     const response = await fetch(api.backend.auth.register(), {
       method: "POST",
       headers: {
