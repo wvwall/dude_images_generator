@@ -23,17 +23,6 @@ const BottomBar: React.FC = () => {
         <Image size={18} />
         <span>Gallery</span>
       </NavLink>
-      {isAuthenticated ? (
-        <NavLink to="/profile" className={navClasses}>
-          <User size={18} />
-          <span>Profile</span>
-        </NavLink>
-      ) : (
-        <NavLink to="/login" className={navClasses}>
-          <LogIn size={18} />
-          <span>Login</span>
-        </NavLink>
-      )}
     </section>
   );
 };

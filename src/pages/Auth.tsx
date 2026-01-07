@@ -49,8 +49,8 @@ const Auth: React.FC = () => {
   };
 
   return (
-    <div className="p-4 pt-16 h-[calc(100vh-92px)]">
-      <div className="overflow-hidden mx-auto w-full max-w-md rounded-2xl border shadow-2xl backdrop-blur-lg bg-white/80 border-white/20">
+    <div className="p-4 pt-8 h-[calc(100vh-92px)]">
+      <div className="w-full max-w-md mx-auto overflow-hidden border shadow-2xl rounded-2xl backdrop-blur-lg bg-white/80 border-white/20">
         <div className="p-8">
           <div className="mb-8 text-center">
             <h1 className="mb-2 text-4xl font-hand text-friends-purple">
@@ -88,7 +88,7 @@ const Auth: React.FC = () => {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="relative">
-              <div className="flex absolute inset-y-0 left-0 items-center pl-3 text-gray-400 pointer-events-none">
+              <div className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400 pointer-events-none">
                 <User size={18} />
               </div>
               <input
@@ -97,13 +97,13 @@ const Auth: React.FC = () => {
                 placeholder="Username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="py-3 pr-4 pl-10 w-full bg-white rounded-xl border border-gray-200 transition-all outline-none focus:ring-2 focus:ring-friends-purple focus:border-transparent"
+                className="w-full py-3 pl-10 pr-4 transition-all bg-white border border-gray-200 outline-none rounded-xl focus:ring-2 focus:ring-friends-purple focus:border-transparent"
                 required
               />
             </div>
 
             <div className="relative">
-              <div className="flex absolute inset-y-0 left-0 items-center pl-3 text-gray-400 pointer-events-none">
+              <div className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400 pointer-events-none">
                 <Lock size={18} />
               </div>
               <input
@@ -112,19 +112,19 @@ const Auth: React.FC = () => {
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="py-3 pr-12 pl-10 w-full bg-white rounded-xl border border-gray-200 transition-all outline-none focus:ring-2 focus:ring-friends-purple focus:border-transparent"
+                className="w-full py-3 pl-10 pr-12 transition-all bg-white border border-gray-200 outline-none rounded-xl focus:ring-2 focus:ring-friends-purple focus:border-transparent"
                 required
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="flex absolute inset-y-0 right-0 items-center pr-4 cursor-pointer">
+                className="absolute inset-y-0 right-0 flex items-center pr-4 cursor-pointer">
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             </div>
 
             {error && (
-              <div className="p-3 text-sm rounded-xl border animate-pulse bg-friends-red/10 border-friends-red/20 text-friends-red">
+              <div className="p-3 text-sm border rounded-xl animate-pulse bg-friends-red/10 border-friends-red/20 text-friends-red">
                 {error}
               </div>
             )}
@@ -132,7 +132,7 @@ const Auth: React.FC = () => {
             <button
               type="submit"
               disabled={loading}
-              className="flex gap-2 justify-center items-center py-4 w-full font-bold rounded-xl shadow-xl transition-all duration-200 transform bg-friends-yellow hover:bg-friends-yellow/90 text-friends-purple hover:shadow-2xl active:translate-y-0 group">
+              className="flex items-center justify-center w-full gap-2 py-4 font-bold transition-all duration-200 transform shadow-xl rounded-xl bg-friends-yellow hover:bg-friends-yellow/90 text-friends-purple hover:shadow-2xl active:translate-y-0 group">
               {loading ? (
                 <div className="w-6 h-6 rounded-full animate-spin border-3 border-friends-purple border-t-transparent"></div>
               ) : (
@@ -149,7 +149,7 @@ const Auth: React.FC = () => {
 
           <button
             onClick={() => setIsLogin(!isLogin)}
-            className="mt-6 w-full text-sm font-medium transition-colors text-friends-purple/70 hover:text-friends-purple">
+            className="w-full mt-6 text-sm font-medium transition-colors text-friends-purple/70 hover:text-friends-purple">
             {isLogin
               ? "Don't have an account? Sign up now!"
               : "Already have an account? Sign in!"}
