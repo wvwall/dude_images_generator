@@ -43,6 +43,9 @@ const Header: React.FC = () => {
                 <span className="text-[8px] font-bold tracking-widest uppercase  text-friends-purple sm:text-xs">
                   Central Perk Studio
                 </span>
+                <span className="text-[8px] text-gray-500 font-hand">
+                  v{process.env.VITE_APP_VERSION}
+                </span>
               </div>
             </div>
           </NavLink>
