@@ -7,8 +7,11 @@ import {
 } from "../services/geminiService";
 import * as sqliteService from "../services/sqliteService";
 import { AspectRatio, GeneratedImage } from "../types";
+import { api } from "../services/api";
+import { authService } from "../services/authService";
 
 export const useGenerationLogic = () => {
+  const token = authService.getToken();
   const location = useLocation();
   const [prompt, setPrompt] = useState("");
   const [aspectRatio, setAspectRatio] = useState<AspectRatio>("1:1");
@@ -186,15 +189,23 @@ export const useGenerationLogic = () => {
       );
 
       const newImage: GeneratedImage = {
-        id: Date.now().toString(),
+        // id: Date.now().toString(),
         url: imageUrl,
         prompt: prompt,
-        timestamp: Date.now(),
+        // timestamp: Date.now(),
         aspectRatio: aspectRatio,
       };
 
       try {
-        await sqliteService.addImage(newImage);
+        // await sqliteService.addImage(newImage);
+        await fetch(api.backend.images.create(), {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(newImage),
+        });
       } catch (dbErr) {
         console.warn("Failed to persist image to local sqlite DB", dbErr);
       }

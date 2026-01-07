@@ -1,8 +1,8 @@
 export interface GeneratedImage {
-  id: string;
+  id?: string;
   url: string;
   prompt: string;
-  timestamp: number;
+  timestamp?: number;
   aspectRatio: string;
 }
 
