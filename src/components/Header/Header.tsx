@@ -15,8 +15,8 @@ const Header: React.FC = () => {
   const navClasses = ({ isActive }: { isActive: boolean }) =>
     `font-hand transition-colors underline-offset-4 decoration-2 ${
       isActive
-        ? "text-xl text-friends-purple underline"
-        : "text-sm hover:text-friends-yellow hover:underline"
+        ? "text-2xl text-friends-purple underline"
+        : "text-xl hover:text-friends-yellow hover:underline"
     }`;
 
   return (
@@ -68,7 +68,7 @@ const Header: React.FC = () => {
             </nav>
 
             <div className="flex items-center justify-end flex-1 md:justify-center md:gap-3 ">
-              <div className="flex items-center justify-center w-10 h-10 gap-2 px-2 py-2 text-center border rounded-full bg-friends-yellow-light border-friends-yellow">
+              <div className="flex items-center justify-center w-12 h-12 gap-2 px-2 py-2 text-center border rounded-full bg-friends-yellow-light border-friends-yellow">
                 <span className="text-sm font-bold tracking-tighter uppercase font-hand text-friends-purple">
                   {user?.username[0].toUpperCase()}
                 </span>
@@ -77,7 +77,7 @@ const Header: React.FC = () => {
                 onClick={handleLogout}
                 className="p-2 transition-colors rounded-full text-friends-purple hover:text-friends-red hover:bg-friends-red/10 hover:scale-110"
                 title="Logout">
-                <LogOut size={14} />
+                <LogOut size={16} />
               </button>
             </div>
           </>
