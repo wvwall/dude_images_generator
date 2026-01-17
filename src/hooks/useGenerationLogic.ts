@@ -7,11 +7,12 @@ import {
 } from "../services/geminiService";
 import * as sqliteService from "../services/sqliteService";
 import { AspectRatio, GeneratedImage } from "../types";
+import { uploadImage } from "../services/uploadService";
+import { getImageUrl } from "../utils/imageUtils";
+import { apiClient } from "../services/apiClient";
 import { api } from "../services/api";
-import { authService } from "../services/authService";
 
 export const useGenerationLogic = () => {
-  const token = authService.getToken();
   const location = useLocation();
   const [prompt, setPrompt] = useState("");
   const [aspectRatio, setAspectRatio] = useState<AspectRatio>("1:1");
@@ -38,7 +39,7 @@ export const useGenerationLogic = () => {
   const [videoProgress, setVideoProgress] = useState<number>(0);
   const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const [completedVideoUri, setCompletedVideoUri] = useState<string | null>(
-    null
+    null,
   );
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -110,7 +111,7 @@ export const useGenerationLogic = () => {
 
   const clearFiles = () => {
     selectedFiles.forEach((file) =>
-      URL.revokeObjectURL(URL.createObjectURL(file))
+      URL.revokeObjectURL(URL.createObjectURL(file)),
     ); // Revoke object URLs
     setSelectedFiles([]);
     setPreviewUrls([]);
@@ -185,39 +186,36 @@ export const useGenerationLogic = () => {
         prompt,
         aspectRatio,
         referenceImagesBase64,
-        model
+        model,
       );
 
-      const newImage: GeneratedImage = {
-        // id: Date.now().toString(),
-        url: imageUrl,
-        prompt: prompt,
-        // timestamp: Date.now(),
-        aspectRatio: aspectRatio,
-      };
+      // Convert the generated image URL to a File for upload
+      const response = await fetch(imageUrl);
+      const blob = await response.blob();
+      const file = new File([blob], `generated-${Date.now()}.png`, {
+        type: blob.type || "image/png",
+      });
 
       try {
-        // await sqliteService.addImage(newImage);
-        await fetch(api.backend.images.create(), {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(newImage),
+        const uploaded = await uploadImage(file, {
+          prompt: prompt,
+          description: `Generated with ${model}, aspect ratio: ${aspectRatio}`,
+          aspectRatio,
         });
+        // Use the uploaded image with backend data
+        const newImage: GeneratedImage = uploaded;
+        setCurrentImage(newImage);
+        setHistory((prev) => [newImage, ...prev]);
+        setSuccess("Image generated successfully!");
       } catch (dbErr) {
-        console.warn("Failed to persist image to local sqlite DB", dbErr);
+        console.warn("Failed to persist image to backend", dbErr);
+        // Keep the temporary local image with blob URL
       }
-
-      setCurrentImage(newImage);
-      setHistory((prev) => [newImage, ...prev]);
-      setSuccess("Image generated successfully!");
     } catch (err: any) {
       console.error(err);
       setError(
         err.message ||
-          "Could not generate image. Please check API Key and Billing status."
+          "Could not generate image. Please check API Key and Billing status.",
       );
     } finally {
       setIsGenerating(false);
@@ -244,7 +242,7 @@ export const useGenerationLogic = () => {
       const { operationName } = await generateVideo(
         prompt,
         referenceImageBase64,
-        mimeType
+        mimeType,
       );
 
       // Start polling every 10 seconds
@@ -258,7 +256,7 @@ export const useGenerationLogic = () => {
       console.error(err);
       setError(
         err.message ||
-          "Could not start video generation. Please check API Key and Billing status."
+          "Could not start video generation. Please check API Key and Billing status.",
       );
       setVideoProgress(0);
       setVideoStatus("");
@@ -289,9 +287,10 @@ export const useGenerationLogic = () => {
   const handleDelete = useCallback(
     async (id: string) => {
       try {
-        await sqliteService.deleteImage(id);
-      } catch (dbErr) {
-        console.warn("Failed to delete image from local sqlite DB", dbErr);
+        // Delete from backend API
+        await apiClient.delete(api.backend.images.delete(id));
+      } catch (err) {
+        console.warn("Failed to delete image from backend", err);
       }
 
       setHistory((prev) => prev.filter((img) => img.id !== id));
@@ -299,7 +298,7 @@ export const useGenerationLogic = () => {
         setCurrentImage(null);
       }
     },
-    [currentImage, history]
+    [currentImage, history],
   );
 
   async function urlToFile(url: string, filename = "image.jpg"): Promise<File> {
@@ -313,14 +312,15 @@ export const useGenerationLogic = () => {
       setMode("image");
       const imgToEdit = history.find((img) => img.id === id);
       if (!imgToEdit) return;
-      const file = await urlToFile(imgToEdit.url);
+      const imageUrl = getImageUrl(imgToEdit);
+      const file = await urlToFile(imageUrl);
       setPrompt(imgToEdit.prompt);
       setSelectedFiles([file]);
       setPreviewUrls([URL.createObjectURL(file)]);
       setError(null);
       window.scrollTo({ top: 0, behavior: "smooth" });
     },
-    [history]
+    [history],
   );
 
   useEffect(() => {
@@ -333,12 +333,13 @@ export const useGenerationLogic = () => {
     setMode("image");
     setPrompt(imgToEdit.prompt);
 
-    fetch(imgToEdit.url)
+    const imageUrl = getImageUrl(imgToEdit);
+    fetch(imageUrl)
       .then((res) => res.blob())
       .then((blob) => {
         const file = new File([blob], "edit.jpg", { type: blob.type });
         setSelectedFiles([file]);
-        setPreviewUrls([imgToEdit.url]);
+        setPreviewUrls([imageUrl]);
       });
 
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -347,10 +348,14 @@ export const useGenerationLogic = () => {
   useEffect(() => {
     (async () => {
       try {
-        const imgs = await sqliteService.getAllImages();
+        // Fetch images from backend API
+        const response = await apiClient.get<GeneratedImage[]>(
+          api.backend.images.getAll(),
+        );
+        const imgs = await response.json();
         setHistory(imgs);
       } catch (err) {
-        console.warn("Failed to load images from local sqlite DB", err);
+        console.warn("Failed to load images from backend API", err);
       } finally {
         setIsLoadingHistory(false);
       }
@@ -360,7 +365,7 @@ export const useGenerationLogic = () => {
   const handleDownloadCurrent = () => {
     if (!currentImage) return;
     const link = document.createElement("a");
-    link.href = currentImage.url;
+    link.href = getImageUrl(currentImage);
     link.download = `dude-creation-${currentImage.id}.jpg`;
     document.body.appendChild(link);
     link.click();

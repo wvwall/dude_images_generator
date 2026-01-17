@@ -1,9 +1,22 @@
+export interface Asset {
+  id: string;
+  filename: string;
+  mimeType: string;
+  size: number;
+  path: string;
+  createdAt: string;
+}
+
 export interface GeneratedImage {
-  id?: string;
-  url: string;
+  id: string;
   prompt: string;
-  timestamp?: number;
+  timestamp: string;
   aspectRatio: string;
+  userId: string;
+  assetId: string;
+  asset: Asset;
+  // For backward compatibility with local URLs
+  url?: string;
 }
 
 export type AspectRatio = "1:1" | "3:4" | "4:3" | "16:9" | "9:16";

@@ -34,6 +34,7 @@ class AuthService {
     username: string;
     password: string;
   }): Promise<AuthResponse> {
+    // Login doesn't use apiClient because it needs to set the token first
     const response = await fetch(api.backend.auth.login(), {
       method: "POST",
       headers: {
@@ -55,6 +56,7 @@ class AuthService {
     username: string;
     password: string;
   }): Promise<AuthResponse> {
+    // Register doesn't use apiClient because it needs to set the token first
     const response = await fetch(api.backend.auth.register(), {
       method: "POST",
       headers: {
@@ -77,11 +79,9 @@ class AuthService {
     if (!this.token) return null;
 
     try {
-      const response = await fetch(api.backend.auth.me(), {
-        headers: {
-          Authorization: `Bearer ${this.token}`,
-        },
-      });
+      // Import apiClient here to avoid circular dependency
+      const { apiClient } = await import("./apiClient");
+      const response = await apiClient.get<User>(api.backend.auth.me());
 
       if (!response.ok) {
         this.removeToken();

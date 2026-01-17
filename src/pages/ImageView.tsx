@@ -1,8 +1,10 @@
 import { Camera, Download, Edit2, Trash2 } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import * as sqliteService from "../services/sqliteService";
 import { GeneratedImage } from "../types";
+import { getImageUrl } from "../utils/imageUtils";
+import { apiClient } from "../services/apiClient";
+import { api } from "../services/api";
 
 const Gallery: React.FC = () => {
   const navigate = useNavigate();
@@ -13,17 +15,20 @@ const Gallery: React.FC = () => {
   useEffect(() => {
     (async () => {
       try {
-        const img = await sqliteService.getImageById(id);
+        const response = await apiClient.get<GeneratedImage>(
+          api.backend.images.getById(id!)
+        );
+        const img = await response.json();
         setImage(img);
       } catch (err) {
-        console.warn("Failed to load image", err);
+        console.warn("Failed to load image from backend", err);
       }
     })();
-  }, []);
+  }, [id]);
 
   const handleDownload = (image: GeneratedImage) => {
     const link = document.createElement("a");
-    link.href = image.url;
+    link.href = getImageUrl(image);
     link.download = `dude-creation-${image.id}.jpg`;
     document.body.appendChild(link);
     link.click();
@@ -34,10 +39,10 @@ const Gallery: React.FC = () => {
   };
   const handleDelete = useCallback(async (id: string) => {
     try {
-      await sqliteService.deleteImage(id);
+      await apiClient.delete(api.backend.images.delete(id));
       goToHome();
     } catch (err) {
-      console.warn("Failed to delete image from DB", err);
+      console.warn("Failed to delete image from backend", err);
     }
   }, []);
 
@@ -56,7 +61,7 @@ const Gallery: React.FC = () => {
             <div className="relative w-full overflow-hidden bg-gray-100 border border-gray-200 rounded-lg aspect-square">
               <img
                 loading="lazy"
-                src={image?.url}
+                src={image ? getImageUrl(image) : ""}
                 alt={image?.prompt}
                 className="object-cover w-full h-full transition-transform duration-1000 group-hover:scale-105"
               />

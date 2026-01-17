@@ -1,7 +1,8 @@
-import { GeneratedImage } from "@/src/types";
+import { GeneratedImage } from "@/types";
 import { Camera, Download, Edit2, Eye, Trash2 } from "lucide-react";
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { getImageUrl } from "@/utils/imageUtils";
 
 interface ImageCardProps {
   image: GeneratedImage;
@@ -11,10 +12,11 @@ interface ImageCardProps {
 
 const ImageCard: React.FC<ImageCardProps> = ({ image, onDelete, onEdit }) => {
   const navigate = useNavigate();
+  const imageUrl = getImageUrl(image);
 
   const handleDownload = (image: GeneratedImage) => {
     const link = document.createElement("a");
-    link.href = image.url;
+    link.href = imageUrl;
     link.download = `dude-creation-${image.id}.jpg`;
     document.body.appendChild(link);
     link.click();
@@ -33,7 +35,7 @@ const ImageCard: React.FC<ImageCardProps> = ({ image, onDelete, onEdit }) => {
       <div className="relative w-full overflow-hidden bg-gray-100 border border-gray-200 rounded-lg aspect-square">
         <img
           loading="lazy"
-          src={image.url}
+          src={imageUrl}
           alt={image.prompt}
           className="object-cover w-full h-full transition-transform duration-1000 group-hover:scale-105"
         />

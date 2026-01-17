@@ -5,20 +5,17 @@ import * as sqliteService from "../services/sqliteService";
 import { GeneratedImage } from "../types";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "../services/api";
-import { authService } from "../services/authService";
+import { apiClient } from "../services/apiClient";
 
 const Gallery: React.FC = () => {
-  const token = authService.getToken();
   const navigate = useNavigate();
   const [images, setImages] = useState<GeneratedImage[]>([]);
   const { data, isPending, error } = useQuery({
     queryKey: ["images"],
-    queryFn: () =>
-      fetch(api.backend.images.getAll(), {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }).then((r) => r.json()),
+    queryFn: async () => {
+      const response = await apiClient.get<GeneratedImage[]>(api.backend.images.getAll());
+      return response.json();
+    },
   });
 
   useEffect(() => {
@@ -27,10 +24,10 @@ const Gallery: React.FC = () => {
 
   const handleDelete = useCallback(async (id: string) => {
     try {
-      await sqliteService.deleteImage(id);
+      await apiClient.delete(api.backend.images.delete(id));
       setImages((prev) => prev.filter((i) => i.id !== id));
     } catch (err) {
-      console.warn("Failed to delete image from DB", err);
+      console.warn("Failed to delete image from backend", err);
     }
   }, []);
 
