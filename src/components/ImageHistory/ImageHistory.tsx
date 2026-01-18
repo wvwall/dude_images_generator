@@ -1,9 +1,9 @@
-import { GeneratedImage } from "@/src/types";
 import { GalleryHorizontalEnd } from "lucide-react";
 import ImageCard from "../ImageCard/ImageCard";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import SkeletonCard from "../ImageCard/SkeletonCard";
+import { GeneratedImage } from "@/types";
 
 interface ImageHistoryProps {
   images: GeneratedImage[];
@@ -25,7 +25,7 @@ const ImageHistory: React.FC<ImageHistoryProps> = ({
 
   return (
     <div className="mt-8">
-      <div className="flex gap-1 items-center pb-4 mb-8 border-b-2 border-dashed border-friends-purple/70">
+      <div className="flex items-center gap-1 pb-4 mb-8 border-b-2 border-dashed border-friends-purple/70">
         {isHomePath ? (
           <span className="px-3 py-1 text-xs font-bold rounded-lg shadow-sm text-friends-yellow bg-friends-purple">
             {images?.length >= 3 ? 3 : images?.length} of {images?.length} SNAPS

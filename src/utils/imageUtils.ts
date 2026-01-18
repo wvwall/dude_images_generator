@@ -14,7 +14,7 @@ export const getImageUrl = (image: GeneratedImage): string => {
 
   // Otherwise, construct URL from asset path
   if (image.asset?.path) {
-    return `${API_BASE_URL}/${image.asset.path}`;
+    return `${image.asset.path}`;
   }
 
   // Fallback to empty string if no URL available
