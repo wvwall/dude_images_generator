@@ -10,6 +10,8 @@ import {
   ArrowRight,
   EyeOff,
   Eye,
+  Wand2,
+  Loader2,
 } from "lucide-react";
 
 const Auth: React.FC = () => {
@@ -49,11 +51,11 @@ const Auth: React.FC = () => {
   };
 
   return (
-    <div className="p-4 pt-8 h-[calc(100vh-92px)]">
-      <div className="w-full max-w-md mx-auto overflow-hidden border shadow-2xl rounded-2xl backdrop-blur-lg bg-white/80 border-white/20">
+    <div className="h-screen p-4 pt-8">
+      <div className="w-full max-w-md mx-auto mt-6 overflow-hidden border shadow-2xl rounded-2xl backdrop-blur-lg bg-white/80 border-white/20">
         <div className="p-8">
           <div className="mb-8 text-center">
-            <h1 className="mb-2 text-4xl font-hand text-friends-purple">
+            <h1 className="mb-2 text-4xl text-black font-hand">
               {isLogin ? "Welcome Back!" : "Join the Crew!"}
             </h1>
             <p className="font-sans text-gray-600">
@@ -63,16 +65,16 @@ const Auth: React.FC = () => {
             </p>
           </div>
 
-          <div className="flex p-1 mb-8 rounded-xl bg-friends-purple-light">
+          <div className="flex gap-2 p-2 mb-8 rounded-xl bg-friends-purple-light">
             <button
               onClick={() => setIsLogin(true)}
-              className={`flex-1 py-2 rounded-lg flex items-center justify-center gap-2 transition-all duration-300 ${
+              className={`flex-1 py-3 rounded-lg flex items-center justify-center gap-2 transition-all duration-300 ${
                 isLogin
                   ? "text-white shadow-lg bg-friends-purple"
                   : "text-friends-purple hover:bg-white/50"
               }`}>
               <LogIn size={18} />
-              <span className="font-medium">Login</span>
+              <span className="font-semibold">Login</span>
             </button>
             <button
               onClick={() => setIsLogin(false)}
@@ -82,7 +84,7 @@ const Auth: React.FC = () => {
                   : "text-friends-purple hover:bg-white/50"
               }`}>
               <UserPlus size={18} />
-              <span className="font-medium">Register</span>
+              <span className="font-semibold">Register</span>
             </button>
           </div>
 
@@ -132,9 +134,12 @@ const Auth: React.FC = () => {
             <button
               type="submit"
               disabled={loading}
-              className="flex items-center justify-center w-full gap-2 py-4 font-bold transition-all duration-200 transform shadow-xl rounded-xl bg-friends-yellow hover:bg-friends-yellow/90 text-friends-purple hover:shadow-2xl active:translate-y-0 group">
+              className="w-full flex items-center justify-center gap-2  bg-friends-yellow text-black hover:bg-yellow-400 py-4 px-6 rounded-xl font-bold text-base transition-all duration-200 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] border-2 border-black">
               {loading ? (
-                <div className="w-6 h-6 rounded-full animate-spin border-3 border-friends-purple border-t-transparent"></div>
+                <Loader2
+                  className="animate-spin text-friends-purple"
+                  size={20}
+                />
               ) : (
                 <>
                   {isLogin ? "Sign In" : "Create Account"}
