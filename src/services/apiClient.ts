@@ -22,6 +22,7 @@ class ApiClient {
     const response = await fetch(url, {
       ...options,
       headers,
+      credentials: "include",
     });
 
     // Handle 401 Unauthorized - token expired or invalid
@@ -37,7 +38,10 @@ class ApiClient {
   /**
    * Convenience method for GET requests with typed response
    */
-  async get<TResponse = unknown>(url: string, options: RequestInit = {}): Promise<Response> {
+  async get<TResponse = unknown>(
+    url: string,
+    options: RequestInit = {},
+  ): Promise<Response> {
     return this.request(url, {
       ...options,
       method: "GET",
@@ -47,7 +51,11 @@ class ApiClient {
   /**
    * Convenience method for POST requests with typed request body and response
    */
-  async post<TResponse = unknown, TBody = unknown>(url: string, body?: TBody, options: RequestInit = {}): Promise<Response> {
+  async post<TResponse = unknown, TBody = unknown>(
+    url: string,
+    body?: TBody,
+    options: RequestInit = {},
+  ): Promise<Response> {
     const headers = new Headers(options.headers);
 
     // Auto-set Content-Type for JSON bodies
@@ -66,7 +74,11 @@ class ApiClient {
   /**
    * Convenience method for PUT requests with typed request body and response
    */
-  async put<TResponse = unknown, TBody = unknown>(url: string, body?: TBody, options: RequestInit = {}): Promise<Response> {
+  async put<TResponse = unknown, TBody = unknown>(
+    url: string,
+    body?: TBody,
+    options: RequestInit = {},
+  ): Promise<Response> {
     const headers = new Headers(options.headers);
 
     // Auto-set Content-Type for JSON bodies
@@ -85,7 +97,10 @@ class ApiClient {
   /**
    * Convenience method for DELETE requests with typed response
    */
-  async delete<TResponse = unknown>(url: string, options: RequestInit = {}): Promise<Response> {
+  async delete<TResponse = unknown>(
+    url: string,
+    options: RequestInit = {},
+  ): Promise<Response> {
     return this.request(url, {
       ...options,
       method: "DELETE",
@@ -95,7 +110,11 @@ class ApiClient {
   /**
    * Convenience method for PATCH requests with typed request body and response
    */
-  async patch<TResponse = unknown, TBody = unknown>(url: string, body?: TBody, options: RequestInit = {}): Promise<Response> {
+  async patch<TResponse = unknown, TBody = unknown>(
+    url: string,
+    body?: TBody,
+    options: RequestInit = {},
+  ): Promise<Response> {
     const headers = new Headers(options.headers);
 
     // Auto-set Content-Type for JSON bodies
