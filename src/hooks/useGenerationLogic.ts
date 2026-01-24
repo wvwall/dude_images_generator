@@ -5,7 +5,6 @@ import {
   generateImage,
   generateVideo,
 } from "../services/geminiService";
-import * as sqliteService from "../services/sqliteService";
 import { AspectRatio, GeneratedImage } from "../types";
 import { uploadImage } from "../services/uploadService";
 import { getImageUrl } from "../utils/imageUtils";

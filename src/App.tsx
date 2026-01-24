@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import {
   BrowserRouter,
   Navigate,
@@ -14,7 +14,6 @@ import Home from "./pages/Home";
 import Image from "./pages/ImageView";
 import Auth from "./pages/Auth";
 import LoadingPage from "./pages/LoadingPage";
-import sqliteService from "./services/sqliteService";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "./context/AuthContext";
 const queryClient = new QueryClient();
@@ -70,24 +69,6 @@ function ScrollToTop() {
 }
 
 const App: React.FC = () => {
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    (async () => {
-      try {
-        await sqliteService.initDB();
-      } catch (err) {
-        console.warn("Failed to init db", err);
-      } finally {
-        setIsLoading(false);
-      }
-    })();
-  }, []);
-
-  if (isLoading) {
-    return <LoadingPage />;
-  }
-
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>

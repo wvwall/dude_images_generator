@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import ImageHistory from "../components/ImageHistory/ImageHistory";
-import * as sqliteService from "../services/sqliteService";
 import { GeneratedImage } from "../types";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "../services/api";
