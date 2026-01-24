@@ -3,6 +3,7 @@ import React from "react";
 import { useGenerationLogic } from "../hooks/useGenerationLogic";
 import { AUDIO_MAP, AudioType } from "../types";
 import AudioPlayer from "./AudioPlayer/AudioPlayer";
+import { getImageUrl } from "../utils/imageUtils";
 
 type UseGenerationLogicReturn = ReturnType<typeof useGenerationLogic>;
 
@@ -102,7 +103,7 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({ state, actions }) => {
             <div className="overflow-hidden relative w-full h-full rounded-lg border-8 border-white shadow-lg">
               <img
                 loading="lazy"
-                src={currentImage.url}
+                src={getImageUrl(currentImage)}
                 alt="Generated result"
                 className="object-contain w-full h-full bg-gray-200"
               />

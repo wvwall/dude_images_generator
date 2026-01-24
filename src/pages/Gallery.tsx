@@ -1,33 +1,32 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import ImageHistory from "../components/ImageHistory/ImageHistory";
-import * as sqliteService from "../services/sqliteService";
 import { GeneratedImage } from "../types";
+import { useQuery } from "@tanstack/react-query";
+import { api } from "../services/api";
+import { apiClient } from "../services/apiClient";
 
 const Gallery: React.FC = () => {
   const navigate = useNavigate();
   const [images, setImages] = useState<GeneratedImage[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const { data, isPending, error } = useQuery({
+    queryKey: ["images"],
+    queryFn: async () => {
+      const response = await apiClient.get<GeneratedImage[]>(api.backend.images.getAll());
+      return response.json();
+    },
+  });
 
   useEffect(() => {
-    (async () => {
-      try {
-        const imgs = await sqliteService.getAllImages();
-        setImages(imgs);
-      } catch (err) {
-        console.warn("Failed to load images for gallery", err);
-      } finally {
-        setIsLoading(false);
-      }
-    })();
-  }, []);
+    setImages(data);
+  }, [data]);
 
   const handleDelete = useCallback(async (id: string) => {
     try {
-      await sqliteService.deleteImage(id);
+      await apiClient.delete(api.backend.images.delete(id));
       setImages((prev) => prev.filter((i) => i.id !== id));
     } catch (err) {
-      console.warn("Failed to delete image from DB", err);
+      console.warn("Failed to delete image from backend", err);
     }
   }, []);
 
@@ -44,12 +43,12 @@ const Gallery: React.FC = () => {
             Every masterpiece you've created.
           </p>
         </div>
-        {isLoading || images.length > 0 ? (
+        {isPending || images?.length > 0 ? (
           <ImageHistory
             images={images}
             onDelete={handleDelete}
             onEdit={handleEdit}
-            isLoading={isLoading}
+            isLoading={isPending}
           />
         ) : (
           <div className="py-20 text-center bg-white border-2 border-gray-300 border-dashed rounded-2xl">
