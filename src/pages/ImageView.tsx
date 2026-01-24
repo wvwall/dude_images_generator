@@ -1,17 +1,29 @@
-import { Camera, Download, Edit2, Trash2 } from "lucide-react";
+import { Camera, Download, Edit2, Maximize2, Trash2 } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { GeneratedImage } from "../types";
 import { getImageUrl } from "../utils/imageUtils";
 import { apiClient } from "../services/apiClient";
 import { api } from "../services/api";
+import Lightbox from "../components/Lightbox/Lightbox";
 
 const ImageView: React.FC = () => {
   const navigate = useNavigate();
 
   const [image, setImage] = useState<GeneratedImage | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  const [isOverlayVisible, setIsOverlayVisible] = useState(false);
   const { id } = useParams();
+
+  const handleTap = () => {
+    setIsOverlayVisible((prev) => !prev);
+  };
+
+  const openLightbox = () => {
+    setIsLightboxOpen(true);
+    setIsOverlayVisible(false);
+  };
 
   useEffect(() => {
     (async () => {
@@ -93,24 +105,41 @@ const ImageView: React.FC = () => {
               <div
                 key={image?.id}
                 className="group cursor-pointer bg-white p-3 pb-4 rounded-xl border-2 border-gray-200 hover:border-friends-purple transition-all duration-300 shadow-md hover:shadow-[5px_5px_0px_0px_rgba(93,63,106,0.2)]">
-                <div className="relative w-full overflow-hidden bg-gray-100 border border-gray-200 rounded-lg aspect-square">
+                <div
+                  className="relative w-full overflow-hidden bg-gray-100 border border-gray-200 rounded-lg aspect-square"
+                  onClick={handleTap}>
                   <img
                     src={image ? getImageUrl(image) : ""}
                     alt={image?.prompt}
                     className="object-cover w-full h-full transition-transform duration-1000 group-hover:scale-105"
                   />
 
-                  <div className="absolute *:mb-3 *:mr-3 inset-0 flex items-end justify-end  transition-opacity duration-300 opacity-0 bg-black/40 group-hover:opacity-100">
+                  <div
+                    className={`absolute *:mb-3 *:mr-3 inset-0 flex items-end justify-end transition-opacity duration-300 bg-black/40 ${isOverlayVisible ? "opacity-100" : "opacity-0"} [@media(hover:hover)]:group-hover:opacity-100`}>
+                    <button
+                      className="absolute p-3 -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 bg-white/20 rounded-full hover:bg-white/30 transition-colors"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openLightbox();
+                      }}
+                      aria-label="Ingrandisci immagine"
+                      title="Ingrandisci">
+                      <Maximize2 size={25} className="text-white" />
+                    </button>
                     <button
                       aria-label="Delete image"
-                      onClick={() => handleDelete(image?.id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDelete(image?.id);
+                      }}
                       className="p-2 text-black transition-transform border-2 border-black rounded-full shadow-lg bg-friends-red hover:bg-red-500 hover:scale-110"
                       title="Delete">
                       <Trash2 size={16} />
                     </button>
                     <button
                       aria-label="Edit image"
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.stopPropagation();
                         if (image) {
                           navigate("/", { state: { editId: image.id } });
                         }
@@ -121,7 +150,10 @@ const ImageView: React.FC = () => {
                     </button>
                     <button
                       aria-label="Download image"
-                      onClick={() => handleDownload(image)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDownload(image);
+                      }}
                       className="p-2 text-black transition-transform border-2 border-black rounded-full shadow-lg bg-friends-yellow hover:bg-yellow-400 hover:scale-110"
                       title="Download">
                       <Download size={16} />
@@ -150,6 +182,15 @@ const ImageView: React.FC = () => {
           </>
         )}
       </main>
+
+      {image && (
+        <Lightbox
+          isOpen={isLightboxOpen}
+          onClose={() => setIsLightboxOpen(false)}
+          imageUrl={getImageUrl(image)}
+          alt={image.prompt}
+        />
+      )}
     </div>
   );
 };
