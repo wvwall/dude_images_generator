@@ -53,35 +53,41 @@ const Header: React.FC = () => {
 
         {/* Desktop Nav */}
 
-        {isAuthenticated && (
+        {/* {isAuthenticated && (
+          <> */}
+        <nav
+          className={`items-center justify-center flex-1 hidden gap-6 md:flex ${
+            isAuthenticated ? "opacity-100" : "opacity-0"
+          }`}>
           <>
-            <nav className="items-center justify-center flex-1 hidden gap-6 md:flex">
-              <>
-                <NavLink to="/" className={navClasses}>
-                  Home
-                </NavLink>
+            <NavLink to="/" className={navClasses}>
+              Home
+            </NavLink>
 
-                <NavLink to="/gallery" className={navClasses}>
-                  Gallery
-                </NavLink>
-              </>
-            </nav>
-
-            <div className="flex items-center justify-end flex-1 md:justify-center md:gap-3 ">
-              <div className="flex items-center justify-center w-12 h-12 gap-2 px-2 py-2 text-center border rounded-full bg-friends-yellow-light border-friends-yellow">
-                <span className="text-sm font-bold tracking-tighter uppercase font-hand text-friends-purple">
-                  {user?.username[0].toUpperCase()}
-                </span>
-              </div>
-              <button
-                onClick={handleLogout}
-                className="p-2 transition-colors rounded-full text-friends-purple hover:text-friends-red hover:bg-friends-red/10 hover:scale-110"
-                title="Logout">
-                <LogOut size={16} />
-              </button>
-            </div>
+            <NavLink to="/gallery" className={navClasses}>
+              Gallery
+            </NavLink>
           </>
-        )}
+        </nav>
+
+        <div
+          className={`flex items-center justify-end flex-1 md:justify-center gap-3 ${
+            isAuthenticated ? "opacity-100" : "opacity-0"
+          }`}>
+          <div className="flex items-center justify-center w-12 h-12 gap-2 px-2 py-2 text-center border rounded-full bg-friends-yellow-light border-friends-yellow">
+            <span className="text-sm font-bold tracking-tighter uppercase font-hand text-friends-purple">
+              {user?.username[0].toUpperCase()}
+            </span>
+          </div>
+          <button
+            onClick={handleLogout}
+            className="p-2 transition-colors rounded-full text-friends-purple hover:text-friends-red hover:bg-friends-red/10 hover:scale-110"
+            title="Logout">
+            <LogOut size={16} />
+          </button>
+        </div>
+        {/* </>
+        )} */}
       </div>
     </header>
   );
