@@ -38,9 +38,12 @@ const Auth: React.FC = () => {
 
     try {
       if (isLogin) {
-        await login({ username, password });
+        await login({ username: username.trim(), password: password.trim() });
       } else {
-        await register({ username, password });
+        await register({
+          username: username.trim(),
+          password: password.trim(),
+        });
       }
       navigate("/");
     } catch (err: any) {
