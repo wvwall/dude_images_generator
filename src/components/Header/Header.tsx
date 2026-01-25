@@ -21,13 +21,13 @@ const Header: React.FC = () => {
 
   return (
     <header className="w-full bg-friends-purple-light">
-      <div className="flex items-center w-full px-4 py-4 bg-white border-b-4 shadow-sm md:px-0 rounded-b-2xl border-friends-purple">
+      <div className="flex items-center w-full px-4 py-4 bg-white border-b-4 shadow-xs md:px-0 rounded-b-2xl border-friends-purple">
         <div className="flex items-center justify-center flex-1 gap-4">
           <NavLink
             to="/"
             className="flex items-center gap-4 transition-opacity hover:opacity-80">
-            <div className="flex items-center justify-center w-10 h-10 border-2 rounded-full shadow-lg bg-friends-purple border-friends-yellow">
-              <Coffee size={20} className="text-white" />
+            <div className="flex items-center justify-center w-12 h-12 border-2 rounded-full shadow-lg bg-friends-purple border-friends-yellow">
+              <Coffee size={22} className="text-white" />
             </div>
             <div className="flex flex-col">
               <h1 className="flex items-center gap-1 text-3xl tracking-wider text-black font-hand">

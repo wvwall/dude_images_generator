@@ -60,7 +60,7 @@ const InputHeader: React.FC = () => {
   return (
     <div className="mb-2">
       <div className="flex items-start gap-2">
-        <h2 className="mb-3 text-4xl text-gray-800 cursor-pointer drop-shadow-sm md:text-7xl font-hand">
+        <h2 className="mb-3 text-4xl text-gray-800 cursor-pointer drop-shadow-xs md:text-7xl font-hand">
           {currentPhrase ? currentPhrase.text : "..."}
         </h2>
 

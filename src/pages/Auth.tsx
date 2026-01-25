@@ -102,7 +102,7 @@ const Auth: React.FC = () => {
                 placeholder="Username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="w-full py-3 pl-10 pr-4 transition-all bg-white border border-gray-200 outline-none rounded-xl focus:ring-2 focus:ring-friends-purple focus:border-transparent"
+                className="w-full py-3 pl-10 pr-4 transition-all bg-white border border-gray-200 outline-hidden rounded-xl focus:ring-2 focus:ring-friends-purple focus:border-transparent"
                 required
               />
             </div>
@@ -117,7 +117,7 @@ const Auth: React.FC = () => {
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full py-3 pl-10 pr-12 transition-all bg-white border border-gray-200 outline-none rounded-xl focus:ring-2 focus:ring-friends-purple focus:border-transparent"
+                className="w-full py-3 pl-10 pr-12 transition-all bg-white border border-gray-200 outline-hidden rounded-xl focus:ring-2 focus:ring-friends-purple focus:border-transparent"
                 required
               />
               <button

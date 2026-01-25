@@ -77,16 +77,16 @@ const ImageView: React.FC = () => {
 
                 <div className="px-1 mt-4">
                   <div className="flex items-start gap-2">
-                    <div className="w-4 h-4 mt-1 bg-gray-200 rounded shrink-0" />
+                    <div className="w-4 h-4 mt-1 bg-gray-200 rounded-sm shrink-0" />
                     <div className="flex-1 space-y-2">
-                      <div className="w-full h-4 bg-gray-200 rounded" />
-                      <div className="w-5/6 h-4 bg-gray-200 rounded" />
+                      <div className="w-full h-4 bg-gray-200 rounded-sm" />
+                      <div className="w-5/6 h-4 bg-gray-200 rounded-sm" />
                     </div>
                   </div>
 
                   <div className="flex items-center justify-between pt-3 mt-4 border-t border-gray-100">
-                    <div className="w-20 h-3 bg-gray-200 rounded" />
-                    <div className="w-10 h-5 bg-gray-200 rounded" />
+                    <div className="w-20 h-3 bg-gray-200 rounded-sm" />
+                    <div className="w-10 h-5 bg-gray-200 rounded-sm" />
                   </div>
                 </div>
               </div>
@@ -117,13 +117,13 @@ const ImageView: React.FC = () => {
                   <div
                     className={`absolute *:mb-3 *:mr-3 inset-0 flex items-end justify-end transition-opacity duration-300 bg-black/40 ${isOverlayVisible ? "opacity-100" : "opacity-0"} [@media(hover:hover)]:group-hover:opacity-100`}>
                     <button
-                      className="absolute p-3 -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 bg-white/20 rounded-full hover:bg-white/30 transition-colors"
+                      className="absolute p-3 transition-colors -translate-x-1/2 -translate-y-1/2 rounded-full top-1/2 left-1/2 bg-white/20 hover:bg-white/30"
                       onClick={(e) => {
                         e.stopPropagation();
                         openLightbox();
                       }}
-                      aria-label="Ingrandisci immagine"
-                      title="Ingrandisci">
+                      aria-label="Expand image"
+                      title="Expand">
                       <Maximize2 size={25} className="text-white" />
                     </button>
                     <button
@@ -172,7 +172,7 @@ const ImageView: React.FC = () => {
                     <span>
                       {new Date(image?.timestamp).toLocaleDateString()}
                     </span>
-                    <span className="px-2 py-1 bg-gray-100 rounded">
+                    <span className="px-2 py-1 bg-gray-100 rounded-sm">
                       {image?.aspectRatio}
                     </span>
                   </div>
