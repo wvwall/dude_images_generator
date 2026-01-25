@@ -1,4 +1,5 @@
 import { AspectRatio } from "../types";
+import { api } from "./api";
 
 export const generateImage = async (
   prompt: string,
@@ -9,7 +10,7 @@ export const generateImage = async (
     | "gemini-3-pro-image-preview" = "gemini-2.5-flash-image"
 ): Promise<string> => {
   try {
-    const res = await fetch("/.netlify/functions/generate-image", {
+    const res = await fetch(api.netlify.generateImage(), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -47,7 +48,7 @@ export const generateVideo = async (
     image ? "provided with mimeType " + mimeType : "none"
   );
   try {
-    const res = await fetch("/.netlify/functions/generate-video", {
+    const res = await fetch(api.netlify.generateVideo(), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ prompt, duration, image, mimeType }),
@@ -67,7 +68,7 @@ export const generateVideo = async (
 };
 
 export const checkVideoStatus = async (operationName: string) => {
-  const res = await fetch("/.netlify/functions/check-video-status", {
+  const res = await fetch(api.netlify.checkVideoStatus(), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ operationName }),
