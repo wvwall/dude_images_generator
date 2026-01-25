@@ -39,6 +39,7 @@ export default defineConfig(({ mode }) => {
           name: "Dude - AI Creative Studio",
           short_name: "Dude Studio",
           description: "AI Creative Studio & Image Generator",
+          // Default theme color (dynamically updated via meta tag in ThemeContext)
           theme_color: "#ffffff",
           icons: [
             {
