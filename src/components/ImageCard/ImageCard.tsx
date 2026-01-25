@@ -86,7 +86,7 @@ const ImageCard: React.FC<ImageCardProps> = ({ image, onDelete, onEdit }) => {
         </div>
         <div className="flex items-center justify-between pt-3 mt-4 text-xs font-semibold tracking-wide text-gray-500 uppercase border-t border-gray-100">
           <span>{new Date(image.timestamp).toLocaleDateString()}</span>
-          <span className="px-2 py-1 bg-gray-100 rounded">
+          <span className="px-2 py-1 bg-gray-100 rounded-sm">
             {image.aspectRatio}
           </span>
         </div>

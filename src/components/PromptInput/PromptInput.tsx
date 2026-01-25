@@ -27,7 +27,7 @@ const PromptInput: React.FC<PromptInputProps> = ({
               ? "Make it look like a comic book, add a turkey on the head..."
               : "A couch in a fountain, 90s sitcom style, cozy coffee shop vibe..."
           }
-          className="w-full min-h-[120px] p-4 bg-gray-50 border-2 border-gray-200 rounded-xl text-gray-800 focus:border-friends-purple focus:bg-white focus:ring-0 transition-all outline-none resize-none placeholder:text-gray-400"
+          className="w-full min-h-[120px] p-4 bg-gray-50 border-2 border-gray-200 rounded-xl text-gray-800 focus:border-friends-purple focus:bg-white focus:ring-0 transition-all outline-hidden resize-none placeholder:text-gray-400"
           disabled={isGenerating}
         />
         <div className="absolute top-[-20px] flex items-center space-x-2 right-2">
@@ -36,7 +36,7 @@ const PromptInput: React.FC<PromptInputProps> = ({
               type="button"
               onClick={() => setPrompt("")}
               disabled={isGenerating}
-              className="text-xs font-bold text-gray-400 hover:text-friends-red focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed">
+              className="text-xs font-bold text-gray-400 hover:text-friends-red focus:outline-hidden disabled:opacity-50 disabled:cursor-not-allowed">
               Clear
             </button>
           )}

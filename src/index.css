@@ -1,6 +1,36 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+
+@theme {
+  /* Friends theme colors */
+  --color-friends-purple: #5d3f6a;
+  --color-friends-yellow: #f4c430;
+  --color-friends-red: #e74c3c;
+  --color-friends-blue: #3498db;
+  --color-friends-purple-light: #d1caf1;
+  --color-friends-yellow-light: #fff5cc;
+
+  /* Custom fonts */
+  --font-sans: 'Poppins', sans-serif;
+  --font-hand: 'Permanent Marker', cursive;
+}
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}
 
 @font-face {
   font-family: "Poppins";

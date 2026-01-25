@@ -6,10 +6,6 @@
 // Base URL per le API (può essere configurata tramite env)
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || "http://localhost:3001";
-console.log(
-  "🚀 ~ import.meta.env.VITE_API_BASE_URL:",
-  import.meta.env.VITE_API_BASE_URL,
-);
 const NETLIFY_FUNCTIONS_BASE = "/.netlify/functions";
 
 /**
