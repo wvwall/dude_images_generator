@@ -72,7 +72,11 @@ const Header: React.FC = () => {
         <div className="flex items-center justify-end flex-1 md:justify-center gap-3">
           {/* Theme toggle - always visible */}
           <button
-            onClick={toggleTheme}
+            type="button"
+            onClick={() => {
+              console.log("Toggle clicked, current isDark:", isDark);
+              toggleTheme();
+            }}
             className="p-2 transition-colors rounded-full text-friends-purple dark:text-friends-yellow hover:bg-friends-purple/10 dark:hover:bg-friends-yellow/10 hover:scale-110"
             title={isDark ? "Light mode" : "Dark mode"}>
             {isDark ? <Sun size={18} /> : <Moon size={18} />}
