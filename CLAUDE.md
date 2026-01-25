@@ -4,7 +4,7 @@
 
 **Dude - AI Creative Studio** (The Friends Edition) is a Single-Page Application (SPA) for generating and editing images and videos using Google's Gemini AI. The interface features a fun "Friends" TV show theme with custom colors and iconic phrases.
 
-**Key Innovation**: The app uses a fully client-side SQLite database (via SQL.js compiled to WebAssembly) persisted to IndexedDB, ensuring user data privacy while eliminating server database costs.
+**Key Architecture**: The app uses a **RESTful backend API** with server-side database storage and JWT-based authentication, ensuring secure multi-user data management and synchronization across devices.
 
 ---
 
@@ -12,9 +12,9 @@
 
 ### Three-Tier Architecture
 
-1. **Frontend**: React 19 + TypeScript + Vite + Tailwind CSS
-2. **Backend**: Netlify Serverless Functions (secure API key handling)
-3. **Data Layer**: SQLite (SQL.js) + IndexedDB (client-side persistence)
+1. **Frontend**: React 19 + TypeScript + Vite + Tailwind CSS + TanStack Query
+2. **Backend API**: RESTful API (default: http://localhost:3001) for user data, authentication, and image storage
+3. **AI Services**: Netlify Serverless Functions (Gemini API integration with secure API key handling)
 
 ### Technology Stack
 
@@ -24,12 +24,13 @@
 | **Language** | TypeScript 5.8.2 | Type-safe development |
 | **Build Tool** | Vite 6.4.1 | Fast dev server & optimized builds |
 | **Styling** | Tailwind CSS 3.4.18 | Utility-first CSS with custom Friends theme |
-| **Routing** | react-router-dom 6.14.1 | Client-side navigation |
-| **AI Integration** | @google/genai 1.30.0 | Gemini AI SDK (server-side only) |
-| **Database** | SQL.js 1.8.0 | SQLite in-browser via WebAssembly |
+| **Routing** | react-router-dom 6.14.1 | Client-side navigation with auth guards |
+| **State Management** | @tanstack/react-query 5.90.16 | Server state management & caching |
+| **AI Integration** | @google/genai 1.30.0 | Gemini AI SDK (Netlify Functions only) |
+| **Authentication** | JWT tokens | Token-based auth with localStorage |
 | **Icons** | lucide-react 0.554.0 | Icon library |
 | **Tour** | @reactour/tour 3.8.0 | Feature onboarding |
-| **Serverless** | Netlify Functions | API key security & async video handling |
+| **Serverless** | Netlify Functions | AI generation endpoints |
 | **PWA** | vite-plugin-pwa 1.2.0 | Progressive Web App capabilities |
 
 ---
@@ -42,38 +43,45 @@ dude_images_generator/
 │   ├── components/          # React components (feature-organized)
 │   │   ├── AspectRatioSelector/
 │   │   ├── AudioPlayer/     # Friends-themed audio phrases
-│   │   ├── BottomBar/       # Navigation bar
+│   │   ├── BottomBar/       # Navigation bar (with auth state)
 │   │   ├── FeatureTour/     # Onboarding tour
-│   │   ├── Header/          # App header
+│   │   ├── Header/          # App header (with login/logout)
 │   │   ├── ImageCard/       # Gallery item display
 │   │   ├── ImageHistory/    # History grid
 │   │   ├── ImageUploadArea/ # Drag-and-drop upload
 │   │   ├── InputForm.tsx    # Main generation form
 │   │   ├── InputHeader/     # Header for input section
 │   │   ├── InputPanel/      # Container for input controls
+│   │   ├── Lightbox/        # Image lightbox viewer
 │   │   ├── ModeSelector/    # Text/Image/Video mode switcher
 │   │   ├── ModelSelectorDropdown/ # AI model selector
 │   │   ├── PivotButton/     # Friends-themed generate button
 │   │   ├── PreviewPanel.tsx # Result preview
 │   │   ├── PromptInput/     # Text prompt input
 │   │   └── PullToRefresh/   # Pull-to-refresh (currently disabled)
+│   ├── context/
+│   │   └── AuthContext.tsx  # Authentication context provider
 │   ├── hooks/
 │   │   └── useGenerationLogic.ts  # Core state & logic for generation
 │   ├── pages/
+│   │   ├── Auth.tsx         # Login/Register page
 │   │   ├── Gallery.tsx      # Gallery view (route: /gallery)
 │   │   ├── Home.tsx         # Main generation page (route: /)
 │   │   ├── ImageView.tsx    # Single image detail (route: /image/:id)
-│   │   └── LoadingPage.tsx  # DB initialization screen
+│   │   └── LoadingPage.tsx  # Auth initialization screen
 │   ├── services/
-│   │   ├── geminiService.ts # API calls to Netlify functions
-│   │   └── sqliteService.ts # SQLite/IndexedDB persistence
-│   ├── types/
-│   │   └── sql-wasm.d.ts    # Type definitions for SQL.js
+│   │   ├── api.ts           # API endpoint definitions
+│   │   ├── apiClient.ts     # HTTP client with auth token injection
+│   │   ├── authService.ts   # Authentication service (login/register/logout)
+│   │   ├── geminiService.ts # Netlify Functions API calls (AI generation)
+│   │   └── uploadService.ts # Image upload to backend
+│   ├── utils/
+│   │   └── imageUtils.ts    # Image URL utilities
 │   ├── types.ts             # Shared TypeScript interfaces
-│   ├── App.tsx              # Root component (routing setup)
+│   ├── App.tsx              # Root component (auth guards, routing)
 │   ├── index.tsx            # Entry point
 │   └── index.css            # Global CSS & Tailwind directives
-├── netlify/functions/       # Serverless backend
+├── netlify/functions/       # Serverless AI generation
 │   ├── generate-image.js    # Image generation endpoint
 │   ├── generate-video.js    # Video generation (async job start)
 │   └── check-video-status.js # Video polling endpoint
@@ -94,14 +102,19 @@ dude_images_generator/
 
 | File | Purpose | Key Responsibilities |
 |------|---------|---------------------|
-| `src/App.tsx` | Root component | Routing setup, DB initialization, scroll management, feature tour wrapper |
-| `src/pages/Home.tsx` | Main page | Coordinates generation UI, uses `useGenerationLogic` hook |
-| `src/hooks/useGenerationLogic.ts` | **Core hook** | All state management, generation logic, file handling, DB operations |
-| `src/services/sqliteService.ts` | Database service | SQLite setup, CRUD operations, IndexedDB persistence |
-| `src/services/geminiService.ts` | API client | Calls to Netlify functions for image/video generation |
-| `src/types.ts` | Type definitions | Shared interfaces (`GeneratedImage`, `AspectRatio`, etc.) |
+| `src/App.tsx` | Root component | Auth provider, routing with auth guards, loading states |
+| `src/pages/Home.tsx` | Main page | Generation UI, uses `useGenerationLogic` hook |
+| `src/pages/Auth.tsx` | Auth page | Login/register forms with validation |
+| `src/hooks/useGenerationLogic.ts` | **Core hook** | State management, generation logic, backend integration |
+| `src/context/AuthContext.tsx` | Auth context | User state, login/register/logout actions |
+| `src/services/apiClient.ts` | HTTP client | Authenticated API requests with automatic token injection |
+| `src/services/api.ts` | API config | Centralized endpoint definitions |
+| `src/services/authService.ts` | Auth service | Token management, login/register API calls |
+| `src/services/uploadService.ts` | Upload service | Image upload to backend with metadata |
+| `src/services/geminiService.ts` | AI service | Calls to Netlify Functions for image/video generation |
+| `src/types.ts` | Type definitions | Shared interfaces (`GeneratedImage`, `Asset`, `User`, etc.) |
 
-### Serverless Functions
+### Serverless Functions (Netlify)
 
 | Function | Purpose | Key Details |
 |----------|---------|-------------|
@@ -115,9 +128,128 @@ dude_images_generator/
 
 | File | Purpose |
 |------|---------|
-| `tailwind.config.js` | Custom Friends theme colors (`friends-purple`, `friends-yellow`, etc.), Poppins font |
-| `vite.config.ts` | Dev server proxy to Netlify Functions (port 8888), PWA manifest, app version injection |
+| `tailwind.config.js` | Custom Friends theme colors, Poppins font |
+| `vite.config.ts` | Dev server proxy to Netlify Functions (port 8888), PWA manifest, env variables |
 | `package.json` | Scripts: `dev`, `build`, `preview`, `netlify:dev`, `version:bump` |
+
+---
+
+## Authentication System
+
+### JWT-Based Authentication
+
+The app uses **JSON Web Tokens (JWT)** stored in `localStorage` for authentication.
+
+**Flow**:
+1. User submits credentials via `/login` or `/register` page
+2. Backend validates and returns `{ user, accessToken }`
+3. `authService` stores token in localStorage
+4. `apiClient` automatically includes token in all API requests via `Authorization: Bearer <token>` header
+5. On 401 responses, token is cleared and user redirected to login
+
+**Implementation** (src/services/authService.ts):
+
+```typescript
+class AuthService {
+  login(credentials)      // POST /api/v1/auth/login
+  register(userData)      // POST /api/v1/auth/register
+  getCurrentUser()        // GET /api/v1/auth/me
+  logout()                // Clear token from localStorage
+  getToken()              // Retrieve stored token
+  setToken(token)         // Store token
+  removeToken()           // Clear token
+}
+```
+
+**Auth Context** (src/context/AuthContext.tsx):
+
+```typescript
+interface AuthContextType {
+  user: User | null
+  isAuthenticated: boolean
+  isLoading: boolean
+  login(credentials): Promise<void>
+  register(userData): Promise<void>
+  logout(): void
+}
+```
+
+### Protected Routes
+
+Routes are protected via conditional rendering in `App.tsx:40-53`:
+
+- **Authenticated users**: Can access `/`, `/gallery`, `/image/:id`
+- **Unauthenticated users**: Redirected to `/login` or `/register`
+- **Unknown routes**: Redirect to appropriate default based on auth state
+
+---
+
+## Data Model & Backend Integration
+
+### Updated Data Model
+
+**Before (v1.x)**: Images stored as base64 data URIs in client-side SQLite + IndexedDB
+
+**Now (v2.x)**: Images stored on backend server with separate asset management
+
+```typescript
+// New Asset model (server-side file storage)
+interface Asset {
+  id: string
+  filename: string
+  mimeType: string
+  size: number
+  path: string           // URL path to image file
+  createdAt: string
+}
+
+// Updated GeneratedImage model
+interface GeneratedImage {
+  id: string
+  prompt: string
+  timestamp: string      // ISO 8601 format (was numeric timestamp)
+  aspectRatio: string
+  userId: string         // NEW: Multi-user support
+  assetId: string        // NEW: Reference to Asset
+  asset: Asset           // NEW: Populated asset data
+  url?: string           // LEGACY: For backward compatibility
+}
+```
+
+### Backend API Endpoints
+
+Configured in `src/services/api.ts:18-54`:
+
+| Endpoint | Method | Purpose |
+|----------|--------|---------|
+| `POST /api/v1/auth/login` | POST | User login |
+| `POST /api/v1/auth/register` | POST | User registration |
+| `GET /api/v1/auth/me` | GET | Get current user |
+| `GET /api/v1/images` | GET | Fetch user's images |
+| `GET /api/v1/images/:id` | GET | Fetch single image |
+| `POST /api/v1/images` | POST | Upload new image (FormData) |
+| `DELETE /api/v1/images/:id` | DELETE | Delete image |
+| `GET /api/v1/videos` | GET | Fetch user's videos (prepared) |
+| `POST /api/v1/videos` | POST | Upload video (prepared) |
+
+**Base URL**: Configured via `VITE_API_BASE_URL` environment variable (default: `http://localhost:3001`)
+
+### Image Upload Flow
+
+**When generating an image** (src/hooks/useGenerationLogic.ts:188-209):
+
+1. Call Netlify Function to generate image → receives base64 data URI
+2. Convert data URI to File object
+3. Upload to backend via `uploadService.uploadImage(file, metadata)`
+4. Backend stores file and returns `GeneratedImage` with asset data
+5. Update local state with backend response
+6. Display image using `asset.path` URL
+
+**Why this approach?**
+- Separates AI generation (Netlify) from data persistence (Backend)
+- Keeps Gemini API key secure in Netlify Functions
+- Enables multi-user data management on backend
+- Allows image storage optimization on server (CDN, compression, etc.)
 
 ---
 
@@ -125,7 +257,7 @@ dude_images_generator/
 
 ### Hook-Based Architecture
 
-The app uses **`useGenerationLogic`** (src/hooks/useGenerationLogic.ts:11) as the central state manager. This hook returns:
+The app uses **`useGenerationLogic`** (src/hooks/useGenerationLogic.ts:14) as the central state manager. This hook returns:
 
 ```typescript
 {
@@ -163,54 +295,20 @@ The app uses **`useGenerationLogic`** (src/hooks/useGenerationLogic.ts:11) as th
 - Separates business logic from UI components
 - Makes testing easier (test the hook independently)
 - Centralizes all generation-related state
+- Easy to swap backend implementations
 
 ### Component Data Flow
 
 ```
-Home.tsx
-  └─> useGenerationLogic() hook
-       ├─> InputForm (receives state + actions)
-       ├─> PreviewPanel (receives state + actions)
-       └─> ImageHistory (receives history + delete/edit handlers)
+App.tsx (AuthProvider)
+  └─> AppContent (routing)
+       ├─> Auth (login/register)
+       └─> Home.tsx
+            └─> useGenerationLogic() hook
+                 ├─> InputForm (state + actions)
+                 ├─> PreviewPanel (state + actions)
+                 └─> ImageHistory (history + delete/edit)
 ```
-
----
-
-## Data Persistence Model
-
-### SQLite + IndexedDB Strategy
-
-**Problem**: SQL.js runs SQLite in-memory in the browser. On page reload, data is lost.
-
-**Solution**:
-1. After every DB change (insert/delete), export the entire DB as `Uint8Array`
-2. Save to IndexedDB (key: `"dude_db"`, store: `"sqlite"`)
-3. On app load, restore from IndexedDB and reinitialize SQL.js
-
-**Implementation** (src/services/sqliteService.ts):
-
-```typescript
-// DB Schema
-CREATE TABLE images (
-  id TEXT PRIMARY KEY,
-  url TEXT,              -- Base64 data URI
-  prompt TEXT,
-  timestamp INTEGER,
-  aspectRatio TEXT
-)
-
-// Key functions
-initDB()           // Load from IndexedDB or create new
-getAllImages()     // SELECT * ORDER BY timestamp DESC
-addImage(img)      // INSERT + persist()
-deleteImage(id)    // DELETE + persist()
-persist()          // Export DB → IndexedDB
-```
-
-**Important**:
-- Database is **local to browser/device** (not synced across devices)
-- Privacy-first: no user data sent to servers
-- Images stored as base64 data URIs directly in SQLite
 
 ---
 
@@ -218,11 +316,11 @@ persist()          // Export DB → IndexedDB
 
 ### Generation Modes
 
-| Mode | Input | Output | Function Called |
-|------|-------|--------|----------------|
-| **Text** | Prompt + AspectRatio | Image (base64 URI) | `generateImage()` with no reference images |
-| **Image** | Prompt + AspectRatio + Reference Images (1-N) | Image (base64 URI) | `generateImage()` with reference images |
-| **Video** | Prompt + Optional Reference Image | Video file (MP4) | `generateVideo()` + polling via `checkVideoStatus()` |
+| Mode | Input | Output | Workflow |
+|------|-------|--------|----------|
+| **Text** | Prompt + AspectRatio | Image | Netlify Function → Upload to Backend → Display |
+| **Image** | Prompt + AspectRatio + Reference Images (1-3) | Image | Netlify Function → Upload to Backend → Display |
+| **Video** | Prompt + Optional Reference Image (1) | Video file (MP4) | Netlify Function (async) → Poll status → Download |
 
 ### Gemini AI Models
 
@@ -235,28 +333,40 @@ Configured in `src/hooks/useGenerationLogic.ts:26-28`:
 
 ### Video Generation Flow
 
-1. User clicks generate → `generateVideo()` called
+1. User clicks generate → `generateVideo()` called (Netlify Function)
 2. Netlify function starts job → returns `operationName`
 3. Client starts polling every 10 seconds via `checkVideoStatus()`
 4. When complete, function returns video buffer
 5. Client creates blob URL → auto-downloads + shows preview
 
-**Code reference**: src/hooks/useGenerationLogic.ts:135-166, 217-256
+**Note**: Videos are currently **not** uploaded to backend (feature prepared but not fully implemented)
+
+**Code reference**: src/hooks/useGenerationLogic.ts:222-256
 
 ---
 
 ## Routing Structure
 
-Defined in `src/App.tsx:63-68`:
+Defined in `src/App.tsx:39-54`:
+
+### Authenticated Routes (requires login)
 
 | Route | Component | Purpose |
 |-------|-----------|---------|
 | `/` | `Home.tsx` | Main generation interface |
-| `/gallery` | `Gallery.tsx` | View all generated images/videos |
+| `/gallery` | `Gallery.tsx` | View all user's images |
 | `/image/:id` | `ImageView.tsx` | Single image detail view |
 | `*` | Redirect to `/` | Fallback for unknown routes |
 
-**Navigation**: Bottom bar component (`BottomBar.tsx`) provides links.
+### Public Routes (no auth required)
+
+| Route | Component | Purpose |
+|-------|-----------|---------|
+| `/login` | `Auth.tsx` | Login form |
+| `/register` | `Auth.tsx` | Registration form |
+| `*` | Redirect to `/login` | Fallback for unauthenticated users |
+
+**Navigation**: Bottom bar component (`BottomBar.tsx`) provides links (dynamically shows based on auth state).
 
 ---
 
@@ -279,14 +389,15 @@ colors: {
 
 ### Typography
 
-- **Primary Font**: Poppins (sans-serif)
-- **Accent Font**: Permanent Marker (cursive) - Used for playful elements
+- **Primary Font**: Poppins (sans-serif) - Used for UI text
+- **Accent Font**: Permanent Marker (cursive) - Used for playful elements (`.font-hand`)
 
 ### Component Patterns
 
 - **Feature folders**: Components grouped by feature (e.g., `ImageCard/`, `ModeSelector/`)
 - **Responsive design**: Mobile-first with Tailwind breakpoints (`md:`, `lg:`)
 - **Consistent spacing**: Use Tailwind's spacing scale (e.g., `p-4`, `gap-8`)
+- **Animations**: Subtle transitions for hover states and loading states
 
 ---
 
@@ -294,19 +405,33 @@ colors: {
 
 ### Local Development
 
+#### Prerequisites
+
+1. **Backend API**: Must be running on port 3001 (or configure `VITE_API_BASE_URL`)
+2. **Netlify Functions**: Must be available for AI generation
+
+#### Setup
+
 ```bash
 # Install dependencies
 npm install
 
-# Start dev server (port 3000) + Netlify Functions (port 8888)
+# Set environment variables (optional - has defaults)
+# Create .env file:
+VITE_API_BASE_URL=http://localhost:3001
+
+# Start dev server + Netlify Functions
 npm run netlify:dev
 
-# Or separate terminals:
-npm run dev              # Vite dev server only (port 3000)
+# Or run separately:
+npm run dev              # Frontend only (port 3000)
 # Netlify functions won't work without netlify dev
 ```
 
-**Important**: The Vite dev server proxies `/.netlify/functions/*` to `localhost:8888` (see vite.config.ts:17-23). You **must** use `netlify dev` for full functionality.
+**Important**:
+- The Vite dev server proxies `/.netlify/functions/*` to `localhost:8888`
+- You **must** use `netlify dev` for AI generation to work
+- Backend API must be running separately (not included in this repo)
 
 ### Build & Deploy
 
@@ -325,9 +450,13 @@ npm run version:bump
 
 ### Environment Variables
 
-Set in Netlify dashboard (not in `.env` files for security):
+#### Frontend (.env)
 
-- `GEMINI_API_KEY` - Required for all generation functions
+- `VITE_API_BASE_URL` - Backend API base URL (default: `http://localhost:3001`)
+
+#### Netlify Functions (Netlify dashboard)
+
+- `GEMINI_API_KEY` - Required for all AI generation functions
 
 ---
 
@@ -336,6 +465,11 @@ Set in Netlify dashboard (not in `.env` files for security):
 ### File Upload Handling
 
 **Max file size**: 4MB (enforced in src/hooks/useGenerationLogic.ts:63-64, 90-91)
+
+**File limits per mode**:
+- **Text mode**: 0 files
+- **Image mode**: Max 3 reference images
+- **Video mode**: Max 1 reference image
 
 **Accepted formats**: Images (JPEG, PNG, etc.) - determined by browser's file picker
 
@@ -347,9 +481,10 @@ Set in Netlify dashboard (not in `.env` files for security):
 ### Error Handling
 
 All async operations use try/catch:
-- **User-facing errors**: Set via `setError()` state
-- **DB errors**: Console warnings + graceful degradation (don't block UI)
-- **API errors**: Display error message from Netlify function response
+- **User-facing errors**: Set via `setError()` state (displayed in UI)
+- **Network errors**: Display error message from API response
+- **Auth errors (401)**: Automatically handled by `apiClient` → redirects to login
+- **Graceful degradation**: Failed uploads don't block UI
 
 ### Success Notifications
 
@@ -361,12 +496,23 @@ setTimeout(() => setSuccess(null), 5000);
 
 ### Image ID Generation
 
-Simple timestamp-based IDs:
+**Backend-generated**: Server assigns IDs (typically UUIDs or auto-increment)
+
+**Previous approach (v1.x)**: Client-side timestamp-based IDs (`Date.now().toString()`)
+
+### Image URL Construction
+
+Use `getImageUrl()` utility (src/utils/imageUtils.ts:9-23):
+
 ```typescript
-id: Date.now().toString()
+const imageUrl = getImageUrl(generatedImage);
+// Returns: image.asset.path (backend URL) or image.url (legacy blob URL)
 ```
 
-**Collision risk**: Low (assumes user won't generate >1 image per millisecond).
+**Why?**
+- Supports both backend assets and legacy local URLs
+- Centralizes URL logic (easy to change CDN configuration)
+- Handles missing data gracefully
 
 ---
 
@@ -380,10 +526,12 @@ id: Date.now().toString()
 
 When making changes:
 1. Test all 3 generation modes (text/image/video)
-2. Verify DB persistence (reload page, check history intact)
-3. Test on mobile viewport (responsive design)
-4. Check Netlify function logs for errors
-5. Verify PWA functionality (offline mode, install prompt)
+2. Verify backend persistence (reload page, check history intact)
+3. Test authentication flow (login, register, logout, token expiry)
+4. Test on mobile viewport (responsive design)
+5. Check Netlify function logs for AI generation errors
+6. Verify PWA functionality (offline mode, install prompt)
+7. Test multi-user scenarios (different users don't see each other's images)
 
 ---
 
@@ -396,52 +544,83 @@ When making changes:
 
 ### Commit Guidelines
 
-- Use descriptive commit messages
+- Use descriptive commit messages with conventional commits format
 - Reference PR numbers when merging
-- Example: `refactor: extract generation logic into useGenerationLogic hook`
+- Example: `feat: add JWT authentication system (#26)`
 
-### Recent Refactorings (Git History Context)
+### Recent Major Changes (Git History Context)
 
-Per the git log:
-- **5c89554**: Merged PR #25 (refactor props/state in components)
-- **08b3a57**: Extracted `useGenerationLogic` hook from `Home.tsx`
-- **23b3d44**: Cleaned up imports and component structure
+**Version 2.0.0 - Major Architecture Overhaul**:
+- Migrated from SQLite + IndexedDB to RESTful backend API
+- Added JWT-based authentication system
+- Added multi-user support with user isolation
+- Changed data model to use server-side assets
+- Added `AuthContext`, `apiClient`, `authService`
+- Removed `sqliteService.ts` and SQL.js dependencies from data flow
+- Added TanStack Query for server state management
 
-**Pattern**: The codebase is actively being refactored for better separation of concerns.
+**Previous version (1.x)**:
+- Client-side only architecture
+- No authentication
+- SQLite + IndexedDB persistence
+- Base64 image storage
+
+**Pattern**: The codebase underwent a major architectural refactor from client-side to server-side persistence.
 
 ---
 
 ## Important Constraints & Gotchas
 
-### 1. Database is Browser-Local
+### 1. Backend API Dependency
 
-Users can't access their history on different devices/browsers. This is **by design** for privacy.
+**Critical**: The app now **requires** a running backend API server for core functionality.
 
-### 2. Base64 Image Storage
+- Images are stored on the backend (not in browser)
+- User authentication requires backend endpoints
+- History won't load without backend connection
 
-Images are stored as data URIs (base64-encoded). This is **inefficient** for storage but simplifies architecture (no file hosting needed).
+**Recommendation**: Provide clear error messages when backend is unavailable.
 
-**Implication**: Large images inflate DB size. Consider recommending users clear old history.
+### 2. Authentication Required
 
-### 3. Video Polling Interval
+All routes except `/login` and `/register` require authentication. Users must create an account to use the app.
+
+### 3. Image Storage Location
+
+Images are stored on the **backend server**, not in browser:
+- **Pros**: Multi-device sync, persistent across browsers, better for large images
+- **Cons**: Requires internet connection, backend storage costs
+
+### 4. Video Polling Interval
 
 Hardcoded to 10 seconds (src/hooks/useGenerationLogic.ts:240-242). Adjust if videos take longer than expected.
 
-### 4. Vite Proxy Configuration
+### 5. Vite Proxy Configuration
 
-The dev server expects Netlify Functions on port 8888. If you run `vite dev` directly (not `netlify dev`), API calls will fail.
+The dev server expects Netlify Functions on port 8888. If you run `vite dev` directly (not `netlify dev`), AI generation will fail.
 
-### 5. PWA Caching
+### 6. PWA Caching
 
 The app is a PWA with aggressive caching. During development, you may need to:
 - Hard refresh (Ctrl+Shift+R)
 - Clear service workers in DevTools
+- Clear localStorage (auth tokens persist)
 
-### 6. TypeScript Strictness
+### 7. TypeScript Strictness
 
 TypeScript is configured but not in strict mode. Some type assertions use `any` (e.g., src/hooks/useGenerationLogic.ts:205, 246).
 
 **Recommendation**: Gradually increase strictness for better type safety.
+
+### 8. CORS Configuration
+
+Backend API must allow requests from frontend origin (typically `http://localhost:3000` in dev).
+
+### 9. Token Expiration
+
+JWT tokens may expire. The app handles 401 responses by clearing the token and redirecting to login, but there's no automatic refresh mechanism.
+
+**Recommendation**: Implement refresh tokens or handle expiration more gracefully.
 
 ---
 
@@ -449,14 +628,16 @@ TypeScript is configured but not in strict mode. Some type assertions use `any` 
 
 ### When Working on This Codebase
 
-1. **Understand the architecture first**: Review this file before making changes
+1. **Understand the architecture first**: This is now a **full-stack application** with frontend + backend
 2. **Respect the hook pattern**: Business logic goes in hooks, not components
-3. **Test DB persistence**: After DB changes, verify IndexedDB updates
-4. **Mind file size limits**: Don't allow uploads >4MB
-5. **Preserve Friends theme**: Maintain playful tone in UI (phrases, colors)
-6. **Use existing utilities**: Don't duplicate file handling, DB operations, etc.
-7. **Check Netlify function logs**: For API debugging (not visible in browser)
-8. **Consider mobile UX**: All changes should work on mobile viewports
+3. **Use apiClient for backend calls**: Never use raw `fetch` for authenticated endpoints
+4. **Handle auth states**: Consider logged-in vs. logged-out user experiences
+5. **Mind file size limits**: Max 4MB per file, max 3 images in image mode
+6. **Preserve Friends theme**: Maintain playful tone in UI (phrases, colors)
+7. **Use existing utilities**: `getImageUrl()`, `apiClient`, `authService`
+8. **Check Netlify function logs**: For AI debugging (not visible in browser)
+9. **Consider mobile UX**: All changes should work on mobile viewports
+10. **Test auth flows**: Login, logout, token expiry, unauthorized access
 
 ### Common Tasks
 
@@ -467,56 +648,119 @@ TypeScript is configured but not in strict mode. Some type assertions use `any` 
 3. Follow existing naming (PascalCase for components)
 4. Use Tailwind classes (avoid inline styles)
 5. Import into relevant page (e.g., `Home.tsx`)
+6. Consider auth state if component behavior changes based on user
 
 #### Modifying Generation Logic
 
 1. Locate logic in `src/hooks/useGenerationLogic.ts`
 2. Update state/actions as needed
-3. Propagate changes to `Home.tsx` (component receives `state` + `actions`)
-4. Test all 3 modes (text/image/video)
+3. Test AI generation (Netlify Functions)
+4. Test backend upload (ensure images persist)
+5. Propagate changes to `Home.tsx` (component receives `state` + `actions`)
+6. Test all 3 modes (text/image/video)
 
 #### Adding a New API Endpoint
 
-1. Create function: `netlify/functions/new-endpoint.js`
-2. Follow pattern from `generate-image.js` (auth, error handling)
-3. Add client call in `src/services/geminiService.ts`
-4. Use in hook or component
+**Frontend:**
+1. Add endpoint to `src/services/api.ts`
+2. Create service function if needed (e.g., in `uploadService.ts`)
+3. Use `apiClient` for authenticated requests
+4. Handle errors and loading states
 
-#### Database Schema Changes
+**Backend:** (not included in this repo)
+1. Implement route handler with authentication middleware
+2. Add database queries/mutations
+3. Return consistent JSON responses
+4. Handle errors with appropriate status codes
 
-1. Update table creation in `src/services/sqliteService.ts:34-36`
-2. Add migration logic if needed (or document manual DB reset)
-3. Update TypeScript interfaces in `src/types.ts`
+#### Adding Protected Routes
+
+1. Add route in `App.tsx` inside authenticated routes section (lines 40-46)
+2. Create page component in `src/pages/`
+3. Use `useAuth()` hook if component needs user data
+4. Test with logged-in and logged-out states
+
+#### Modifying Data Model
+
+**Frontend:**
+1. Update TypeScript interfaces in `src/types.ts`
+2. Update `GeneratedImage`, `Asset`, or `User` interfaces
+3. Check all usages (TypeScript will help identify)
+
+**Backend:** (not included in this repo)
+1. Create database migration
+2. Update models/schemas
+3. Update API response serialization
 
 ### Performance Considerations
 
-- **DB export on every change**: Not a bottleneck (SQLite is small), but avoid rapid writes
-- **Base64 encoding**: Inflates image size by ~33%, consider optimization for large images
+- **Backend API calls**: Minimize unnecessary requests (use caching via TanStack Query)
+- **Image loading**: Backend assets should be optimized (compression, CDN)
+- **Auth checks**: Cached via AuthContext (only fetches user once on mount)
 - **Video polling**: Uses setInterval, ensure cleanup on unmount (already handled)
+- **Asset URLs**: Consider adding CDN for production (not yet implemented)
 
 ### Accessibility Notes
 
-**Current state**: Basic accessibility (semantic HTML, no ARIA attributes).
+**Current state**: Basic accessibility (semantic HTML, some ARIA attributes).
+
+**Implemented**:
+- ARIA labels on model selector
+- Lazy loading for images
+- Focus states on interactive elements
 
 **Improvement areas**:
-- Add ARIA labels to interactive elements
-- Test keyboard navigation
+- Add more ARIA labels to complex interactions
+- Test keyboard navigation thoroughly
 - Add screen reader announcements for generation status
+- Improve color contrast ratios
+
+---
+
+## Security Considerations
+
+### Authentication Security
+
+1. **JWT Storage**: Tokens stored in `localStorage` (vulnerable to XSS)
+   - **Recommendation**: Consider `httpOnly` cookies for production
+   - **Mitigation**: Ensure backend validates and expires tokens
+
+2. **Token Exposure**: Client-side storage means tokens accessible to JavaScript
+   - **Mitigation**: Short-lived tokens + refresh token rotation (not yet implemented)
+
+3. **CORS**: Backend must properly configure CORS to prevent unauthorized origins
+
+4. **API Key Protection**: `GEMINI_API_KEY` hidden in Netlify Functions (good!)
+
+### Best Practices for AI Assistants
+
+- Never log or expose `GEMINI_API_KEY` in client code
+- Validate user input before sending to backend
+- Sanitize file uploads (size, type checks already implemented)
+- Handle auth errors gracefully (don't expose sensitive error details)
+- Use HTTPS in production for all API calls
 
 ---
 
 ## Future Enhancement Ideas
 
-Based on codebase analysis, these are logical next steps:
+Based on current architecture, these are logical next steps:
 
-1. **Pull-to-Refresh**: Already scaffolded (see commented code in App.tsx:55-59)
-2. **Cloud Sync**: Add optional account system + cloud storage
-3. **Image Editing**: Filters, crops, etc. (Gemini supports editing prompts)
-4. **Batch Generation**: Generate multiple variations at once
-5. **History Search**: Filter by prompt text, date range
-6. **Export/Import History**: Let users backup/restore their gallery
-7. **Keyboard Shortcuts**: Power user features
-8. **Automated Tests**: Add Jest + React Testing Library
+1. **Refresh Token System**: Implement refresh tokens to avoid frequent re-logins
+2. **Cloud CDN Integration**: Serve images from CDN for better performance
+3. **Video Backend Integration**: Complete video upload/storage on backend
+4. **Image Editing**: Filters, crops, etc. (Gemini supports editing prompts)
+5. **Batch Generation**: Generate multiple variations at once
+6. **History Search**: Filter by prompt text, date range, user
+7. **Export/Import History**: Let users backup/restore their gallery
+8. **Keyboard Shortcuts**: Power user features
+9. **Automated Tests**: Add Jest + React Testing Library
+10. **Social Features**: Share images, collaborative galleries (requires backend changes)
+11. **Admin Dashboard**: User management, usage analytics
+12. **Rate Limiting**: Prevent abuse of AI generation (backend side)
+13. **Email Verification**: Add email to user registration
+14. **Password Reset**: Forgot password flow
+15. **Profile Management**: Update username, avatar, settings
 
 ---
 
@@ -524,10 +768,12 @@ Based on codebase analysis, these are logical next steps:
 
 ### Most Important Files to Understand
 
-1. `src/hooks/useGenerationLogic.ts` - **All business logic**
-2. `src/services/sqliteService.ts` - **Data persistence**
-3. `src/App.tsx` - **Routing & initialization**
-4. `netlify/functions/generate-image.js` - **API integration example**
+1. `src/hooks/useGenerationLogic.ts` - **All generation logic**
+2. `src/services/apiClient.ts` - **HTTP client with auth**
+3. `src/services/authService.ts` - **Authentication logic**
+4. `src/context/AuthContext.tsx` - **Auth state management**
+5. `src/App.tsx` - **Routing & auth guards**
+6. `netlify/functions/generate-image.js` - **AI integration example**
 
 ### Key Commands
 
@@ -537,20 +783,91 @@ npm run build          # Production build
 npm run version:bump   # Update version in package.json
 ```
 
+### Environment Variables Checklist
+
+**Frontend:**
+- `VITE_API_BASE_URL` - Backend API URL (default: http://localhost:3001)
+
+**Netlify:**
+- `GEMINI_API_KEY` - Gemini AI API key (required)
+
 ### Debugging Tips
 
-- **DB issues**: Check IndexedDB in DevTools → Application → IndexedDB → `dude_images_db`
-- **API issues**: Check Netlify CLI output for function logs
-- **Image not showing**: Verify base64 data URI format in DB
+- **Auth issues**: Check localStorage for `auth_token`, check backend `/api/v1/auth/me`
+- **API issues**: Check Network tab in DevTools, verify backend is running
+- **Image not showing**: Check `asset.path` value, verify backend serves static files
 - **Video stuck**: Check browser Network tab for polling requests
+- **401 Unauthorized**: Token expired or invalid → should auto-redirect to login
+- **CORS errors**: Backend CORS configuration issue
 
 ---
 
-## Version
+## API Documentation Quick Reference
 
-This document reflects the codebase state as of **v1.3.5** (package.json version).
+### Authentication Endpoints
 
-Last updated: 2026-01-11
+```
+POST /api/v1/auth/login
+Body: { username: string, password: string }
+Response: { user: User, accessToken: string }
+
+POST /api/v1/auth/register
+Body: { username: string, password: string }
+Response: { user: User, accessToken: string }
+
+GET /api/v1/auth/me
+Headers: Authorization: Bearer <token>
+Response: User
+```
+
+### Image Endpoints
+
+```
+GET /api/v1/images
+Headers: Authorization: Bearer <token>
+Response: GeneratedImage[]
+
+GET /api/v1/images/:id
+Headers: Authorization: Bearer <token>
+Response: GeneratedImage
+
+POST /api/v1/images
+Headers: Authorization: Bearer <token>
+Body: FormData { image: File, prompt: string, aspectRatio: string, description?: string }
+Response: GeneratedImage
+
+DELETE /api/v1/images/:id
+Headers: Authorization: Bearer <token>
+Response: { success: boolean }
+```
+
+---
+
+## Version History
+
+### Version 2.0.3 (Current)
+
+**Major Changes:**
+- ✅ Migrated from SQLite + IndexedDB to RESTful backend API
+- ✅ Added JWT-based authentication system
+- ✅ Added multi-user support with user isolation
+- ✅ Implemented server-side image storage with Asset model
+- ✅ Added TanStack Query for server state management
+- ✅ Added Lightbox component for image viewing
+- ✅ Removed client-side SQLite dependency from data flow
+
+**Breaking Changes from 1.x:**
+- Backend API now required (app won't work without it)
+- All users must authenticate (no anonymous usage)
+- Image data structure changed (added `userId`, `assetId`, `asset`)
+- Images stored on server (not in browser)
+
+### Version 1.3.5 (Legacy)
+
+- Client-side only architecture
+- SQLite + IndexedDB persistence
+- No authentication
+- Base64 image storage in browser
 
 ---
 
@@ -561,5 +878,12 @@ For codebase questions:
 2. Check inline code comments
 3. Examine git history for context on recent changes
 4. Refer to README.md for user-facing documentation
+5. Check backend API documentation (separate repo)
 
-**Happy coding!** May your prompts be creative and your generation times be swift.
+**Happy coding!** May your prompts be creative and your APIs be RESTful.
+
+---
+
+**Document Version**: 2.0
+**Last Updated**: 2026-01-25
+**Codebase Version**: 2.0.3
