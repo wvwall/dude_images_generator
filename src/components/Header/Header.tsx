@@ -1,5 +1,5 @@
 import { Coffee, LogOut, Moon, Sun } from "lucide-react";
-import React from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { useTheme } from "../../context/ThemeContext";
@@ -8,11 +8,30 @@ const Header: React.FC = () => {
   const navigate = useNavigate();
   const { user, logout, isAuthenticated } = useAuth();
   const { isDark, toggleTheme } = useTheme();
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const handleLogout = () => {
     logout();
     navigate("/login");
   };
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    if (isDropdownOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isDropdownOpen]);
 
   const navClasses = ({ isActive }: { isActive: boolean }) =>
     `font-hand transition-colors underline-offset-4 decoration-2 ${
@@ -79,21 +98,30 @@ const Header: React.FC = () => {
             {isDark ? <Sun size={18} /> : <Moon size={18} />}
           </button>
 
-          {/* User info and logout - only visible when authenticated */}
+          {/* User avatar with dropdown - only visible when authenticated */}
           {isAuthenticated && (
-            <>
-              <div className="flex items-center justify-center w-12 h-12 gap-2 px-2 py-2 text-center border rounded-full bg-friends-yellow-light dark:bg-friends-purple border-friends-yellow">
+            <div className="relative" ref={dropdownRef}>
+              <button
+                type="button"
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                className="flex items-center justify-center w-12 h-12 gap-2 px-2 py-2 text-center border rounded-full bg-friends-yellow-light dark:bg-friends-purple border-friends-yellow cursor-pointer hover:scale-105 transition-transform">
                 <span className="text-sm font-bold tracking-tighter uppercase font-hand text-friends-purple dark:text-friends-yellow">
                   {user?.username[0].toUpperCase()}
                 </span>
-              </div>
-              <button
-                onClick={handleLogout}
-                className="p-2 transition-colors rounded-full text-friends-purple dark:text-gray-300 hover:text-friends-red hover:bg-friends-red/10 hover:scale-110"
-                title="Logout">
-                <LogOut size={16} />
               </button>
-            </>
+
+              {/* Dropdown menu */}
+              {isDropdownOpen && (
+                <div className="absolute right-0 mt-2 w-40 bg-white dark:bg-dark-surface border-2 border-gray-200 dark:border-dark-border rounded-xl shadow-lg overflow-hidden z-50">
+                  <button
+                    onClick={handleLogout}
+                    className="w-full flex items-center gap-2 px-4 py-3 text-sm font-medium text-friends-purple dark:text-gray-300 hover:bg-friends-red/10 hover:text-friends-red transition-colors">
+                    <LogOut size={16} />
+                    <span>Logout</span>
+                  </button>
+                </div>
+              )}
+            </div>
           )}
         </div>
       </div>
