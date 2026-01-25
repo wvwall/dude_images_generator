@@ -73,10 +73,7 @@ const Header: React.FC = () => {
           {/* Theme toggle - always visible */}
           <button
             type="button"
-            onClick={() => {
-              console.log("Toggle clicked, current isDark:", isDark);
-              toggleTheme();
-            }}
+            onClick={toggleTheme}
             className="p-2 transition-colors rounded-full text-friends-purple dark:text-friends-yellow hover:bg-friends-purple/10 dark:hover:bg-friends-yellow/10 hover:scale-110"
             title={isDark ? "Light mode" : "Dark mode"}>
             {isDark ? <Sun size={18} /> : <Moon size={18} />}
