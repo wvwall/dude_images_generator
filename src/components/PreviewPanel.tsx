@@ -33,10 +33,10 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({ state, actions }) => {
       data-tour="preview-panel">
       <div
         className={`
-           w-full md:min-h-[510px] bg-white border-4 border-friends-purple rounded-2xl flex flex-col items-center justify-center overflow-hidden shadow-xl
+           w-full md:min-h-[510px] bg-white dark:bg-dark-surface border-4 border-friends-purple rounded-2xl flex flex-col items-center justify-center overflow-hidden shadow-xl
           ${
             !currentImage && !isGeneratingVideo && !isVideoReady
-              ? 'bg-[url("https://www.transparenttextures.com/patterns/cubes.png")]'
+              ? 'bg-[url("https://www.transparenttextures.com/patterns/cubes.png")] dark:bg-none'
               : ""
           }
         `}>
@@ -48,12 +48,12 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({ state, actions }) => {
             </div>
 
             <div>
-              <h3 className="mb-3 text-2xl text-friends-purple font-hand">
+              <h3 className="mb-3 text-2xl text-friends-purple dark:text-friends-yellow font-hand">
                 {videoStatus}
               </h3>
 
               {videoProgress !== undefined && videoProgress > 0 && (
-                <div className="w-full bg-gray-200 rounded-full h-3 mb-3 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                <div className="w-full bg-gray-200 dark:bg-dark-card rounded-full h-3 mb-3 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                   <div
                     className="h-full rounded-full transition-all duration-1000 bg-friends-yellow"
                     style={{ width: `${videoProgress}%` }}
@@ -61,7 +61,7 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({ state, actions }) => {
                 </div>
               )}
 
-              <p className="text-base font-medium text-gray-500">
+              <p className="text-base font-medium text-gray-500 dark:text-gray-400">
                 This might take a few minutes. Grab a coffee! ☕
               </p>
 
@@ -99,13 +99,13 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({ state, actions }) => {
           </div>
         ) : currentImage ? (
           // Block 3: Generated Static Image
-          <div className="relative w-full h-full bg-gray-50 group">
-            <div className="overflow-hidden relative w-full h-full rounded-lg border-8 border-white shadow-lg">
+          <div className="relative w-full h-full bg-gray-50 dark:bg-dark-card group">
+            <div className="overflow-hidden relative w-full h-full rounded-lg border-8 border-white dark:border-dark-surface shadow-lg">
               <img
                 loading="lazy"
                 src={getImageUrl(currentImage)}
                 alt="Generated result"
-                className="object-contain w-full h-full bg-gray-200"
+                className="object-contain w-full h-full bg-gray-200 dark:bg-dark-card"
               />
             </div>
 
@@ -126,7 +126,7 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({ state, actions }) => {
             </div>
             <div>
               <div className="flex gap-2 justify-center items-start">
-                <h3 className="mb-2 text-2xl text-friends-purple font-hand">
+                <h3 className="mb-2 text-2xl text-friends-purple dark:text-friends-yellow font-hand">
                   Oh. My. God.
                 </h3>
                 <AudioPlayer
@@ -135,7 +135,7 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({ state, actions }) => {
                 />
               </div>
 
-              <p className="text-base font-medium text-gray-500">
+              <p className="text-base font-medium text-gray-500 dark:text-gray-400">
                 It's empty in here! Enter a prompt to start creating.
               </p>
             </div>

@@ -19,7 +19,7 @@ const PivotButton: React.FC<PivotButtonProps> = ({
         w-full py-4 px-6 rounded-xl font-bold text-base transition-all duration-200 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] border-2 border-black
         ${
           isDisabled
-            ? "bg-gray-100 text-gray-400 border-gray-300 shadow-none cursor-not-allowed"
+            ? "bg-gray-100 dark:bg-dark-card text-gray-400 border-gray-300 dark:border-dark-border shadow-none cursor-not-allowed"
             : "bg-friends-yellow text-black hover:bg-yellow-400"
         }
       `}>

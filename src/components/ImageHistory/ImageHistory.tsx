@@ -25,7 +25,7 @@ const ImageHistory: React.FC<ImageHistoryProps> = ({
 
   return (
     <div className="mt-8">
-      <div className="flex items-center gap-1 pb-4 mb-8 border-b-2 border-dashed border-friends-purple/70">
+      <div className="flex items-center gap-1 pb-4 mb-8 border-b-2 border-dashed border-friends-purple/70 dark:border-friends-yellow/70">
         {isHomePath ? (
           <span className="px-3 py-1 text-xs font-bold rounded-lg shadow-xs text-friends-yellow bg-friends-purple">
             {images?.length >= 3 ? 3 : images?.length} of {images?.length} SNAPS
@@ -37,10 +37,10 @@ const ImageHistory: React.FC<ImageHistoryProps> = ({
         )}
         {isHomePath && (
           <>
-            <GalleryHorizontalEnd size={18} className="ml-auto text-black" />
+            <GalleryHorizontalEnd size={18} className="ml-auto text-black dark:text-white" />
             <button
               onClick={() => navigate("/gallery")}
-              className="text-sm font-semibold text-black underline decoration-2 underline-offset-4 hover:text-friends-purple hover:brightness-110"
+              className="text-sm font-semibold text-black dark:text-white underline decoration-2 underline-offset-4 hover:text-friends-purple dark:hover:text-friends-yellow hover:brightness-110"
               title="See more">
               See all
             </button>

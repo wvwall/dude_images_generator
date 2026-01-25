@@ -35,7 +35,7 @@ const ImageUploadArea: React.FC<ImageUploadAreaProps> = ({
   return (
     <div className="space-y-3 duration-200 animate-in fade-in zoom-in-95">
       <div className="flex items-center justify-between">
-        <label className="block text-sm font-bold tracking-wide text-gray-700 uppercase">
+        <label className="block text-sm font-bold tracking-wide text-gray-700 dark:text-gray-300 uppercase">
           Your Reference
         </label>
         {previewUrls.length > 0 && (
@@ -85,8 +85,8 @@ const ImageUploadArea: React.FC<ImageUploadAreaProps> = ({
                 flex flex-col items-center justify-center h-32 gap-2 transition-colors border-2 border-dashed rounded-xl group
                 ${
                   isDragging
-                    ? "border-friends-purple bg-friends-cream"
-                    : "border-friends-purple/30 bg-friends-cream/30 hover:bg-friends-cream"
+                    ? "border-friends-purple dark:border-friends-yellow bg-friends-purple-light/50 dark:bg-friends-purple/20"
+                    : "border-friends-purple/30 dark:border-gray-600 bg-friends-purple-light/20 dark:bg-dark-card hover:bg-friends-purple-light/50 dark:hover:bg-dark-border"
                 }
                 ${
                   maxImages.isReached
@@ -98,24 +98,24 @@ const ImageUploadArea: React.FC<ImageUploadAreaProps> = ({
           <MessageSquareWarning className="text-friends-red" />
         ) : (
           <Upload
-            className={`transition-transform text-friends-purple ${
+            className={`transition-transform text-friends-purple dark:text-friends-yellow ${
               isDragging ? "scale-110" : "group-hover:scale-110"
             }`}
             size={24}
           />
         )}
-        <span className="text-sm font-bold text-friends-purple">
+        <span className="text-sm font-bold text-friends-purple dark:text-friends-yellow">
           {!maxImages.isReached &&
             (isDragging ? "Drop it!" : "Upload photos to pivot")}
         </span>
 
         {!isDragging && !maxImages.isReached && (
-          <span className="text-xs text-gray-500">
+          <span className="text-xs text-gray-500 dark:text-gray-400">
             JPG or PNG, max 4MB per image
           </span>
         )}
         {maxImages.isReached && (
-          <span className="text-sm font-semibold text-friends-purple">
+          <span className="text-sm font-semibold text-friends-purple dark:text-friends-purple-light">
             Images limit reached.
             <span className="text-[10px] text-friends-red ml-1">
               ( {maxImages.limit} )

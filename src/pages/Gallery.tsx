@@ -35,11 +35,11 @@ const Gallery: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen pb-12 font-sans bg-friends-purple-light">
+    <div className="min-h-screen pb-12 font-sans bg-friends-purple-light dark:bg-dark-bg">
       <main className="px-4 pt-10 mx-auto max-w-7xl">
         <div className="mb-8 text-center">
-          <h2 className="mb-2 text-4xl text-gray-800 font-hand">The Gallery</h2>
-          <p className="font-medium text-gray-600">
+          <h2 className="mb-2 text-4xl text-gray-800 dark:text-white font-hand">The Gallery</h2>
+          <p className="font-medium text-gray-600 dark:text-gray-400">
             Every masterpiece you've created.
           </p>
         </div>
@@ -51,7 +51,7 @@ const Gallery: React.FC = () => {
             isLoading={isPending}
           />
         ) : (
-          <div className="py-20 text-center bg-white border-2 border-gray-300 border-dashed rounded-2xl">
+          <div className="py-20 text-center bg-white dark:bg-dark-surface border-2 border-gray-300 dark:border-dark-border border-dashed rounded-2xl">
             <p className="text-xl text-gray-400 font-hand">
               No memories yet...
             </p>

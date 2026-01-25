@@ -9,6 +9,12 @@
   --color-friends-purple-light: #d1caf1;
   --color-friends-yellow-light: #fff5cc;
 
+  /* Dark mode colors */
+  --color-dark-bg: #1a1a2e;
+  --color-dark-surface: #16213e;
+  --color-dark-card: #1f2937;
+  --color-dark-border: #374151;
+
   /* Custom fonts */
   --font-sans: 'Poppins', sans-serif;
   --font-hand: 'Permanent Marker', cursive;

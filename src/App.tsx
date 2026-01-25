@@ -16,6 +16,7 @@ import Auth from "./pages/Auth";
 import LoadingPage from "./pages/LoadingPage";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "./context/AuthContext";
+import { ThemeProvider } from "./context/ThemeContext";
 const queryClient = new QueryClient();
 
 import { useAuth } from "./context/AuthContext";
@@ -35,7 +36,7 @@ const AppContent: React.FC = () => {
       }}>
       <Header />
       <ScrollToTop />
-      <section className="pb-12 md:pb-0 bg-friends-purple-light">
+      <section className="pb-12 md:pb-0 bg-friends-purple-light dark:bg-dark-bg">
         <Routes>
           {isAuthenticated ? (
             <>
@@ -71,9 +72,11 @@ function ScrollToTop() {
 const App: React.FC = () => {
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <AppContent />
-      </AuthProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          <AppContent />
+        </AuthProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 };

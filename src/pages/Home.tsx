@@ -20,7 +20,7 @@ const Home: React.FC = () => {
   }, [setIsOpen]);
 
   return (
-    <section className="min-h-screen pb-24 font-sans bg-friends-purple-light">
+    <section className="min-h-screen pb-24 font-sans bg-friends-purple-light dark:bg-dark-bg">
       <main className="px-4 pt-12 mx-auto max-w-7xl md:pt-16">
         <InputHeader />
         <div className="flex flex-col gap-8 mt-12 lg:items-start lg:flex-row">
