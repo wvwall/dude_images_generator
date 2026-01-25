@@ -53,7 +53,7 @@ const Header: React.FC = () => {
           </NavLink>
         </div>
 
-        {/* Desktop Nav */}
+        {/* Desktop Nav - only visible when authenticated */}
         <nav
           className={`items-center justify-center flex-1 hidden gap-6 md:flex ${
             isAuthenticated ? "opacity-100" : "opacity-0"
@@ -69,27 +69,31 @@ const Header: React.FC = () => {
           </>
         </nav>
 
-        <div
-          className={`flex items-center justify-end flex-1 md:justify-center gap-3 ${
-            isAuthenticated ? "opacity-100" : "opacity-0"
-          }`}>
+        <div className="flex items-center justify-end flex-1 md:justify-center gap-3">
+          {/* Theme toggle - always visible */}
           <button
             onClick={toggleTheme}
             className="p-2 transition-colors rounded-full text-friends-purple dark:text-friends-yellow hover:bg-friends-purple/10 dark:hover:bg-friends-yellow/10 hover:scale-110"
             title={isDark ? "Light mode" : "Dark mode"}>
             {isDark ? <Sun size={18} /> : <Moon size={18} />}
           </button>
-          <div className="flex items-center justify-center w-12 h-12 gap-2 px-2 py-2 text-center border rounded-full bg-friends-yellow-light dark:bg-friends-purple border-friends-yellow">
-            <span className="text-sm font-bold tracking-tighter uppercase font-hand text-friends-purple dark:text-friends-yellow">
-              {user?.username[0].toUpperCase()}
-            </span>
-          </div>
-          <button
-            onClick={handleLogout}
-            className="p-2 transition-colors rounded-full text-friends-purple dark:text-gray-300 hover:text-friends-red hover:bg-friends-red/10 hover:scale-110"
-            title="Logout">
-            <LogOut size={16} />
-          </button>
+
+          {/* User info and logout - only visible when authenticated */}
+          {isAuthenticated && (
+            <>
+              <div className="flex items-center justify-center w-12 h-12 gap-2 px-2 py-2 text-center border rounded-full bg-friends-yellow-light dark:bg-friends-purple border-friends-yellow">
+                <span className="text-sm font-bold tracking-tighter uppercase font-hand text-friends-purple dark:text-friends-yellow">
+                  {user?.username[0].toUpperCase()}
+                </span>
+              </div>
+              <button
+                onClick={handleLogout}
+                className="p-2 transition-colors rounded-full text-friends-purple dark:text-gray-300 hover:text-friends-red hover:bg-friends-red/10 hover:scale-110"
+                title="Logout">
+                <LogOut size={16} />
+              </button>
+            </>
+          )}
         </div>
       </div>
     </header>
