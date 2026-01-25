@@ -64,29 +64,29 @@ const ImageView: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen pb-12 font-sans bg-friends-purple-light">
+    <div className="min-h-screen pb-12 font-sans bg-friends-purple-light dark:bg-dark-bg">
       <main className="max-w-3xl px-4 pt-16 mx-auto">
         {/* Skeleton */}
         {isLoading && (
           <div className="animate-pulse">
-            <div className="h-12 p-4 bg-gray-200 rounded-2xl" />
+            <div className="h-12 p-4 bg-gray-200 dark:bg-dark-card rounded-2xl" />
 
             <div className="py-10 ">
-              <div className="p-3 pb-4 bg-white border-2 border-gray-200 shadow-md rounded-xl">
-                <div className="w-full bg-gray-200 rounded-lg aspect-square" />
+              <div className="p-3 pb-4 bg-white dark:bg-dark-surface border-2 border-gray-200 dark:border-dark-border shadow-md rounded-xl">
+                <div className="w-full bg-gray-200 dark:bg-dark-card rounded-lg aspect-square" />
 
                 <div className="px-1 mt-4">
                   <div className="flex items-start gap-2">
-                    <div className="w-4 h-4 mt-1 bg-gray-200 rounded-sm shrink-0" />
+                    <div className="w-4 h-4 mt-1 bg-gray-200 dark:bg-dark-card rounded-sm shrink-0" />
                     <div className="flex-1 space-y-2">
-                      <div className="w-full h-4 bg-gray-200 rounded-sm" />
-                      <div className="w-5/6 h-4 bg-gray-200 rounded-sm" />
+                      <div className="w-full h-4 bg-gray-200 dark:bg-dark-card rounded-sm" />
+                      <div className="w-5/6 h-4 bg-gray-200 dark:bg-dark-card rounded-sm" />
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between pt-3 mt-4 border-t border-gray-100">
-                    <div className="w-20 h-3 bg-gray-200 rounded-sm" />
-                    <div className="w-10 h-5 bg-gray-200 rounded-sm" />
+                  <div className="flex items-center justify-between pt-3 mt-4 border-t border-gray-100 dark:border-dark-border">
+                    <div className="w-20 h-3 bg-gray-200 dark:bg-dark-card rounded-sm" />
+                    <div className="w-10 h-5 bg-gray-200 dark:bg-dark-card rounded-sm" />
                   </div>
                 </div>
               </div>
@@ -97,16 +97,16 @@ const ImageView: React.FC = () => {
         {/* Content */}
         {!isLoading && (
           <>
-            <h2 className="p-4 text-2xl text-center  border-friends-purple shadow-[3px_3px_0px_0px_rgba(93,63,106,1)] text-gray-800 border  text-balance font-hand bg-friends-yellow-light rounded-2xl">
+            <h2 className="p-4 text-2xl text-center border-friends-purple shadow-[3px_3px_0px_0px_rgba(93,63,106,1)] text-gray-800 dark:text-white border text-balance font-hand bg-friends-yellow-light dark:bg-dark-surface rounded-2xl">
               {image?.prompt}
             </h2>
 
             <div className="flex justify-center py-10">
               <div
                 key={image?.id}
-                className="group cursor-pointer bg-white p-3 pb-4 rounded-xl border-2 border-gray-200 hover:border-friends-purple transition-all duration-300 shadow-md hover:shadow-[5px_5px_0px_0px_rgba(93,63,106,0.2)]">
+                className="group cursor-pointer bg-white dark:bg-dark-surface p-3 pb-4 rounded-xl border-2 border-gray-200 dark:border-dark-border hover:border-friends-purple dark:hover:border-friends-yellow transition-all duration-300 shadow-md hover:shadow-[5px_5px_0px_0px_rgba(93,63,106,0.2)] dark:hover:shadow-[5px_5px_0px_0px_rgba(244,196,48,0.2)]">
                 <div
-                  className="relative w-full overflow-hidden bg-gray-100 border border-gray-200 rounded-lg aspect-square"
+                  className="relative w-full overflow-hidden bg-gray-100 dark:bg-dark-card border border-gray-200 dark:border-dark-border rounded-lg aspect-square"
                   onClick={handleTap}>
                   <img
                     src={image ? getImageUrl(image) : ""}
@@ -164,15 +164,15 @@ const ImageView: React.FC = () => {
                 <div className="px-1 mt-4">
                   <div className="flex items-start gap-2">
                     <Camera size={16} className="mt-1 text-gray-400 shrink-0" />
-                    <p className="text-sm font-medium leading-relaxed text-gray-600 line-clamp-2">
+                    <p className="text-sm font-medium leading-relaxed text-gray-600 dark:text-gray-300 line-clamp-2">
                       "{image?.prompt}"
                     </p>
                   </div>
-                  <div className="flex items-center justify-between pt-3 mt-4 text-xs font-semibold tracking-wide text-gray-500 uppercase border-t border-gray-100">
+                  <div className="flex items-center justify-between pt-3 mt-4 text-xs font-semibold tracking-wide text-gray-500 dark:text-gray-400 uppercase border-t border-gray-100 dark:border-dark-border">
                     <span>
                       {new Date(image?.timestamp).toLocaleDateString()}
                     </span>
-                    <span className="px-2 py-1 bg-gray-100 rounded-sm">
+                    <span className="px-2 py-1 bg-gray-100 dark:bg-dark-card rounded-sm">
                       {image?.aspectRatio}
                     </span>
                   </div>

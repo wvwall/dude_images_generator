@@ -38,7 +38,7 @@ const AspectRatioSelector: React.FC<AspectRatioSelectorProps> = ({
             ${
               selected === ratio.value
                 ? "bg-friends-purple text-white border-friends-purple shadow-[3px_3px_0px_0px_rgba(244,196,48,1)]"
-                : "bg-white text-gray-600 border-gray-200 hover:border-friends-purple hover:text-friends-purple"
+                : "bg-white dark:bg-dark-card text-gray-600 dark:text-gray-300 border-gray-200 dark:border-dark-border hover:border-friends-purple dark:hover:border-friends-yellow hover:text-friends-purple dark:hover:text-friends-yellow"
             }
             ${disabled ? "opacity-50 cursor-not-allowed" : ""}
           `}>

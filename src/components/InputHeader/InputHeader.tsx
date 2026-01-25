@@ -60,7 +60,7 @@ const InputHeader: React.FC = () => {
   return (
     <div className="mb-2">
       <div className="flex items-start gap-2">
-        <h2 className="mb-3 text-4xl text-gray-800 cursor-pointer drop-shadow-xs md:text-7xl font-hand">
+        <h2 className="mb-3 text-4xl text-gray-800 dark:text-white cursor-pointer drop-shadow-xs md:text-7xl font-hand">
           {currentPhrase ? currentPhrase.text : "..."}
         </h2>
 
@@ -88,7 +88,7 @@ const InputHeader: React.FC = () => {
                 style={{ transition: "stroke-dashoffset 100ms linear" }}
               />
             </svg>
-            <div className="absolute inset-0 flex items-center justify-center text-xs font-medium text-gray-700">
+            <div className="absolute inset-0 flex items-center justify-center text-xs font-medium text-gray-700 dark:text-gray-300">
               {currentPhrase && (
                 <AudioPlayer
                   audioSrc={currentPhrase.audioSrc}
@@ -103,11 +103,11 @@ const InputHeader: React.FC = () => {
 
       <div className="flex items-start gap-2">
         <div className="flex flex-col md:flex-row md:items-center md:gap-1">
-          <p className="font-medium text-gray-600">
+          <p className="font-medium text-gray-600 dark:text-gray-400">
             Describe what you want to generate.
           </p>
           <div className="flex items-start gap-2 mt-1 md:mt-0">
-            <p className="font-medium text-gray-600">
+            <p className="font-medium text-gray-600 dark:text-gray-400">
               I'll be there for youuu…
             </p>
             <AudioPlayer

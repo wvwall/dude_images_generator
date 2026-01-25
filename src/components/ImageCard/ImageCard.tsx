@@ -31,8 +31,8 @@ const ImageCard: React.FC<ImageCardProps> = ({ image, onDelete, onEdit }) => {
     <div
       onClick={() => goToDetails(image)}
       key={image.id}
-      className="group cursor-pointer bg-white p-3 pb-4 rounded-xl border-2 border-gray-200 hover:border-friends-purple transition-all duration-300 shadow-md hover:shadow-[5px_5px_0px_0px_rgba(93,63,106,0.2)]">
-      <div className="relative w-full overflow-hidden bg-gray-100 border border-gray-200 rounded-lg aspect-square">
+      className="group cursor-pointer bg-white dark:bg-dark-surface p-3 pb-4 rounded-xl border-2 border-gray-200 dark:border-dark-border hover:border-friends-purple dark:hover:border-friends-yellow transition-all duration-300 shadow-md hover:shadow-[5px_5px_0px_0px_rgba(93,63,106,0.2)] dark:hover:shadow-[5px_5px_0px_0px_rgba(244,196,48,0.2)]">
+      <div className="relative w-full overflow-hidden bg-gray-100 dark:bg-dark-card border border-gray-200 dark:border-dark-border rounded-lg aspect-square">
         <img
           loading="lazy"
           src={imageUrl}
@@ -80,13 +80,13 @@ const ImageCard: React.FC<ImageCardProps> = ({ image, onDelete, onEdit }) => {
       <div className="px-1 mt-4">
         <div className="flex items-start gap-2">
           <Camera size={16} className="mt-1 text-gray-400 shrink-0" />
-          <p className="text-sm font-medium leading-relaxed text-gray-600 line-clamp-2">
+          <p className="text-sm font-medium leading-relaxed text-gray-600 dark:text-gray-300 line-clamp-2">
             "{image.prompt}"
           </p>
         </div>
-        <div className="flex items-center justify-between pt-3 mt-4 text-xs font-semibold tracking-wide text-gray-500 uppercase border-t border-gray-100">
+        <div className="flex items-center justify-between pt-3 mt-4 text-xs font-semibold tracking-wide text-gray-500 dark:text-gray-400 uppercase border-t border-gray-100 dark:border-dark-border">
           <span>{new Date(image.timestamp).toLocaleDateString()}</span>
-          <span className="px-2 py-1 bg-gray-100 rounded-sm">
+          <span className="px-2 py-1 bg-gray-100 dark:bg-dark-card rounded-sm">
             {image.aspectRatio}
           </span>
         </div>

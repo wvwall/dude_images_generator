@@ -1,5 +1,8 @@
 @import 'tailwindcss';
 
+/* Enable class-based dark mode */
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   /* Friends theme colors */
   --color-friends-purple: #5d3f6a;
@@ -8,6 +11,12 @@
   --color-friends-blue: #3498db;
   --color-friends-purple-light: #d1caf1;
   --color-friends-yellow-light: #fff5cc;
+
+  /* Dark mode colors */
+  --color-dark-bg: #1a1a2e;
+  --color-dark-surface: #111827;
+  --color-dark-card: #1f2937;
+  --color-dark-border: #374151;
 
   /* Custom fonts */
   --font-sans: 'Poppins', sans-serif;

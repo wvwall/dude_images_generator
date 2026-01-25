@@ -34,7 +34,7 @@ const ModelSelectorDropdown: React.FC<ModelSelectorDropdownProps> = ({
               | "gemini-3-pro-image-preview"
           )
         }
-        className="block w-full px-3 py-3 pr-4 text-xs font-semibold text-gray-700 bg-white border-2 border-gray-200 rounded-lg shadow-xs appearance-none hover:bg-gray-100 focus:outline-hidden focus:ring-2 focus:ring-offset-0 focus:ring-friends-purple hover:border-friends-yellow hover:text-friends-purple hover:cursor-pointer">
+        className="block w-full px-3 py-3 pr-4 text-xs font-semibold text-gray-700 dark:text-gray-300 bg-white dark:bg-dark-card border-2 border-gray-200 dark:border-dark-border rounded-lg shadow-xs appearance-none hover:bg-gray-100 dark:hover:bg-dark-border focus:outline-hidden focus:ring-2 focus:ring-offset-0 focus:ring-friends-purple dark:focus:ring-friends-yellow hover:border-friends-yellow hover:text-friends-purple dark:hover:text-friends-yellow hover:cursor-pointer">
         {models.map((m) => (
           <option key={m.id} value={m.id}>
             {m.icon} • {m.name}
