@@ -14,7 +14,9 @@ export const getImageUrl = (image: GeneratedImage): string => {
 
   // Otherwise, construct URL from asset path
   if (image.asset?.path) {
-    return `${image.asset.path}`;
+    const prefix = import.meta.env.DEV ? API_BASE_URL + "/" : "";
+    console.log("🚀 ~ getImageUrl ~ mport.meta.env.DEV :", import.meta.env.DEV);
+    return `${prefix}${image.asset.path}`;
   }
 
   // Fallback to empty string if no URL available
