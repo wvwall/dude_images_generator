@@ -117,13 +117,13 @@ const ImageView: React.FC = () => {
                   <div
                     className={`absolute *:mb-3 *:mr-3 inset-0 flex items-end justify-end transition-opacity duration-300 bg-black/40 ${isOverlayVisible ? "opacity-100" : "opacity-0"} [@media(hover:hover)]:group-hover:opacity-100`}>
                     <button
-                      className="absolute p-3 -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 bg-white/20 rounded-full hover:bg-white/30 transition-colors"
+                      className="absolute p-3 transition-colors -translate-x-1/2 -translate-y-1/2 rounded-full top-1/2 left-1/2 bg-white/20 hover:bg-white/30"
                       onClick={(e) => {
                         e.stopPropagation();
                         openLightbox();
                       }}
-                      aria-label="Ingrandisci immagine"
-                      title="Ingrandisci">
+                      aria-label="Expand image"
+                      title="Expand">
                       <Maximize2 size={25} className="text-white" />
                     </button>
                     <button
