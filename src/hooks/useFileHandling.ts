@@ -1,4 +1,5 @@
 import React, { useRef } from "react";
+import { useShallow } from "zustand/react/shallow";
 import { useGenerationStore } from "../store/useGenerationStore";
 
 export const useFileHandling = () => {
@@ -12,7 +13,17 @@ export const useFileHandling = () => {
     setPreviewUrls,
     setIsDragging,
     setError,
-  } = useGenerationStore();
+  } = useGenerationStore(
+    useShallow((s) => ({
+      selectedFiles: s.selectedFiles,
+      previewUrls: s.previewUrls,
+      isDragging: s.isDragging,
+      setSelectedFiles: s.setSelectedFiles,
+      setPreviewUrls: s.setPreviewUrls,
+      setIsDragging: s.setIsDragging,
+      setError: s.setError,
+    })),
+  );
 
   const validateAndAddFiles = (files: File[]) => {
     const newSelectedFiles: File[] = [];

@@ -1,8 +1,8 @@
 import { create } from "zustand";
 import { AspectRatio, GeneratedImage } from "../types";
 
-type Mode = "text" | "image" | "video";
-type Model = "gemini-2.5-flash-image" | "gemini-3-pro-image-preview";
+export type Mode = "text" | "image" | "video";
+export type Model = "gemini-2.5-flash-image" | "gemini-3-pro-image-preview";
 
 interface GenerationState {
   // Form
@@ -49,7 +49,9 @@ interface GenerationActions {
   resetVideo: () => void;
 }
 
-export const useGenerationStore = create<GenerationState & GenerationActions>(
+export type GenerationStore = GenerationState & GenerationActions;
+
+export const useGenerationStore = create<GenerationStore>(
   (set) => ({
     // Form defaults
     prompt: "",

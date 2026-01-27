@@ -1,22 +1,19 @@
 import { useCallback, useEffect, useRef } from "react";
+import { useShallow } from "zustand/react/shallow";
 import { checkVideoStatus, generateVideo } from "../services/geminiService";
 import { useGenerationStore } from "../store/useGenerationStore";
 
 export const useVideoGeneration = () => {
   const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  const {
-    videoStatus,
-    videoProgress,
-    completedVideoUri,
-    setVideoStatus,
-    setVideoProgress,
-    setCompletedVideoUri,
-    setIsGenerating,
-    setError,
-    setSuccess,
-    resetVideo,
-  } = useGenerationStore();
+  // Only subscribe to the 3 values needed for rendering
+  const { videoStatus, videoProgress, completedVideoUri } = useGenerationStore(
+    useShallow((s) => ({
+      videoStatus: s.videoStatus,
+      videoProgress: s.videoProgress,
+      completedVideoUri: s.completedVideoUri,
+    })),
+  );
 
   const stopPolling = useCallback(() => {
     if (pollingIntervalRef.current) {
@@ -25,34 +22,36 @@ export const useVideoGeneration = () => {
     }
   }, []);
 
+  // Use getState() for imperative actions — no subscription needed
   const pollVideoStatus = useCallback(
     async (operationName: string) => {
       const result = await checkVideoStatus(operationName);
+      const s = useGenerationStore.getState();
 
       if (result.status === "completed") {
-        setVideoStatus("Video ready!");
-        setIsGenerating(false);
+        s.setVideoStatus("Video ready!");
+        s.setIsGenerating(false);
         stopPolling();
 
         if (result.videoBuffer) {
           const blob = new Blob([result.videoBuffer], { type: "video/mp4" });
           const url = URL.createObjectURL(blob);
 
-          setCompletedVideoUri(url);
-          setSuccess("Video generated successfully!");
+          s.setCompletedVideoUri(url);
+          s.setSuccess("Video generated successfully!");
 
           const link = document.createElement("a");
           link.href = url;
           link.download = "generated_video.mp4";
           link.click();
-          setTimeout(() => setSuccess(null), 5000);
+          setTimeout(() => useGenerationStore.getState().setSuccess(null), 5000);
         }
       } else {
-        setVideoProgress(result.progress || 0);
-        setVideoStatus("Generating video...");
+        s.setVideoProgress(result.progress || 0);
+        s.setVideoStatus("Generating video...");
       }
     },
-    [stopPolling, setVideoStatus, setIsGenerating, setCompletedVideoUri, setSuccess, setVideoProgress],
+    [stopPolling],
   );
 
   const startVideoGeneration = useCallback(
@@ -61,10 +60,11 @@ export const useVideoGeneration = () => {
       fileToBase64: (file: File) => Promise<string>,
       selectedFiles: File[],
     ) => {
-      setIsGenerating(true);
-      setError(null);
-      resetVideo();
-      setVideoStatus("Starting video generation...");
+      const s = useGenerationStore.getState();
+      s.setIsGenerating(true);
+      s.setError(null);
+      s.resetVideo();
+      s.setVideoStatus("Starting video generation...");
 
       let referenceImageBase64: string | undefined;
       let mimeType: string | undefined;
@@ -88,15 +88,16 @@ export const useVideoGeneration = () => {
         await pollVideoStatus(operationName);
       } catch (err: any) {
         console.error(err);
-        setError(
+        const store = useGenerationStore.getState();
+        store.setError(
           err.message ||
             "Could not start video generation. Please check API Key and Billing status.",
         );
-        resetVideo();
-        setIsGenerating(false);
+        store.resetVideo();
+        store.setIsGenerating(false);
       }
     },
-    [pollVideoStatus, setIsGenerating, setError, setVideoStatus, resetVideo],
+    [pollVideoStatus],
   );
 
   // Cleanup on unmount

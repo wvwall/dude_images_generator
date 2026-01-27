@@ -1,5 +1,6 @@
 import { useTour } from "@reactour/tour";
 import React, { useEffect } from "react";
+import { useShallow } from "zustand/react/shallow";
 import ImageHistory from "../components/ImageHistory/ImageHistory";
 import InputForm from "../components/InputForm";
 import InputHeader from "../components/InputHeader/InputHeader";
@@ -15,7 +16,7 @@ import { useGenerationActions } from "../hooks/useGenerationActions";
 const Home: React.FC = () => {
   const { setIsOpen } = useTour();
 
-  // State — direct from sources
+  // State — subscribe only to what's rendered
   const {
     prompt, setPrompt,
     aspectRatio, setAspectRatio,
@@ -25,15 +26,30 @@ const Home: React.FC = () => {
     currentImage,
     error,
     success,
-  } = useGenerationStore();
+  } = useGenerationStore(
+    useShallow((s) => ({
+      prompt: s.prompt,
+      setPrompt: s.setPrompt,
+      aspectRatio: s.aspectRatio,
+      setAspectRatio: s.setAspectRatio,
+      mode: s.mode,
+      setMode: s.setMode,
+      model: s.model,
+      setModel: s.setModel,
+      isGenerating: s.isGenerating,
+      currentImage: s.currentImage,
+      error: s.error,
+      success: s.success,
+    })),
+  );
 
   const { data: history = [], isLoading: isLoadingHistory } = useImagesQuery();
   const files = useFileHandling();
   const video = useVideoGeneration();
 
-  // Composed actions
+  // Pass fileToBase64 to avoid duplicating useFileHandling inside actions
   const { handleGenerate, handleDelete, handleEdit, handleDownloadCurrent } =
-    useGenerationActions();
+    useGenerationActions(files.fileToBase64);
 
   useEffect(() => {
     const tourSeen = localStorage.getItem("tourSeen");
