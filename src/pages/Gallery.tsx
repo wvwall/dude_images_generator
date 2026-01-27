@@ -1,38 +1,24 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import ImageHistory from "../components/ImageHistory/ImageHistory";
-import { GeneratedImage } from "../types";
-import { useQuery } from "@tanstack/react-query";
-import { api } from "../services/api";
-import { apiClient } from "../services/apiClient";
+import { useImagesQuery, useDeleteMutation } from "../hooks/useImagesQuery";
 
 const Gallery: React.FC = () => {
   const navigate = useNavigate();
-  const [images, setImages] = useState<GeneratedImage[]>([]);
-  const { data, isPending, error } = useQuery({
-    queryKey: ["images"],
-    queryFn: async () => {
-      const response = await apiClient.get<GeneratedImage[]>(api.backend.images.getAll());
-      return response.json();
-    },
-  });
-
-  useEffect(() => {
-    setImages(data);
-  }, [data]);
+  const { data: images = [], isPending } = useImagesQuery();
+  const deleteMutation = useDeleteMutation();
 
   const handleDelete = useCallback(async (id: string) => {
     try {
-      await apiClient.delete(api.backend.images.delete(id));
-      setImages((prev) => prev.filter((i) => i.id !== id));
+      await deleteMutation.mutateAsync(id);
     } catch (err) {
       console.warn("Failed to delete image from backend", err);
     }
-  }, []);
+  }, [deleteMutation]);
 
   const handleEdit = useCallback((id: string) => {
     navigate("/", { state: { editId: id } });
-  }, []);
+  }, [navigate]);
 
   return (
     <div className="min-h-screen pb-12 font-sans bg-friends-purple-light dark:bg-dark-bg">
@@ -43,7 +29,7 @@ const Gallery: React.FC = () => {
             Every masterpiece you've created.
           </p>
         </div>
-        {isPending || images?.length > 0 ? (
+        {isPending || images.length > 0 ? (
           <ImageHistory
             images={images}
             onDelete={handleDelete}
