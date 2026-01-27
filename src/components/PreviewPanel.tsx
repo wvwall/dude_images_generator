@@ -108,7 +108,7 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({
               <button
                 aria-label="Download current image"
                 onClick={onDownload}
-                className="flex gap-2 items-center px-2 py-2 text-sm font-bold text-black rounded-full border-2 border-black shadow-lg transition-colors bg-friends-yellow hover:bg-yellow-400 hover:scale-105">
+                className="hover:cursor-pointer flex gap-2 items-center px-2 py-2 text-sm font-bold text-black rounded-full border-2 border-black shadow-lg transition-colors bg-friends-yellow hover:bg-yellow-400 hover:scale-105">
                 <Download size={18} />
               </button>
             </div>

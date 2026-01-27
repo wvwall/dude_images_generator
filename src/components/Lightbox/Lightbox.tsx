@@ -40,7 +40,7 @@ const Lightbox: React.FC<LightboxProps> = ({
       onClick={onClose}>
       <button
         onClick={onClose}
-        className="absolute p-2 text-white transition-colors rounded-full top-4 right-4 hover:bg-white/20"
+        className="absolute p-2 hover:cursor-pointer text-white transition-colors rounded-full top-4 right-4 hover:bg-white/20"
         aria-label="Chiudi">
         <X size={24} />
       </button>

@@ -1,18 +1,16 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
 import {
-  LogIn,
-  UserPlus,
-  Mail,
-  Lock,
-  User,
   ArrowRight,
-  EyeOff,
   Eye,
-  Wand2,
+  EyeOff,
   Loader2,
+  Lock,
+  LogIn,
+  User,
+  UserPlus,
 } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 const Auth: React.FC = () => {
   const location = useLocation();
@@ -137,7 +135,7 @@ const Auth: React.FC = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex items-center justify-center gap-2  bg-friends-yellow text-black hover:bg-yellow-400 py-4 px-6 rounded-xl font-bold text-base transition-all duration-200 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] border-2 border-black">
+              className="w-full flex items-center justify-center gap-2  bg-friends-yellow text-black hover:bg-yellow-400 py-4 px-6 rounded-xl font-bold text-base transition-all duration-200 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:cursor-pointer active:translate-x-0.5 active:translate-y-0.5 active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] border-2 border-black">
               {loading ? (
                 <Loader2
                   className="animate-spin text-friends-purple"

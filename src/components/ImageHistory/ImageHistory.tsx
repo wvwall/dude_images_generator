@@ -37,10 +37,13 @@ const ImageHistory: React.FC<ImageHistoryProps> = ({
         )}
         {isHomePath && (
           <>
-            <GalleryHorizontalEnd size={18} className="ml-auto text-black dark:text-white" />
+            <GalleryHorizontalEnd
+              size={18}
+              className="ml-auto text-black dark:text-white"
+            />
             <button
               onClick={() => navigate("/gallery")}
-              className="text-sm font-semibold text-black dark:text-white underline decoration-2 underline-offset-4 hover:text-friends-purple dark:hover:text-friends-yellow hover:brightness-110"
+              className="text-sm font-semibold hover:cursor-pointer text-black dark:text-white underline decoration-2 underline-offset-4 hover:text-friends-purple dark:hover:text-friends-yellow hover:brightness-110"
               title="See more">
               See all
             </button>
