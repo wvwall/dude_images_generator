@@ -31,7 +31,7 @@ const ImageCard: React.FC<ImageCardProps> = ({ image, onDelete, onEdit }) => {
     <div
       onClick={() => goToDetails(image)}
       key={image.id}
-      className="group cursor-pointer bg-white dark:bg-dark-surface p-3 pb-4 rounded-xl border-2 border-gray-200 dark:border-dark-border hover:border-friends-purple dark:hover:border-friends-yellow transition-all duration-300 shadow-md hover:shadow-[5px_5px_0px_0px_rgba(93,63,106,0.2)] dark:hover:shadow-[5px_5px_0px_0px_rgba(244,196,48,0.2)]">
+      className="group  bg-white dark:bg-dark-surface p-3 pb-4 rounded-xl border-2 border-gray-200 dark:border-dark-border hover:border-friends-purple dark:hover:border-friends-yellow transition-all duration-300 shadow-md hover:shadow-[5px_5px_0px_0px_rgba(93,63,106,0.2)] dark:hover:shadow-[5px_5px_0px_0px_rgba(244,196,48,0.2)]">
       <div className="relative w-full overflow-hidden bg-gray-100 dark:bg-dark-card border border-gray-200 dark:border-dark-border rounded-lg aspect-square">
         <img
           loading="lazy"
@@ -49,7 +49,7 @@ const ImageCard: React.FC<ImageCardProps> = ({ image, onDelete, onEdit }) => {
               e.stopPropagation();
               onDelete(image.id);
             }}
-            className="p-2 text-black transition-colors border-2 border-black rounded-full shadow-lg bg-friends-red hover:bg-red-500 hover:scale-105"
+            className="p-2 text-black hover:cursor-pointer transition-colors border-2 border-black rounded-full shadow-lg bg-friends-red hover:bg-red-500 hover:scale-105"
             title="Delete">
             <Trash2 size={16} />
           </button>
@@ -60,7 +60,7 @@ const ImageCard: React.FC<ImageCardProps> = ({ image, onDelete, onEdit }) => {
               e.stopPropagation();
               onEdit(image.id);
             }}
-            className="p-2 text-black transition-colors border-2 border-black rounded-full shadow-lg bg-friends-blue hover:bg-blue-500 hover:scale-105"
+            className="p-2 text-black hover:cursor-pointer transition-colors border-2 border-black rounded-full shadow-lg bg-friends-blue hover:bg-blue-500 hover:scale-105"
             title="Edit">
             <Edit2 size={16} />
           </button>
@@ -70,7 +70,7 @@ const ImageCard: React.FC<ImageCardProps> = ({ image, onDelete, onEdit }) => {
               e.stopPropagation();
               handleDownload(image);
             }}
-            className="p-2 text-black transition-colors border-2 border-black rounded-full shadow-lg bg-friends-yellow hover:bg-yellow-400 hover:scale-105"
+            className="p-2 text-black hover:cursor-pointer transition-colors border-2 border-black rounded-full shadow-lg bg-friends-yellow hover:bg-yellow-400 hover:scale-105"
             title="Download">
             <Download size={16} />
           </button>

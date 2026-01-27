@@ -19,7 +19,10 @@ const Header: React.FC = () => {
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsDropdownOpen(false);
       }
     };
@@ -93,7 +96,7 @@ const Header: React.FC = () => {
           <button
             type="button"
             onClick={toggleTheme}
-            className="p-2 transition-colors rounded-full text-friends-purple dark:text-friends-yellow hover:bg-friends-purple/10 dark:hover:bg-friends-yellow/10 hover:scale-110"
+            className="p-2 hover:cursor-pointer transition-colors rounded-full text-friends-purple dark:text-friends-yellow hover:bg-friends-purple/10 dark:hover:bg-friends-yellow/10 hover:scale-110"
             title={isDark ? "Light mode" : "Dark mode"}>
             {isDark ? <Sun size={18} /> : <Moon size={18} />}
           </button>
@@ -104,7 +107,7 @@ const Header: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className="flex items-center justify-center w-12 h-12 gap-2 px-2 py-2 text-center border rounded-full bg-friends-yellow-light dark:bg-friends-purple border-friends-yellow cursor-pointer hover:scale-105 transition-transform">
+                className="flex hover:cursor-pointer items-center justify-center w-12 h-12 gap-2 px-2 py-2 text-center border rounded-full bg-friends-yellow-light dark:bg-friends-purple border-friends-yellow cursor-pointer hover:scale-105 transition-transform">
                 <span className="text-sm font-bold tracking-tighter uppercase font-hand text-friends-purple dark:text-friends-yellow">
                   {user?.username[0].toUpperCase()}
                 </span>
@@ -115,7 +118,7 @@ const Header: React.FC = () => {
                 <div className="absolute right-0 mt-2 w-40 bg-white dark:bg-dark-surface border-2 border-gray-200 dark:border-dark-border rounded-xl shadow-lg overflow-hidden z-50">
                   <button
                     onClick={handleLogout}
-                    className="w-full flex items-center gap-2 px-4 py-3 text-sm font-medium text-friends-purple dark:text-gray-300 hover:bg-friends-red/10 hover:text-friends-red transition-colors">
+                    className="w-full flex hover:cursor-pointer items-center gap-2 px-4 py-3 text-sm font-medium text-friends-purple dark:text-gray-300 hover:bg-friends-red/10 hover:text-friends-red transition-colors">
                     <LogOut size={16} />
                     <span>Logout</span>
                   </button>

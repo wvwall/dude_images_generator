@@ -68,7 +68,7 @@ const ImageUploadArea: React.FC<ImageUploadAreaProps> = ({
                 aria-label="Clear all images"
                 type="button"
                 onClick={clearFiles}
-                className="p-1.5 text-black transition-colors border-2 border-black rounded-full shadow-md bg-friends-red hover:bg-red-600">
+                className="p-1.5 text-black hover:cursor-pointer transition-colors border-2 border-black rounded-full shadow-md bg-friends-red hover:bg-red-600">
                 <BrushCleaning size={14} />
               </button>
             )}

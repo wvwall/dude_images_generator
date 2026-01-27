@@ -64,7 +64,13 @@ export const handler = async (event) => {
 
     if (!videoData || !videoData.uri) {
       console.error("No video URI found in completed operation:", operation);
-      throw new Error("No video URI found in completed operation");
+      return {
+        statusCode: 500,
+        body: JSON.stringify({
+          status: "failed",
+          error: "Video generation failed",
+        }),
+      };
     }
 
     const ai = new GoogleGenAI({ apiKey });

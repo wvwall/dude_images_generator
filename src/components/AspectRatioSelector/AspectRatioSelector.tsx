@@ -1,6 +1,6 @@
 import React from "react";
 import { Square, Smartphone, Monitor, LayoutTemplate } from "lucide-react";
-import { AspectRatio } from "@/src/types";
+import { AspectRatio } from "@/types";
 
 interface AspectRatioSelectorProps {
   selected: AspectRatio;
@@ -34,7 +34,7 @@ const AspectRatioSelector: React.FC<AspectRatioSelectorProps> = ({
           onClick={() => onSelect(ratio.value)}
           disabled={disabled}
           className={`
-            flex items-center gap-2 px-4 py-2.5 text-sm font-bold rounded-lg transition-all duration-200 border-2
+            flex hover:cursor-pointer items-center gap-2 px-4 py-2.5 text-sm font-bold rounded-lg transition-all duration-200 border-2
             ${
               selected === ratio.value
                 ? "bg-friends-purple text-white border-friends-purple shadow-[3px_3px_0px_0px_rgba(244,196,48,1)]"
