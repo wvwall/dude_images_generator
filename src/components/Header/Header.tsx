@@ -56,10 +56,10 @@ const Header: React.FC = () => {
   };
 
   const navClasses = ({ isActive }: { isActive: boolean }) =>
-    `font-hand transition-colors underline-offset-4 decoration-2 ${
+    `font-hand transition-colors px-4 py-2 rounded-lg text-xl ${
       isActive
-        ? "text-2xl text-friends-purple dark:text-friends-yellow underline"
-        : "text-xl hover:text-friends-yellow hover:underline dark:text-gray-300"
+        ? "text-friends-purple dark:text-friends-yellow bg-friends-purple/10 dark:bg-friends-yellow/10"
+        : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-border"
     }`;
 
   return (
