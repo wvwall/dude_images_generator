@@ -78,7 +78,7 @@
   font-style: normal;
   font-weight: 400;
   src: url("/fonts/PermanentMarker-Regular.ttf") format("truetype");
-  font-display: swap;
+  font-display: block;
 }
 
 body {
