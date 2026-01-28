@@ -115,11 +115,11 @@ const Header: React.FC = () => {
 
               {/* Dropdown menu */}
               {isDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-40 bg-white dark:bg-dark-surface border-2 border-gray-200 dark:border-dark-border rounded-xl shadow-lg overflow-hidden z-50">
+                <div className="absolute right-0 mt-2 w-30 bg-white dark:bg-dark-surface border-2 border-gray-200 dark:border-dark-border rounded-lg shadow-lg overflow-hidden z-50">
                   <button
                     onClick={handleLogout}
-                    className="w-full flex hover:cursor-pointer items-center gap-2 px-4 py-3 text-sm font-medium text-friends-purple dark:text-gray-300 hover:bg-friends-red/10 hover:text-friends-red transition-colors">
-                    <LogOut size={16} />
+                    className="w-full flex hover:cursor-pointer justify-center items-center gap-2 px-4 py-3 text-sm font-medium text-friends-purple dark:text-gray-300 hover:bg-friends-red/10 hover:text-friends-red transition-colors">
+                    <LogOut size={18} />
                     <span>Logout</span>
                   </button>
                 </div>
