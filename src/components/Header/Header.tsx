@@ -1,4 +1,4 @@
-import { Coffee, LogOut, Moon, Sun } from "lucide-react";
+import { Coffee, LogOut, Monitor, Moon, Sun } from "lucide-react";
 import React, { useState, useRef, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
@@ -7,16 +7,18 @@ import { useTheme } from "../../context/ThemeContext";
 const Header: React.FC = () => {
   const navigate = useNavigate();
   const { user, logout, isAuthenticated } = useAuth();
-  const { isDark, toggleTheme } = useTheme();
+  const { theme, setTheme, isDark } = useTheme();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isThemeDropdownOpen, setIsThemeDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const themeDropdownRef = useRef<HTMLDivElement>(null);
 
   const handleLogout = () => {
     logout();
     navigate("/login");
   };
 
-  // Close dropdown when clicking outside
+  // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -25,16 +27,33 @@ const Header: React.FC = () => {
       ) {
         setIsDropdownOpen(false);
       }
+      if (
+        themeDropdownRef.current &&
+        !themeDropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsThemeDropdownOpen(false);
+      }
     };
 
-    if (isDropdownOpen) {
+    if (isDropdownOpen || isThemeDropdownOpen) {
       document.addEventListener("mousedown", handleClickOutside);
     }
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [isDropdownOpen]);
+  }, [isDropdownOpen, isThemeDropdownOpen]);
+
+  const handleThemeChange = (newTheme: "light" | "dark" | "system") => {
+    setTheme(newTheme);
+    setIsThemeDropdownOpen(false);
+  };
+
+  const getThemeIcon = () => {
+    if (theme === "system") return <Monitor size={18} />;
+    if (theme === "dark") return <Moon size={18} />;
+    return <Sun size={18} />;
+  };
 
   const navClasses = ({ isActive }: { isActive: boolean }) =>
     `font-hand transition-colors underline-offset-4 decoration-2 ${
@@ -92,14 +111,52 @@ const Header: React.FC = () => {
         </nav>
 
         <div className="flex items-center justify-end flex-1 md:justify-center gap-3">
-          {/* Theme toggle - always visible */}
-          <button
-            type="button"
-            onClick={toggleTheme}
-            className="p-2 hover:cursor-pointer transition-colors rounded-full text-friends-purple dark:text-friends-yellow hover:bg-friends-purple/10 dark:hover:bg-friends-yellow/10 hover:scale-110"
-            title={isDark ? "Light mode" : "Dark mode"}>
-            {isDark ? <Sun size={18} /> : <Moon size={18} />}
-          </button>
+          {/* Theme selector dropdown - always visible */}
+          <div className="relative" ref={themeDropdownRef}>
+            <button
+              type="button"
+              onClick={() => setIsThemeDropdownOpen(!isThemeDropdownOpen)}
+              className="p-2 hover:cursor-pointer transition-colors rounded-full text-friends-purple dark:text-friends-yellow hover:bg-friends-purple/10 dark:hover:bg-friends-yellow/10 hover:scale-110"
+              title={`Theme: ${theme}`}>
+              {getThemeIcon()}
+            </button>
+
+            {/* Theme dropdown menu */}
+            {isThemeDropdownOpen && (
+              <div className="absolute right-0 mt-2 w-36 bg-white dark:bg-dark-surface border-2 border-gray-200 dark:border-dark-border rounded-lg shadow-lg overflow-hidden z-50">
+                <button
+                  onClick={() => handleThemeChange("light")}
+                  className={`w-full flex hover:cursor-pointer items-center gap-3 px-4 py-3 text-sm font-medium transition-colors ${
+                    theme === "light"
+                      ? "bg-friends-purple/10 text-friends-purple dark:bg-friends-yellow/10 dark:text-friends-yellow"
+                      : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-border"
+                  }`}>
+                  <Sun size={16} />
+                  <span>Light</span>
+                </button>
+                <button
+                  onClick={() => handleThemeChange("dark")}
+                  className={`w-full flex hover:cursor-pointer items-center gap-3 px-4 py-3 text-sm font-medium transition-colors ${
+                    theme === "dark"
+                      ? "bg-friends-purple/10 text-friends-purple dark:bg-friends-yellow/10 dark:text-friends-yellow"
+                      : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-border"
+                  }`}>
+                  <Moon size={16} />
+                  <span>Dark</span>
+                </button>
+                <button
+                  onClick={() => handleThemeChange("system")}
+                  className={`w-full flex hover:cursor-pointer items-center gap-3 px-4 py-3 text-sm font-medium transition-colors ${
+                    theme === "system"
+                      ? "bg-friends-purple/10 text-friends-purple dark:bg-friends-yellow/10 dark:text-friends-yellow"
+                      : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-border"
+                  }`}>
+                  <Monitor size={16} />
+                  <span>System</span>
+                </button>
+              </div>
+            )}
+          </div>
 
           {/* User avatar with dropdown - only visible when authenticated */}
           {isAuthenticated && (
