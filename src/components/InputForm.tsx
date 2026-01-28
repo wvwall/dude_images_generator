@@ -1,49 +1,59 @@
 import { AlertCircle, CheckCircle } from "lucide-react";
 import React from "react";
-import { useGenerationLogic } from "../hooks/useGenerationLogic";
+import { AspectRatio } from "../types";
+import { useFileHandling } from "../hooks/useFileHandling";
 import AspectRatioSelector from "./AspectRatioSelector/AspectRatioSelector";
-
 import ImageUploadArea from "./ImageUploadArea/ImageUploadArea";
 import ModelSelectorDropdown from "./ModelSelectorDropdown/ModelSelectorDropdown";
 import PivotButton from "./PivotButton/PivotButton";
 import PromptInput from "./PromptInput/PromptInput";
 
-type UseGenerationLogicReturn = ReturnType<typeof useGenerationLogic>;
+type Mode = "text" | "image" | "video";
+type Model = "gemini-2.5-flash-image" | "gemini-3-pro-image-preview";
 
 interface InputFormProps {
-  state: UseGenerationLogicReturn["state"];
-  actions: UseGenerationLogicReturn["actions"];
+  prompt: string;
+  setPrompt: (prompt: string) => void;
+  aspectRatio: AspectRatio;
+  setAspectRatio: (ratio: AspectRatio) => void;
+  model: Model;
+  setModel: (model: Model) => void;
+  mode: Mode;
+  isGenerating: boolean;
+  error: string | null;
+  success: string | null;
+  files: ReturnType<typeof useFileHandling>;
+  onGenerate: (e: React.FormEvent) => void;
 }
 
-const InputForm: React.FC<InputFormProps> = ({ state, actions }) => {
+const InputForm: React.FC<InputFormProps> = ({
+  prompt,
+  setPrompt,
+  aspectRatio,
+  setAspectRatio,
+  model,
+  setModel,
+  mode,
+  isGenerating,
+  error,
+  success,
+  files,
+  onGenerate,
+}) => {
   const {
-    prompt,
-    aspectRatio,
-    isGenerating,
-    mode,
     selectedFiles,
     previewUrls,
-    error,
-    success,
     fileInputRef,
     isDragging,
-    model,
-  } = state;
-
-  const {
-    setPrompt,
-    setAspectRatio,
-    handleGenerate,
     handleFileSelect,
     clearFiles,
     handleRemoveFile,
     handleDragOver,
     handleDragLeave,
     handleDrop,
-    setModel,
-  } = actions;
+  } = files;
 
-  const LIMITS: Record<"image" | "video" | "text", number> = {
+  const LIMITS: Record<Mode, number> = {
     image: 3,
     video: 1,
     text: 0,
@@ -67,7 +77,7 @@ const InputForm: React.FC<InputFormProps> = ({ state, actions }) => {
     isMaxImagesReached(mode)?.isReached;
 
   return (
-    <form onSubmit={handleGenerate} className="flex flex-col flex-1 gap-6 p-6">
+    <form onSubmit={onGenerate} className="flex flex-col flex-1 gap-6 p-6">
       {mode === "video" && (
         <div className="p-4 text-sm font-medium text-yellow-800 dark:text-yellow-200 bg-yellow-100 dark:bg-yellow-900/30 border-2 border-yellow-200 dark:border-yellow-800 rounded-xl">
           <strong className="font-bold">Note:</strong> Video generation may take

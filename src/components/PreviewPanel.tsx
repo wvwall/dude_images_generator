@@ -1,30 +1,25 @@
 import { Armchair, Download, Loader2, Video } from "lucide-react";
 import React from "react";
-import { useGenerationLogic } from "../hooks/useGenerationLogic";
-import { AUDIO_MAP, AudioType } from "../types";
+import { GeneratedImage, AUDIO_MAP, AudioType } from "../types";
 import AudioPlayer from "./AudioPlayer/AudioPlayer";
 import { getImageUrl } from "../utils/imageUtils";
 
-type UseGenerationLogicReturn = ReturnType<typeof useGenerationLogic>;
-
 interface PreviewPanelProps {
-  state: UseGenerationLogicReturn["state"];
-  actions: UseGenerationLogicReturn["actions"];
+  currentImage: GeneratedImage | null;
+  videoStatus: string;
+  videoProgress: number;
+  completedVideoUri: string | null;
+  onDownload: () => void;
 }
 
-const PreviewPanel: React.FC<PreviewPanelProps> = ({ state, actions }) => {
-  const {
-    currentImage,
-    videoStatus,
-    videoProgress,
-    completedVideoUri,
-    previewUrls,
-  } = state;
-
-  const { handleDownloadCurrent } = actions;
-
+const PreviewPanel: React.FC<PreviewPanelProps> = ({
+  currentImage,
+  videoStatus,
+  videoProgress,
+  completedVideoUri,
+  onDownload,
+}) => {
   const isGeneratingVideo = videoStatus && videoStatus !== "Video ready!";
-  // Variable to determine if the video is ready for display
   const isVideoReady = !!completedVideoUri;
 
   return (
@@ -112,8 +107,8 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({ state, actions }) => {
             <div className="absolute top-6 right-6 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
               <button
                 aria-label="Download current image"
-                onClick={handleDownloadCurrent}
-                className="flex gap-2 items-center px-2 py-2 text-sm font-bold text-black rounded-full border-2 border-black shadow-lg transition-colors bg-friends-yellow hover:bg-yellow-400 hover:scale-105">
+                onClick={onDownload}
+                className="hover:cursor-pointer flex gap-2 items-center px-2 py-2 text-sm font-bold text-black rounded-full border-2 border-black shadow-lg transition-colors bg-friends-yellow hover:bg-yellow-400 hover:scale-105">
                 <Download size={18} />
               </button>
             </div>
