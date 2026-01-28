@@ -7,6 +7,19 @@ import { GeneratedImage, AspectRatio } from "../types";
 
 const IMAGES_KEY = ["images"] as const;
 
+export const useImageByIdQuery = (id: string | undefined) => {
+  return useQuery<GeneratedImage>({
+    queryKey: [...IMAGES_KEY, id],
+    queryFn: async () => {
+      const response = await apiClient.get<GeneratedImage>(
+        api.backend.images.getById(id!),
+      );
+      return response.json();
+    },
+    enabled: !!id,
+  });
+};
+
 export const useImagesQuery = () => {
   return useQuery<GeneratedImage[]>({
     queryKey: IMAGES_KEY,

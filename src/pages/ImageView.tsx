@@ -1,20 +1,20 @@
 import { Camera, Download, Edit2, Maximize2, Trash2 } from "lucide-react";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { GeneratedImage } from "../types";
 import { getImageUrl } from "../utils/imageUtils";
-import { apiClient } from "../services/apiClient";
-import { api } from "../services/api";
+import { useImageByIdQuery, useDeleteMutation } from "../hooks/useImagesQuery";
 import Lightbox from "../components/Lightbox/Lightbox";
 
 const ImageView: React.FC = () => {
   const navigate = useNavigate();
+  const { id } = useParams();
 
-  const [image, setImage] = useState<GeneratedImage | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const { data: image, isPending: isLoading } = useImageByIdQuery(id);
+  const deleteMutation = useDeleteMutation();
+
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [isOverlayVisible, setIsOverlayVisible] = useState(false);
-  const { id } = useParams();
 
   const handleTap = () => {
     setIsOverlayVisible((prev) => !prev);
@@ -25,43 +25,23 @@ const ImageView: React.FC = () => {
     setIsOverlayVisible(false);
   };
 
-  useEffect(() => {
-    (async () => {
-      setIsLoading(true);
-      try {
-        const response = await apiClient.get<GeneratedImage>(
-          api.backend.images.getById(id!),
-        );
-        const img = await response.json();
-        setImage(img);
-      } catch (err) {
-        console.warn("Failed to load image from backend", err);
-        setIsLoading(false);
-      } finally {
-        setIsLoading(false);
-      }
-    })();
-  }, [id]);
-
-  const handleDownload = (image: GeneratedImage) => {
+  const handleDownload = (img: GeneratedImage) => {
     const link = document.createElement("a");
-    link.href = getImageUrl(image);
-    link.download = `dude-creation-${image.id}.jpg`;
+    link.href = getImageUrl(img);
+    link.download = `dude-creation-${img.id}.jpg`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
-  const goToHome = () => {
-    navigate(`/`);
-  };
-  const handleDelete = useCallback(async (id: string) => {
+
+  const handleDelete = useCallback(async (imageId: string) => {
     try {
-      await apiClient.delete(api.backend.images.delete(id));
-      goToHome();
+      await deleteMutation.mutateAsync(imageId);
+      navigate("/");
     } catch (err) {
       console.warn("Failed to delete image from backend", err);
     }
-  }, []);
+  }, [deleteMutation, navigate]);
 
   return (
     <div className="min-h-screen pb-12 font-sans bg-friends-purple-light dark:bg-dark-bg">
@@ -130,7 +110,7 @@ const ImageView: React.FC = () => {
                       aria-label="Delete image"
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleDelete(image?.id);
+                        if (image) handleDelete(image.id);
                       }}
                       className="p-2 text-black hover:cursor-pointer transition-transform border-2 border-black rounded-full shadow-lg bg-friends-red hover:bg-red-500 hover:scale-110"
                       title="Delete">
@@ -152,7 +132,7 @@ const ImageView: React.FC = () => {
                       aria-label="Download image"
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleDownload(image);
+                        if (image) handleDownload(image);
                       }}
                       className="p-2 text-black hover:cursor-pointer transition-transform border-2 border-black rounded-full shadow-lg bg-friends-yellow hover:bg-yellow-400 hover:scale-110"
                       title="Download">
@@ -170,7 +150,7 @@ const ImageView: React.FC = () => {
                   </div>
                   <div className="flex items-center justify-between pt-3 mt-4 text-xs font-semibold tracking-wide text-gray-500 dark:text-gray-400 uppercase border-t border-gray-100 dark:border-dark-border">
                     <span>
-                      {new Date(image?.timestamp).toLocaleDateString()}
+                      {image ? new Date(image.timestamp).toLocaleDateString() : ""}
                     </span>
                     <span className="px-2 py-1 bg-gray-100 dark:bg-dark-card rounded-sm">
                       {image?.aspectRatio}
