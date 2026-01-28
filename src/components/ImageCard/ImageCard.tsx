@@ -21,7 +21,8 @@ const ImageCard: React.FC<ImageCardProps> = ({ image, onDelete, onEdit }) => {
 
   const handleDownload = async (img: GeneratedImage) => {
     try {
-      const response = await fetch(img.url);
+      const imageUrl = getImageUrl(img);
+      const response = await fetch(imageUrl);
       const blob = await response.blob();
       const blobUrl = URL.createObjectURL(blob);
       const link = document.createElement("a");

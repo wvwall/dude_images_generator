@@ -118,7 +118,8 @@ export const useGenerationActions = (
     const { currentImage } = useGenerationStore.getState();
     if (!currentImage) return;
     try {
-      const response = await fetch(currentImage.url);
+      const imageUrl = getImageUrl(currentImage);
+      const response = await fetch(imageUrl);
       const blob = await response.blob();
       const blobUrl = URL.createObjectURL(blob);
       const link = document.createElement("a");
