@@ -1,4 +1,6 @@
 import { create } from "zustand";
+import { devtools } from "zustand/middleware";
+import type {} from "@redux-devtools/extension";
 import { AspectRatio, GeneratedImage } from "../types";
 
 export type Mode = "text" | "image" | "video";
@@ -51,60 +53,72 @@ interface GenerationActions {
 
 export type GenerationStore = GenerationState & GenerationActions;
 
-export const useGenerationStore = create<GenerationStore>(
-  (set) => ({
-    // Form defaults
-    prompt: "",
-    aspectRatio: "1:1",
-    mode: "text",
-    model: "gemini-2.5-flash-image",
+export const useGenerationStore = create<GenerationStore>()(
+  devtools(
+    (set) => ({
+      // Form defaults
+      prompt: "",
+      aspectRatio: "1:1",
+      mode: "text",
+      model: "gemini-2.5-flash-image",
 
-    // Files
-    selectedFiles: [],
-    previewUrls: [],
-    isDragging: false,
+      // Files
+      selectedFiles: [],
+      previewUrls: [],
+      isDragging: false,
 
-    // Generation UI
-    isGenerating: false,
-    currentImage: null,
-    error: null,
-    success: null,
+      // Generation UI
+      isGenerating: false,
+      currentImage: null,
+      error: null,
+      success: null,
 
-    // Video
-    videoStatus: "",
-    videoProgress: 0,
-    completedVideoUri: null,
+      // Video
+      videoStatus: "",
+      videoProgress: 0,
+      completedVideoUri: null,
 
-    // Form actions
-    setPrompt: (prompt) => set({ prompt }),
-    setAspectRatio: (aspectRatio) => set({ aspectRatio }),
-    setMode: (mode) => set({ mode }),
-    setModel: (model) => set({ model }),
+      // Form actions
+      setPrompt: (prompt) => set({ prompt }, false, "form/setPrompt"),
+      setAspectRatio: (aspectRatio) => set({ aspectRatio }, false, "form/setAspectRatio"),
+      setMode: (mode) => set({ mode }, false, "form/setMode"),
+      setModel: (model) => set({ model }, false, "form/setModel"),
 
-    // File actions
-    setSelectedFiles: (files) =>
-      set((state) => ({
-        selectedFiles:
-          typeof files === "function" ? files(state.selectedFiles) : files,
-      })),
-    setPreviewUrls: (urls) =>
-      set((state) => ({
-        previewUrls:
-          typeof urls === "function" ? urls(state.previewUrls) : urls,
-      })),
-    setIsDragging: (isDragging) => set({ isDragging }),
+      // File actions
+      setSelectedFiles: (files) =>
+        set(
+          (state) => ({
+            selectedFiles:
+              typeof files === "function" ? files(state.selectedFiles) : files,
+          }),
+          false,
+          "files/setSelectedFiles",
+        ),
+      setPreviewUrls: (urls) =>
+        set(
+          (state) => ({
+            previewUrls:
+              typeof urls === "function" ? urls(state.previewUrls) : urls,
+          }),
+          false,
+          "files/setPreviewUrls",
+        ),
+      setIsDragging: (isDragging) => set({ isDragging }, false, "files/setIsDragging"),
 
-    // Generation actions
-    setIsGenerating: (isGenerating) => set({ isGenerating }),
-    setCurrentImage: (currentImage) => set({ currentImage }),
-    setError: (error) => set({ error }),
-    setSuccess: (success) => set({ success }),
+      // Generation actions
+      setIsGenerating: (isGenerating) => set({ isGenerating }, false, "generation/setIsGenerating"),
+      setCurrentImage: (currentImage) => set({ currentImage }, false, "generation/setCurrentImage"),
+      setError: (error) => set({ error }, false, "generation/setError"),
+      setSuccess: (success) => set({ success }, false, "generation/setSuccess"),
 
-    // Video actions
-    setVideoStatus: (videoStatus) => set({ videoStatus }),
-    setVideoProgress: (videoProgress) => set({ videoProgress }),
-    setCompletedVideoUri: (completedVideoUri) => set({ completedVideoUri }),
-    resetVideo: () =>
-      set({ videoStatus: "", videoProgress: 0, completedVideoUri: null }),
-  }),
+      // Video actions
+      setVideoStatus: (videoStatus) => set({ videoStatus }, false, "video/setVideoStatus"),
+      setVideoProgress: (videoProgress) => set({ videoProgress }, false, "video/setVideoProgress"),
+      setCompletedVideoUri: (completedVideoUri) =>
+        set({ completedVideoUri }, false, "video/setCompletedVideoUri"),
+      resetVideo: () =>
+        set({ videoStatus: "", videoProgress: 0, completedVideoUri: null }, false, "video/resetVideo"),
+    }),
+    { name: "GenerationStore" },
+  ),
 );

@@ -21,6 +21,7 @@
     "zustand": "^5.0.10"
   },
   "devDependencies": {
+    "@redux-devtools/extension": "^3.3.0",
     "@tailwindcss/postcss": "^4.1.18",
     "@types/node": "^22.14.0",
     "@types/react": "^19.2.6",
