@@ -1,6 +1,6 @@
 import { GeneratedImage } from "@/types";
 import { Camera, Download, Edit2, Eye, Trash2 } from "lucide-react";
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getImageUrl } from "@/utils/imageUtils";
 
@@ -13,43 +13,68 @@ interface ImageCardProps {
 const ImageCard: React.FC<ImageCardProps> = ({ image, onDelete, onEdit }) => {
   const navigate = useNavigate();
   const imageUrl = getImageUrl(image);
+  const [isOverlayVisible, setIsOverlayVisible] = useState(false);
 
-  const handleDownload = (image: GeneratedImage) => {
-    const link = document.createElement("a");
-    link.href = imageUrl;
-    link.download = `dude-creation-${image.id}.jpg`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  const handleTap = () => {
+    setIsOverlayVisible((prev) => !prev);
   };
 
-  const goToDetails = (image: GeneratedImage) => {
-    navigate(`/image/${image.id}`);
+  const handleDownload = async (img: GeneratedImage) => {
+    try {
+      const response = await fetch(img.url);
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = `dude-creation-${img.id}.jpg`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(blobUrl);
+    } catch (error) {
+      console.error("Errore durante il download:", error);
+    }
+  };
+
+  const goToDetails = (img: GeneratedImage) => {
+    navigate(`/image/${img.id}`);
   };
 
   return (
     <div
-      onClick={() => goToDetails(image)}
       key={image.id}
-      className="group  bg-white dark:bg-dark-surface p-3 pb-4 rounded-xl border-2 border-gray-200 dark:border-dark-border hover:border-friends-purple dark:hover:border-friends-yellow transition-all duration-300 shadow-md hover:shadow-[5px_5px_0px_0px_rgba(93,63,106,0.2)] dark:hover:shadow-[5px_5px_0px_0px_rgba(244,196,48,0.2)]">
-      <div className="relative w-full overflow-hidden bg-gray-100 dark:bg-dark-card border border-gray-200 dark:border-dark-border rounded-lg aspect-square">
+      className="group bg-white dark:bg-dark-surface p-3 pb-4 rounded-xl border-2 border-gray-200 dark:border-dark-border hover:border-friends-purple dark:hover:border-friends-yellow transition-all duration-300 shadow-md hover:shadow-[5px_5px_0px_0px_rgba(93,63,106,0.2)] dark:hover:shadow-[5px_5px_0px_0px_rgba(244,196,48,0.2)]">
+      <div
+        className="relative w-full overflow-hidden bg-gray-100 dark:bg-dark-card border border-gray-200 dark:border-dark-border rounded-lg aspect-square"
+        onClick={handleTap}>
         <img
           loading="lazy"
           src={imageUrl}
           alt={image.prompt}
           className="object-cover w-full h-full transition-transform duration-1000 group-hover:scale-105"
         />
-        <div className="absolute top-[50%] right-[50%] opacity-0 transition-opacity duration-300  group-hover:opacity-100 translate-x-[50%] translate-y-[-50%] px-3 py-2 text-sm font-semibold text-gray-50">
-          <Eye size={25} className="opacity-30 " />
-        </div>
-        <div className="absolute *:mb-3 *:mr-3 inset-0 flex items-end justify-end  transition-opacity duration-300 opacity-0 bg-black/40 group-hover:opacity-100">
+
+        <div
+          className={`absolute *:mb-3 *:mr-3 inset-0 flex items-end justify-end transition-opacity duration-300 bg-black/40 ${isOverlayVisible ? "opacity-100" : "opacity-0"} [@media(hover:hover)]:group-hover:opacity-100`}>
+          {/* Bottone centrale */}
+          <button
+            className="absolute p-3 hover:cursor-pointer transition-colors -translate-x-1/2 -translate-y-1/2 rounded-full top-1/2 left-1/2 bg-white/20 hover:bg-white/30"
+            onClick={(e) => {
+              e.stopPropagation();
+              goToDetails(image);
+            }}
+            aria-label="View details"
+            title="View">
+            <Eye size={25} className="text-white" />
+          </button>
+
           <button
             aria-label="Delete image"
             onClick={(e) => {
               e.stopPropagation();
               onDelete(image.id);
             }}
-            className="p-2 text-black hover:cursor-pointer transition-colors border-2 border-black rounded-full shadow-lg bg-friends-red hover:bg-red-500 hover:scale-105"
+            className="p-2 text-black hover:cursor-pointer transition-transform border-2 border-black rounded-full shadow-lg bg-friends-red hover:bg-red-500 hover:scale-110"
             title="Delete">
             <Trash2 size={16} />
           </button>
@@ -60,17 +85,18 @@ const ImageCard: React.FC<ImageCardProps> = ({ image, onDelete, onEdit }) => {
               e.stopPropagation();
               onEdit(image.id);
             }}
-            className="p-2 text-black hover:cursor-pointer transition-colors border-2 border-black rounded-full shadow-lg bg-friends-blue hover:bg-blue-500 hover:scale-105"
+            className="p-2 text-black hover:cursor-pointer transition-transform border-2 border-black rounded-full shadow-lg bg-friends-blue hover:bg-blue-500 hover:scale-110"
             title="Edit">
             <Edit2 size={16} />
           </button>
+
           <button
             aria-label="Download image"
             onClick={(e) => {
               e.stopPropagation();
               handleDownload(image);
             }}
-            className="p-2 text-black hover:cursor-pointer transition-colors border-2 border-black rounded-full shadow-lg bg-friends-yellow hover:bg-yellow-400 hover:scale-105"
+            className="p-2 text-black hover:cursor-pointer transition-transform border-2 border-black rounded-full shadow-lg bg-friends-yellow hover:bg-yellow-400 hover:scale-110"
             title="Download">
             <Download size={16} />
           </button>

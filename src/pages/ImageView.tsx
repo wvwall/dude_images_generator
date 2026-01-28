@@ -1,5 +1,5 @@
 import { Camera, Download, Edit2, Maximize2, Trash2 } from "lucide-react";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { GeneratedImage } from "../types";
 import { getImageUrl } from "../utils/imageUtils";
@@ -15,6 +15,12 @@ const ImageView: React.FC = () => {
 
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [isOverlayVisible, setIsOverlayVisible] = useState(false);
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
+
+  // Reset quando cambia l'immagine
+  useEffect(() => {
+    setIsImageLoaded(false);
+  }, [id]);
 
   const handleTap = () => {
     setIsOverlayVisible((prev) => !prev);
@@ -25,33 +31,46 @@ const ImageView: React.FC = () => {
     setIsOverlayVisible(false);
   };
 
-  const handleDownload = (img: GeneratedImage) => {
-    const link = document.createElement("a");
-    link.href = getImageUrl(img);
-    link.download = `dude-creation-${img.id}.jpg`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  const handleDownload = async (img: GeneratedImage) => {
+    try {
+      const response = await fetch(img.url);
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = `dude-creation-${img.id}.jpg`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(blobUrl);
+    } catch (error) {
+      console.error("Errore durante il download:", error);
+    }
   };
 
-  const handleDelete = useCallback(async (imageId: string) => {
-    try {
-      await deleteMutation.mutateAsync(imageId);
-      navigate("/");
-    } catch (err) {
-      console.warn("Failed to delete image from backend", err);
-    }
-  }, [deleteMutation, navigate]);
+  const handleDelete = useCallback(
+    async (imageId: string) => {
+      try {
+        await deleteMutation.mutateAsync(imageId);
+        navigate("/");
+      } catch (err) {
+        console.warn("Failed to delete image from backend", err);
+      }
+    },
+    [deleteMutation, navigate],
+  );
+
+  const showSkeleton = isLoading || !isImageLoaded;
 
   return (
     <div className="min-h-screen pb-12 font-sans bg-friends-purple-light dark:bg-dark-bg">
       <main className="max-w-3xl px-4 pt-16 mx-auto">
         {/* Skeleton */}
-        {isLoading && (
+        {showSkeleton && (
           <div className="animate-pulse">
             <div className="h-12 p-4 bg-gray-200 dark:bg-dark-card rounded-2xl" />
 
-            <div className="py-10 ">
+            <div className="py-10">
               <div className="p-3 pb-4 bg-white dark:bg-dark-surface border-2 border-gray-200 dark:border-dark-border shadow-md rounded-xl">
                 <div className="w-full bg-gray-200 dark:bg-dark-card rounded-lg aspect-square" />
 
@@ -74,9 +93,9 @@ const ImageView: React.FC = () => {
           </div>
         )}
 
-        {/* Content */}
+        {/* Content - nascosto finché l'immagine non è caricata */}
         {!isLoading && (
-          <>
+          <div className={showSkeleton ? "hidden" : ""}>
             <h2 className="p-4 text-2xl text-center border-friends-purple shadow-[3px_3px_0px_0px_rgba(93,63,106,1)] text-gray-800 dark:text-white border text-balance font-hand bg-friends-yellow-light dark:bg-dark-surface rounded-2xl">
               {image?.prompt}
             </h2>
@@ -84,13 +103,14 @@ const ImageView: React.FC = () => {
             <div className="flex justify-center py-10">
               <div
                 key={image?.id}
-                className="group  bg-white dark:bg-dark-surface p-3 pb-4 rounded-xl border-2 border-gray-200 dark:border-dark-border hover:border-friends-purple dark:hover:border-friends-yellow transition-all duration-300 shadow-md hover:shadow-[5px_5px_0px_0px_rgba(93,63,106,0.2)] dark:hover:shadow-[5px_5px_0px_0px_rgba(244,196,48,0.2)]">
+                className="group bg-white dark:bg-dark-surface p-3 pb-4 rounded-xl border-2 border-gray-200 dark:border-dark-border hover:border-friends-purple dark:hover:border-friends-yellow transition-all duration-300 shadow-md hover:shadow-[5px_5px_0px_0px_rgba(93,63,106,0.2)] dark:hover:shadow-[5px_5px_0px_0px_rgba(244,196,48,0.2)]">
                 <div
                   className="relative w-full overflow-hidden bg-gray-100 dark:bg-dark-card border border-gray-200 dark:border-dark-border rounded-lg aspect-square"
                   onClick={handleTap}>
                   <img
                     src={image ? getImageUrl(image) : ""}
                     alt={image?.prompt}
+                    onLoad={() => setIsImageLoaded(true)}
                     className="object-cover w-full h-full transition-transform duration-1000 group-hover:scale-105"
                   />
 
@@ -150,7 +170,9 @@ const ImageView: React.FC = () => {
                   </div>
                   <div className="flex items-center justify-between pt-3 mt-4 text-xs font-semibold tracking-wide text-gray-500 dark:text-gray-400 uppercase border-t border-gray-100 dark:border-dark-border">
                     <span>
-                      {image ? new Date(image.timestamp).toLocaleDateString() : ""}
+                      {image
+                        ? new Date(image.timestamp).toLocaleDateString()
+                        : ""}
                     </span>
                     <span className="px-2 py-1 bg-gray-100 dark:bg-dark-card rounded-sm">
                       {image?.aspectRatio}
@@ -159,7 +181,7 @@ const ImageView: React.FC = () => {
                 </div>
               </div>
             </div>
-          </>
+          </div>
         )}
       </main>
 

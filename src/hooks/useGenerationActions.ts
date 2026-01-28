@@ -1,7 +1,11 @@
 import React, { useCallback, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { useGenerationStore } from "../store/useGenerationStore";
-import { useImagesQuery, useGenerateMutation, useDeleteMutation } from "./useImagesQuery";
+import {
+  useImagesQuery,
+  useGenerateMutation,
+  useDeleteMutation,
+} from "./useImagesQuery";
 import { useVideoGeneration } from "./useVideoGeneration";
 import { getImageUrl } from "../utils/imageUtils";
 
@@ -53,16 +57,23 @@ export const useGenerationActions = (
           });
 
           useGenerationStore.getState().setCurrentImage(newImage);
-          useGenerationStore.getState().setSuccess("Image generated successfully!");
+          useGenerationStore
+            .getState()
+            .setSuccess("Image generated successfully!");
         } catch (err: any) {
           console.error(err);
-          useGenerationStore.getState().setError(
-            err.message ||
-              "Could not generate image. Please check API Key and Billing status.",
-          );
+          useGenerationStore
+            .getState()
+            .setError(
+              err.message ||
+                "Could not generate image. Please check API Key and Billing status.",
+            );
         } finally {
           useGenerationStore.getState().setIsGenerating(false);
-          setTimeout(() => useGenerationStore.getState().setSuccess(null), 5000);
+          setTimeout(
+            () => useGenerationStore.getState().setSuccess(null),
+            5000,
+          );
         }
       }
     },
@@ -103,15 +114,24 @@ export const useGenerationActions = (
     [history],
   );
 
-  const handleDownloadCurrent = useCallback(() => {
+  const handleDownloadCurrent = useCallback(async () => {
     const { currentImage } = useGenerationStore.getState();
     if (!currentImage) return;
-    const link = document.createElement("a");
-    link.href = getImageUrl(currentImage);
-    link.download = `dude-creation-${currentImage.id}.jpg`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    try {
+      const response = await fetch(currentImage.url);
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = `dude-creation-${currentImage.id}.jpg`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      // Pulizia memoria
+      URL.revokeObjectURL(blobUrl);
+    } catch (error) {
+      console.error("Errore durante il download:", error);
+    }
   }, []);
 
   // Handle editId from navigation state
