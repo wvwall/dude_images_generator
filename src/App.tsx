@@ -1,3 +1,4 @@
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React, { useEffect } from "react";
 import {
   BrowserRouter,
@@ -7,16 +8,14 @@ import {
   useLocation,
 } from "react-router-dom";
 import BottomBar from "./components/BottomBar/BottomBar";
-import FeatureTour from "./components/FeatureTour/FeatureTour";
 import Header from "./components/Header/Header";
+import { AuthProvider } from "./context/AuthContext";
+import { ThemeProvider } from "./context/ThemeContext";
+import Auth from "./pages/Auth";
 import Gallery from "./pages/Gallery";
 import Home from "./pages/Home";
 import Image from "./pages/ImageView";
-import Auth from "./pages/Auth";
 import LoadingPage from "./pages/LoadingPage";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { AuthProvider } from "./context/AuthContext";
-import { ThemeProvider } from "./context/ThemeContext";
 const queryClient = new QueryClient();
 
 import { useAuth } from "./context/AuthContext";
