@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { AUDIO_MAP, AudioType } from "../../types";
 import AudioPlayer from "../AudioPlayer/AudioPlayer";
 import { phrases } from "../AudioPlayer/phrases";
@@ -9,45 +9,41 @@ const InputHeader: React.FC = () => {
   const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [elapsed, setElapsed] = useState(0);
+  const startTimeRef = useRef<number>(Date.now());
 
   const dynamicPhrases = phrases.filter((phrase) => phrase.dynamic);
   const currentPhrase = dynamicPhrases.length
     ? dynamicPhrases[currentPhraseIndex]
     : undefined;
 
-  // advance phrase every DURATION_MS
+  // Single useEffect to handle both timer and countdown
   useEffect(() => {
     if (dynamicPhrases.length === 0 || isPlaying) return;
-    const interval = setInterval(() => {
-      setCurrentPhraseIndex(
-        (prevIndex) => (prevIndex + 1) % dynamicPhrases.length
-      );
-    }, DURATION_MS - elapsed);
 
-    return () => clearInterval(interval);
-  }, [dynamicPhrases.length, isPlaying, elapsed]);
+    // Set start time accounting for any elapsed time
+    startTimeRef.current = Date.now() - elapsed;
 
-  // countdown timer that resets on phrase change
-  useEffect(() => {
-    if (dynamicPhrases.length === 0) return;
+    const tick = setInterval(() => {
+      const now = Date.now();
+      const newElapsed = now - startTimeRef.current;
 
-    let tick: NodeJS.Timeout;
-    if (!isPlaying) {
-      const start = Date.now() - elapsed;
-      tick = setInterval(() => {
-        const e = Date.now() - start;
-        setElapsed(e >= DURATION_MS ? DURATION_MS : e);
-      }, 100);
-    }
+      if (newElapsed >= DURATION_MS) {
+        // Change phrase and reset timer
+        setCurrentPhraseIndex((prev) => (prev + 1) % dynamicPhrases.length);
+        setElapsed(0);
+        startTimeRef.current = now;
+      } else {
+        setElapsed(newElapsed);
+      }
+    }, 100);
 
-    return () => {
-      if (tick) clearInterval(tick);
-    };
-  }, [currentPhraseIndex, isPlaying, dynamicPhrases.length]);
+    return () => clearInterval(tick);
+  }, [dynamicPhrases.length, isPlaying]);
 
-  // Reset elapsed when phrase changes
+  // Reset elapsed when phrase changes externally
   useEffect(() => {
     setElapsed(0);
+    startTimeRef.current = Date.now();
   }, [currentPhraseIndex]);
 
   const percent = Math.min(1, elapsed / DURATION_MS);
