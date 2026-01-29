@@ -12,6 +12,8 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const MIN_LOADING_MS = 300; // Minimum time to show LoadingPage
+
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
@@ -20,13 +22,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   useEffect(() => {
     const initAuth = async () => {
+      const startTime = Date.now();
+
       try {
         const currentUser = await authService.getCurrentUser();
         setUser(currentUser);
       } catch (error) {
         console.error("Auth initialization failed:", error);
       } finally {
-        setIsLoading(false);
+        // Ensure LoadingPage is visible for at least MIN_LOADING_MS
+        const elapsed = Date.now() - startTime;
+        const remainingTime = Math.max(0, MIN_LOADING_MS - elapsed);
+
+        if (remainingTime > 0) {
+          setTimeout(() => setIsLoading(false), remainingTime);
+        } else {
+          setIsLoading(false);
+        }
       }
     };
 
