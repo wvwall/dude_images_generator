@@ -22,6 +22,8 @@ import { useAuth } from "./context/AuthContext";
 
 const AppContent: React.FC = () => {
   const { isAuthenticated, isLoading: isAuthLoading } = useAuth();
+  const isRegistrationDisabled =
+    import.meta.env.VITE_DISABLE_REGISTRATION === "true";
 
   if (isAuthLoading) {
     return <LoadingPage />;
@@ -47,7 +49,14 @@ const AppContent: React.FC = () => {
           ) : (
             <>
               <Route path="/login" element={<Auth />} />
-              <Route path="/register" element={<Auth />} />
+              {isRegistrationDisabled ? (
+                <Route
+                  path="/register"
+                  element={<Navigate to="/login" replace />}
+                />
+              ) : (
+                <Route path="/register" element={<Auth />} />
+              )}
               <Route path="*" element={<Navigate to="/login" replace />} />
             </>
           )}

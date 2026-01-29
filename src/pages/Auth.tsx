@@ -12,12 +12,21 @@ import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
+const isRegistrationDisabled =
+  import.meta.env.VITE_DISABLE_REGISTRATION === "true";
+
 const Auth: React.FC = () => {
   const location = useLocation();
-  const [isLogin, setIsLogin] = useState(location.pathname === "/login");
+  const [isLogin, setIsLogin] = useState(
+    isRegistrationDisabled || location.pathname === "/login"
+  );
 
   useEffect(() => {
-    setIsLogin(location.pathname === "/login");
+    if (isRegistrationDisabled) {
+      setIsLogin(true);
+    } else {
+      setIsLogin(location.pathname === "/login");
+    }
   }, [location.pathname]);
 
   const [username, setUsername] = useState("");
@@ -66,28 +75,30 @@ const Auth: React.FC = () => {
             </p>
           </div>
 
-          <div className="flex gap-2 p-2 mb-8 rounded-xl bg-friends-purple-light dark:bg-dark-card">
-            <button
-              onClick={() => setIsLogin(true)}
-              className={`flex-1 py-3 rounded-lg flex items-center justify-center gap-2 transition-all duration-300 ${
-                isLogin
-                  ? "text-white shadow-lg bg-friends-purple"
-                  : "text-friends-purple dark:text-gray-300 hover:bg-white/50 dark:hover:bg-dark-border"
-              }`}>
-              <LogIn size={18} />
-              <span className="font-semibold">Login</span>
-            </button>
-            <button
-              onClick={() => setIsLogin(false)}
-              className={`flex-1 py-2 rounded-lg flex items-center justify-center gap-2 transition-all duration-300 ${
-                !isLogin
-                  ? "text-white shadow-lg bg-friends-purple"
-                  : "text-friends-purple dark:text-gray-300 hover:bg-white/50 dark:hover:bg-dark-border"
-              }`}>
-              <UserPlus size={18} />
-              <span className="font-semibold">Register</span>
-            </button>
-          </div>
+          {!isRegistrationDisabled && (
+            <div className="flex gap-2 p-2 mb-8 rounded-xl bg-friends-purple-light dark:bg-dark-card">
+              <button
+                onClick={() => setIsLogin(true)}
+                className={`flex-1 py-3 rounded-lg flex items-center justify-center gap-2 transition-all duration-300 ${
+                  isLogin
+                    ? "text-white shadow-lg bg-friends-purple"
+                    : "text-friends-purple dark:text-gray-300 hover:bg-white/50 dark:hover:bg-dark-border"
+                }`}>
+                <LogIn size={18} />
+                <span className="font-semibold">Login</span>
+              </button>
+              <button
+                onClick={() => setIsLogin(false)}
+                className={`flex-1 py-2 rounded-lg flex items-center justify-center gap-2 transition-all duration-300 ${
+                  !isLogin
+                    ? "text-white shadow-lg bg-friends-purple"
+                    : "text-friends-purple dark:text-gray-300 hover:bg-white/50 dark:hover:bg-dark-border"
+                }`}>
+                <UserPlus size={18} />
+                <span className="font-semibold">Register</span>
+              </button>
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="relative">
@@ -153,13 +164,15 @@ const Auth: React.FC = () => {
             </button>
           </form>
 
-          <button
-            onClick={() => setIsLogin(!isLogin)}
-            className="w-full mt-6 text-sm font-medium transition-colors text-friends-purple/70 dark:text-friends-purple-light/70 hover:text-friends-purple dark:hover:text-friends-purple-light">
-            {isLogin
-              ? "Don't have an account? Sign up now!"
-              : "Already have an account? Sign in!"}
-          </button>
+          {!isRegistrationDisabled && (
+            <button
+              onClick={() => setIsLogin(!isLogin)}
+              className="w-full mt-6 text-sm font-medium transition-colors text-friends-purple/70 dark:text-friends-purple-light/70 hover:text-friends-purple dark:hover:text-friends-purple-light">
+              {isLogin
+                ? "Don't have an account? Sign up now!"
+                : "Already have an account? Sign in!"}
+            </button>
+          )}
         </div>
       </div>
     </div>
