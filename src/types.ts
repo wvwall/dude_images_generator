@@ -19,6 +19,19 @@ export interface GeneratedImage {
   url?: string;
 }
 
+export interface GeneratedVideo {
+  id: string;
+  prompt: string;
+  timestamp: string;
+  duration: number;
+  resolution: string;
+  userId: string;
+  assetId: string;
+  asset: Asset;
+  // For backward compatibility with blob URLs
+  url?: string;
+}
+
 export type AspectRatio = "1:1" | "3:4" | "4:3" | "16:9" | "9:16";
 
 export interface GenerationConfig {
