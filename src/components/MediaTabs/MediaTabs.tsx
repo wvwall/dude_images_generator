@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Camera, Video, GalleryHorizontalEnd } from "lucide-react";
+import { Camera, GalleryHorizontalEnd, Video } from "lucide-react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 
 type TabType = "images" | "videos";
@@ -34,7 +34,7 @@ const MediaTabs: React.FC<MediaTabsProps> = ({
     <div className="flex items-center gap-2 pb-4 mb-8 border-b-2 border-dashed border-friends-purple/70 dark:border-friends-yellow/70">
       <button
         onClick={() => onTabChange("images")}
-        className={`px-3 py-1.5 text-xs font-bold rounded-lg shadow-xs flex items-center gap-1.5 transition-all ${
+        className={`px-3 py-1.5 cursor-pointer text-xs font-bold rounded-lg shadow-xs flex items-center gap-1.5 transition-all ${
           activeTab === "images"
             ? "text-friends-yellow bg-friends-purple"
             : "text-friends-purple bg-friends-purple/10 hover:bg-friends-purple/20 dark:text-friends-yellow dark:bg-friends-yellow/10 dark:hover:bg-friends-yellow/20"
@@ -45,7 +45,7 @@ const MediaTabs: React.FC<MediaTabsProps> = ({
 
       <button
         onClick={() => onTabChange("videos")}
-        className={`px-3 py-1.5 text-xs font-bold rounded-lg shadow-xs flex items-center gap-1.5 transition-all ${
+        className={`px-3 py-1.5 cursor-pointer text-xs font-bold rounded-lg shadow-xs flex items-center gap-1.5 transition-all ${
           activeTab === "videos"
             ? "text-friends-yellow bg-friends-purple"
             : "text-friends-purple bg-friends-purple/10 hover:bg-friends-purple/20 dark:text-friends-yellow dark:bg-friends-yellow/10 dark:hover:bg-friends-yellow/20"

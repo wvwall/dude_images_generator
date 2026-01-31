@@ -55,7 +55,7 @@ export const useVideoGeneration = () => {
                   prompt: params.prompt,
                   duration: 4, // Default duration
                   resolution: "1080p",
-                }
+                },
               );
               // Invalidate videos query to refetch the list
               queryClient.invalidateQueries({ queryKey: ["videos"] });
@@ -73,7 +73,10 @@ export const useVideoGeneration = () => {
           link.href = url;
           link.download = "generated_video.mp4";
           link.click();
-          setTimeout(() => useGenerationStore.getState().setSuccess(null), 5000);
+          setTimeout(
+            () => useGenerationStore.getState().setSuccess(null),
+            5000,
+          );
         }
       } else {
         s.setVideoProgress(result.progress || 0);

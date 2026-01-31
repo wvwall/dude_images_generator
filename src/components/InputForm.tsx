@@ -60,7 +60,7 @@ const InputForm: React.FC<InputFormProps> = ({
   };
 
   const isMaxImagesReached = (
-    mode: keyof typeof LIMITS
+    mode: keyof typeof LIMITS,
   ): { isReached: boolean; limit: number } => {
     const limit = LIMITS[mode];
 
@@ -109,7 +109,7 @@ const InputForm: React.FC<InputFormProps> = ({
 
       {(mode === "text" || mode === "image") && (
         <div className="flex flex-col justify-between gap-5 md:flex-row">
-          <div className="w-[250px] space-y-3">
+          <div className="w-62.5 space-y-3">
             <span className="block text-sm font-bold tracking-wide text-gray-700 dark:text-gray-300 uppercase">
               The Shape
             </span>
@@ -119,7 +119,7 @@ const InputForm: React.FC<InputFormProps> = ({
               disabled={isGenerating}
             />
           </div>
-          <div className="space-y-3 w-[180px]">
+          <div className="space-y-3 w-45">
             <span className="block text-sm font-bold tracking-wide text-gray-700 dark:text-gray-300 uppercase">
               The Model
             </span>

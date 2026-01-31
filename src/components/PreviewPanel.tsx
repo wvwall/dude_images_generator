@@ -24,11 +24,11 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({
 
   return (
     <div
-      className="w-full lg:w-7/12 md:min-h-[500px] relative "
+      className="w-full lg:w-7/12 md:min-h-125 relative "
       data-tour="preview-panel">
       <div
         className={`
-           w-full md:min-h-[510px] bg-white dark:bg-dark-surface border-4 border-friends-purple rounded-2xl flex flex-col items-center justify-center overflow-hidden shadow-xl
+           w-full md:min-h-127.5 bg-white dark:bg-dark-surface border-4 border-friends-purple rounded-2xl flex flex-col items-center justify-center overflow-hidden shadow-xl
           ${
             !currentImage && !isGeneratingVideo && !isVideoReady
               ? 'bg-[url("https://www.transparenttextures.com/patterns/cubes.png")] dark:bg-none'
