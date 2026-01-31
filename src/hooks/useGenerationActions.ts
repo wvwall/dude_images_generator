@@ -35,6 +35,8 @@ export const useGenerationActions = (
           s.prompt,
           fileToBase64,
           s.selectedFiles,
+          s.videoDuration,
+          s.videoResolution,
         );
       } else {
         s.setIsGenerating(true);

@@ -30,6 +30,8 @@ const Home: React.FC = () => {
     currentImage,
     error,
     success,
+    videoResolution, setVideoResolution,
+    videoDuration, setVideoDuration,
   } = useGenerationStore(
     useShallow((s) => ({
       prompt: s.prompt,
@@ -44,6 +46,10 @@ const Home: React.FC = () => {
       currentImage: s.currentImage,
       error: s.error,
       success: s.success,
+      videoResolution: s.videoResolution,
+      setVideoResolution: s.setVideoResolution,
+      videoDuration: s.videoDuration,
+      setVideoDuration: s.setVideoDuration,
     })),
   );
 
@@ -94,6 +100,10 @@ const Home: React.FC = () => {
               success={success}
               files={files}
               onGenerate={handleGenerate}
+              videoResolution={videoResolution}
+              setVideoResolution={setVideoResolution}
+              videoDuration={videoDuration}
+              setVideoDuration={setVideoDuration}
             />
           </InputPanel>
 
@@ -103,6 +113,8 @@ const Home: React.FC = () => {
             videoProgress={video.videoProgress}
             completedVideoUri={video.completedVideoUri}
             onDownload={handleDownloadCurrent}
+            isGenerating={isGenerating}
+            mode={mode}
           />
         </div>
         {(isLoadingHistory || isLoadingVideos || history.length > 0 || videoHistory.length > 0) && (
