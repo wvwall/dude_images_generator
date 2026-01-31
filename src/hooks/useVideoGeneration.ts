@@ -73,11 +73,6 @@ export const useVideoGeneration = () => {
             s.setSuccess("Video generated successfully!");
           }
 
-          // Auto-download
-          const link = document.createElement("a");
-          link.href = url;
-          link.download = "generated_video.mp4";
-          link.click();
           setTimeout(
             () => useGenerationStore.getState().setSuccess(null),
             5000,
