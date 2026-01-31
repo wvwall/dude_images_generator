@@ -2,9 +2,11 @@ import { useCallback, useEffect, useRef } from "react";
 import { useShallow } from "zustand/react/shallow";
 import { checkVideoStatus, generateVideo } from "../services/geminiService";
 import { useGenerationStore } from "../store/useGenerationStore";
+import { uploadVideo } from "../services/uploadService";
 
 export const useVideoGeneration = () => {
   const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const generationParamsRef = useRef<{ prompt: string } | null>(null);
 
   // Only subscribe to the 3 values needed for rendering
   const { videoStatus, videoProgress, completedVideoUri } = useGenerationStore(
@@ -38,8 +40,31 @@ export const useVideoGeneration = () => {
           const url = URL.createObjectURL(blob);
 
           s.setCompletedVideoUri(url);
-          s.setSuccess("Video generated successfully!");
 
+          // Upload to backend
+          const params = generationParamsRef.current;
+          if (params) {
+            try {
+              await uploadVideo(
+                new File([blob], `generated-video-${Date.now()}.mp4`, {
+                  type: "video/mp4",
+                }),
+                {
+                  prompt: params.prompt,
+                  duration: 4, // Default duration
+                  resolution: "1080p",
+                }
+              );
+              s.setSuccess("Video saved to your gallery!");
+            } catch (uploadError) {
+              console.error("Failed to upload video to backend:", uploadError);
+              s.setSuccess("Video generated! (Failed to save to gallery)");
+            }
+          } else {
+            s.setSuccess("Video generated successfully!");
+          }
+
+          // Auto-download
           const link = document.createElement("a");
           link.href = url;
           link.download = "generated_video.mp4";
@@ -60,6 +85,9 @@ export const useVideoGeneration = () => {
       fileToBase64: (file: File) => Promise<string>,
       selectedFiles: File[],
     ) => {
+      // Store params for backend upload
+      generationParamsRef.current = { prompt };
+
       const s = useGenerationStore.getState();
       s.setIsGenerating(true);
       s.setError(null);

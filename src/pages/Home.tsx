@@ -1,7 +1,10 @@
 import { useTour } from "@reactour/tour";
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
-import ImageHistory from "../components/ImageHistory/ImageHistory";
+import ImageCard from "../components/ImageCard/ImageCard";
+import VideoCard from "../components/VideoCard/VideoCard";
+import MediaTabs from "../components/MediaTabs/MediaTabs";
+import SkeletonCard from "../components/ImageCard/SkeletonCard";
 import InputForm from "../components/InputForm";
 import InputHeader from "../components/InputHeader/InputHeader";
 import InputPanel from "../components/InputPanel/InputPanel";
@@ -9,6 +12,7 @@ import ModeSelector from "../components/ModeSelector/ModeSelector";
 import PreviewPanel from "../components/PreviewPanel";
 import { useGenerationStore } from "../store/useGenerationStore";
 import { useImagesQuery } from "../hooks/useImagesQuery";
+import { useVideosQuery, useDeleteVideoMutation } from "../hooks/useVideosQuery";
 import { useFileHandling } from "../hooks/useFileHandling";
 import { useVideoGeneration } from "../hooks/useVideoGeneration";
 import { useGenerationActions } from "../hooks/useGenerationActions";
@@ -44,12 +48,24 @@ const Home: React.FC = () => {
   );
 
   const { data: history = [], isLoading: isLoadingHistory } = useImagesQuery();
+  const { data: videoHistory = [], isLoading: isLoadingVideos } = useVideosQuery();
+  const deleteVideoMutation = useDeleteVideoMutation();
   const files = useFileHandling();
   const video = useVideoGeneration();
+
+  const [activeTab, setActiveTab] = useState<"images" | "videos">("images");
 
   // Pass fileToBase64 to avoid duplicating useFileHandling inside actions
   const { handleGenerate, handleDelete, handleEdit, handleDownloadCurrent } =
     useGenerationActions(files.fileToBase64);
+
+  const handleDeleteVideo = useCallback(async (id: string) => {
+    try {
+      await deleteVideoMutation.mutateAsync(id);
+    } catch (err) {
+      console.warn("Failed to delete video from backend", err);
+    }
+  }, [deleteVideoMutation]);
 
   useEffect(() => {
     const tourSeen = localStorage.getItem("tourSeen");
@@ -89,13 +105,54 @@ const Home: React.FC = () => {
             onDownload={handleDownloadCurrent}
           />
         </div>
-        {(isLoadingHistory || history.length > 0) && (
-          <ImageHistory
-            images={history}
-            onDelete={handleDelete}
-            onEdit={handleEdit}
-            isLoading={isLoadingHistory}
-          />
+        {(isLoadingHistory || isLoadingVideos || history.length > 0 || videoHistory.length > 0) && (
+          <div className="mt-8">
+            <MediaTabs
+              imagesCount={history.length}
+              videosCount={videoHistory.length}
+              activeTab={activeTab}
+              onTabChange={setActiveTab}
+              showSeeAll={true}
+              displayLimit={3}
+            />
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+              {activeTab === "images" ? (
+                isLoadingHistory ? (
+                  Array.from({ length: 3 }).map((_, i) => <SkeletonCard key={i} />)
+                ) : (
+                  history.slice(0, 3).map((image) => (
+                    <ImageCard
+                      key={image.id}
+                      image={image}
+                      onDelete={handleDelete}
+                      onEdit={handleEdit}
+                    />
+                  ))
+                )
+              ) : (
+                isLoadingVideos ? (
+                  Array.from({ length: 3 }).map((_, i) => <SkeletonCard key={i} />)
+                ) : videoHistory.length > 0 ? (
+                  videoHistory.slice(0, 3).map((videoItem) => (
+                    <VideoCard
+                      key={videoItem.id}
+                      video={videoItem}
+                      onDelete={handleDeleteVideo}
+                    />
+                  ))
+                ) : (
+                  <div className="col-span-full py-20 text-center bg-white dark:bg-dark-surface border-2 border-gray-300 dark:border-dark-border border-dashed rounded-2xl">
+                    <p className="text-xl text-gray-400 font-hand">
+                      No videos yet...
+                    </p>
+                    <p className="mt-2 text-sm text-gray-400">
+                      Select Video mode to create something!
+                    </p>
+                  </div>
+                )
+              )}
+            </div>
+          </div>
         )}
       </main>
     </section>
