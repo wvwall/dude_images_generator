@@ -62,7 +62,7 @@ export const handler = async (event) => {
 
     console.debug("🚀 ~ Starting video generation with prompt:", finalPrompt);
 
-    const base64StringImg = image.includes("base64,")
+    const base64StringImg = image?.includes("base64,")
       ? image.split("base64,")[1]
       : image;
 
@@ -71,24 +71,31 @@ export const handler = async (event) => {
       resolution: resolution,
       aspectRatio: aspectRatio,
     };
-    const imageBody = {
-      imageBytes: base64StringImg,
-      mimeType: mimeType,
-    };
 
     console.debug("🚀 ~ handler ~ configBody:", configBody);
 
-    // Only start the generation, DO NOT wait for completion
-    const operation = await ai.models.generateVideos({
+    // Build request parameters - only include image if provided
+    const requestParams = {
       model: "veo-3.1-generate-preview",
       prompt: finalPrompt,
-      image: imageBody,
       config: configBody,
-    });
+    };
+
+    // Only add image if one was provided
+    if (base64StringImg) {
+      requestParams.image = {
+        bytesBase64Encoded: base64StringImg,
+        mimeType: mimeType,
+      };
+      console.debug("🚀 ~ Including reference image with mimeType:", mimeType);
+    }
+
+    // Only start the generation, DO NOT wait for completion
+    const operation = await ai.models.generateVideos(requestParams);
 
     console.debug(
       "🚀 ~ Video generation started, operation name:",
-      operation.name
+      operation.name,
     );
 
     // Immediately return the operation name for client-side polling

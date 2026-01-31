@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useRef } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useShallow } from "zustand/react/shallow";
 import { checkVideoStatus, generateVideo } from "../services/geminiService";
 import { useGenerationStore } from "../store/useGenerationStore";
 import { uploadVideo } from "../services/uploadService";
 
 export const useVideoGeneration = () => {
+  const queryClient = useQueryClient();
   const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const generationParamsRef = useRef<{ prompt: string } | null>(null);
 
@@ -55,6 +57,8 @@ export const useVideoGeneration = () => {
                   resolution: "1080p",
                 }
               );
+              // Invalidate videos query to refetch the list
+              queryClient.invalidateQueries({ queryKey: ["videos"] });
               s.setSuccess("Video saved to your gallery!");
             } catch (uploadError) {
               console.error("Failed to upload video to backend:", uploadError);
@@ -76,7 +80,7 @@ export const useVideoGeneration = () => {
         s.setVideoStatus("Generating video...");
       }
     },
-    [stopPolling],
+    [stopPolling, queryClient],
   );
 
   const startVideoGeneration = useCallback(
