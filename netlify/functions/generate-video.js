@@ -84,7 +84,7 @@ export const handler = async (event) => {
     // Only add image if one was provided
     if (base64StringImg) {
       requestParams.image = {
-        bytesBase64Encoded: base64StringImg,
+        imageBytes: base64StringImg,
         mimeType: mimeType,
       };
       console.debug("🚀 ~ Including reference image with mimeType:", mimeType);
