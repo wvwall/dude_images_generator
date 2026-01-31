@@ -4,11 +4,16 @@ import { useShallow } from "zustand/react/shallow";
 import { checkVideoStatus, generateVideo } from "../services/geminiService";
 import { useGenerationStore } from "../store/useGenerationStore";
 import { uploadVideo } from "../services/uploadService";
+import { VideoResolution, VideoDuration } from "../types";
 
 export const useVideoGeneration = () => {
   const queryClient = useQueryClient();
   const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
-  const generationParamsRef = useRef<{ prompt: string } | null>(null);
+  const generationParamsRef = useRef<{
+    prompt: string;
+    duration: VideoDuration;
+    resolution: VideoResolution;
+  } | null>(null);
 
   // Only subscribe to the 3 values needed for rendering
   const { videoStatus, videoProgress, completedVideoUri } = useGenerationStore(
@@ -53,9 +58,9 @@ export const useVideoGeneration = () => {
                 }),
                 {
                   prompt: params.prompt,
-                  duration: 4, // Default duration
-                  resolution: "1080p",
-                }
+                  duration: params.duration,
+                  resolution: params.resolution,
+                },
               );
               // Invalidate videos query to refetch the list
               queryClient.invalidateQueries({ queryKey: ["videos"] });
@@ -68,12 +73,10 @@ export const useVideoGeneration = () => {
             s.setSuccess("Video generated successfully!");
           }
 
-          // Auto-download
-          const link = document.createElement("a");
-          link.href = url;
-          link.download = "generated_video.mp4";
-          link.click();
-          setTimeout(() => useGenerationStore.getState().setSuccess(null), 5000);
+          setTimeout(
+            () => useGenerationStore.getState().setSuccess(null),
+            5000,
+          );
         }
       } else {
         s.setVideoProgress(result.progress || 0);
@@ -88,9 +91,11 @@ export const useVideoGeneration = () => {
       prompt: string,
       fileToBase64: (file: File) => Promise<string>,
       selectedFiles: File[],
+      duration: VideoDuration,
+      resolution: VideoResolution,
     ) => {
       // Store params for backend upload
-      generationParamsRef.current = { prompt };
+      generationParamsRef.current = { prompt, duration, resolution };
 
       const s = useGenerationStore.getState();
       s.setIsGenerating(true);
@@ -111,6 +116,8 @@ export const useVideoGeneration = () => {
           prompt,
           referenceImageBase64,
           mimeType,
+          duration,
+          resolution,
         );
 
         pollingIntervalRef.current = setInterval(() => {

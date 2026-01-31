@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import type {} from "@redux-devtools/extension";
-import { AspectRatio, GeneratedImage } from "../types";
+import { AspectRatio, GeneratedImage, VideoResolution, VideoDuration } from "../types";
 
 export type Mode = "text" | "image" | "video";
 export type Model = "gemini-2.5-flash-image" | "gemini-3-pro-image-preview";
@@ -28,6 +28,8 @@ interface GenerationState {
   videoStatus: string;
   videoProgress: number;
   completedVideoUri: string | null;
+  videoResolution: VideoResolution;
+  videoDuration: VideoDuration;
 }
 
 interface GenerationActions {
@@ -48,6 +50,8 @@ interface GenerationActions {
   setVideoStatus: (status: string) => void;
   setVideoProgress: (progress: number) => void;
   setCompletedVideoUri: (uri: string | null) => void;
+  setVideoResolution: (resolution: VideoResolution) => void;
+  setVideoDuration: (duration: VideoDuration) => void;
   resetVideo: () => void;
 }
 
@@ -77,6 +81,8 @@ export const useGenerationStore = create<GenerationStore>()(
       videoStatus: "",
       videoProgress: 0,
       completedVideoUri: null,
+      videoResolution: "720p",
+      videoDuration: 4,
 
       // Form actions
       setPrompt: (prompt) => set({ prompt }, false, "form/setPrompt"),
@@ -116,6 +122,10 @@ export const useGenerationStore = create<GenerationStore>()(
       setVideoProgress: (videoProgress) => set({ videoProgress }, false, "video/setVideoProgress"),
       setCompletedVideoUri: (completedVideoUri) =>
         set({ completedVideoUri }, false, "video/setCompletedVideoUri"),
+      setVideoResolution: (videoResolution) =>
+        set({ videoResolution }, false, "video/setVideoResolution"),
+      setVideoDuration: (videoDuration) =>
+        set({ videoDuration }, false, "video/setVideoDuration"),
       resetVideo: () =>
         set({ videoStatus: "", videoProgress: 0, completedVideoUri: null }, false, "video/resetVideo"),
     }),

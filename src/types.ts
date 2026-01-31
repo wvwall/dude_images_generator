@@ -34,6 +34,9 @@ export interface GeneratedVideo {
 
 export type AspectRatio = "1:1" | "3:4" | "4:3" | "16:9" | "9:16";
 
+export type VideoResolution = "720p" | "1080p";
+export type VideoDuration = 4;
+
 export interface GenerationConfig {
   prompt: string;
   aspectRatio: AspectRatio;

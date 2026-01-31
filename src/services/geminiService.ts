@@ -1,4 +1,4 @@
-import { AspectRatio } from "../types";
+import { AspectRatio, VideoResolution } from "../types";
 import { api } from "./api";
 
 export const generateImage = async (
@@ -40,9 +40,10 @@ export const generateVideo = async (
   prompt: string,
   image?: string,
   mimeType?: string,
-  duration: number = 4
+  duration: number = 4,
+  resolution: VideoResolution = "720p"
 ): Promise<{ operationName: string }> => {
-  console.log("Generating video with prompt:", prompt, "duration:", duration);
+  console.log("Generating video with prompt:", prompt, "duration:", duration, "resolution:", resolution);
   console.log(
     "Using image:",
     image ? "provided with mimeType " + mimeType : "none"
@@ -51,7 +52,7 @@ export const generateVideo = async (
     const res = await fetch(api.netlify.generateVideo(), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ prompt, duration, image, mimeType }),
+      body: JSON.stringify({ prompt, duration, image, mimeType, resolution }),
     });
     if (!res.ok) {
       const txt = await res.text();

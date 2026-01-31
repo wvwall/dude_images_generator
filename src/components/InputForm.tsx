@@ -1,12 +1,13 @@
-import { AlertCircle, CheckCircle } from "lucide-react";
+import { AlertCircle, CheckCircle, Info } from "lucide-react";
 import React from "react";
-import { AspectRatio } from "../types";
+import { AspectRatio, VideoResolution, VideoDuration } from "../types";
 import { useFileHandling } from "../hooks/useFileHandling";
 import AspectRatioSelector from "./AspectRatioSelector/AspectRatioSelector";
 import ImageUploadArea from "./ImageUploadArea/ImageUploadArea";
 import ModelSelectorDropdown from "./ModelSelectorDropdown/ModelSelectorDropdown";
 import PivotButton from "./PivotButton/PivotButton";
 import PromptInput from "./PromptInput/PromptInput";
+import VideoOptionsSelector from "./VideoOptionsSelector/VideoOptionsSelector";
 
 type Mode = "text" | "image" | "video";
 type Model = "gemini-2.5-flash-image" | "gemini-3-pro-image-preview";
@@ -24,6 +25,10 @@ interface InputFormProps {
   success: string | null;
   files: ReturnType<typeof useFileHandling>;
   onGenerate: (e: React.FormEvent) => void;
+  videoResolution: VideoResolution;
+  setVideoResolution: (resolution: VideoResolution) => void;
+  videoDuration: VideoDuration;
+  setVideoDuration: (duration: VideoDuration) => void;
 }
 
 const InputForm: React.FC<InputFormProps> = ({
@@ -39,6 +44,10 @@ const InputForm: React.FC<InputFormProps> = ({
   success,
   files,
   onGenerate,
+  videoResolution,
+  setVideoResolution,
+  videoDuration,
+  setVideoDuration,
 }) => {
   const {
     selectedFiles,
@@ -60,7 +69,7 @@ const InputForm: React.FC<InputFormProps> = ({
   };
 
   const isMaxImagesReached = (
-    mode: keyof typeof LIMITS
+    mode: keyof typeof LIMITS,
   ): { isReached: boolean; limit: number } => {
     const limit = LIMITS[mode];
 
@@ -79,9 +88,10 @@ const InputForm: React.FC<InputFormProps> = ({
   return (
     <form onSubmit={onGenerate} className="flex flex-col flex-1 gap-6 p-6">
       {mode === "video" && (
-        <div className="p-4 text-sm font-medium text-yellow-800 dark:text-yellow-200 bg-yellow-100 dark:bg-yellow-900/30 border-2 border-yellow-200 dark:border-yellow-800 rounded-xl">
-          <strong className="font-bold">Note:</strong> Video generation may take
-          longer to process.
+        <div className="flex items-center gap-2 px-3 py-1.5 text-xs text-yellow-700 dark:text-yellow-300 bg-yellow-50 dark:bg-yellow-900/20 border-2 dark:border-yellow-800 border-yellow-200 rounded-lg">
+          <Info size={14} className="shrink-0" />
+          <strong className="font-bold">Note:</strong>{" "}
+          <span>Video generation may take longer to process</span>
         </div>
       )}
       {(mode === "image" || mode === "video") && (
@@ -109,7 +119,7 @@ const InputForm: React.FC<InputFormProps> = ({
 
       {(mode === "text" || mode === "image") && (
         <div className="flex flex-col justify-between gap-5 md:flex-row">
-          <div className="w-[250px] space-y-3">
+          <div className="w-62.5 space-y-3">
             <span className="block text-sm font-bold tracking-wide text-gray-700 dark:text-gray-300 uppercase">
               The Shape
             </span>
@@ -119,7 +129,7 @@ const InputForm: React.FC<InputFormProps> = ({
               disabled={isGenerating}
             />
           </div>
-          <div className="space-y-3 w-[180px]">
+          <div className="space-y-3 w-45">
             <span className="block text-sm font-bold tracking-wide text-gray-700 dark:text-gray-300 uppercase">
               The Model
             </span>
@@ -134,6 +144,16 @@ const InputForm: React.FC<InputFormProps> = ({
             )}
           </div>
         </div>
+      )}
+
+      {mode === "video" && (
+        <VideoOptionsSelector
+          resolution={videoResolution}
+          onResolutionChange={setVideoResolution}
+          duration={videoDuration}
+          onDurationChange={setVideoDuration}
+          disabled={isGenerating}
+        />
       )}
 
       <div className="pt-2 mt-auto">
