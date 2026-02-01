@@ -17,6 +17,7 @@ export const api = {
     generateImage: () => `${NETLIFY_FUNCTIONS_BASE}/generate-image`,
     generateVideo: () => `${NETLIFY_FUNCTIONS_BASE}/generate-video`,
     checkVideoStatus: () => `${NETLIFY_FUNCTIONS_BASE}/check-video-status`,
+    enhancePrompt: () => `${NETLIFY_FUNCTIONS_BASE}/enhance-prompt`,
   },
 
   // Backend API (se presente)
