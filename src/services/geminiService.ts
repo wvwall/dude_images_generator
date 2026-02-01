@@ -87,3 +87,28 @@ export const checkVideoStatus = async (operationName: string) => {
 
   return await res.json();
 };
+
+export const enhancePrompt = async (prompt: string): Promise<string> => {
+  try {
+    const res = await fetch(api.netlify.enhancePrompt(), {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ prompt }),
+    });
+
+    if (!res.ok) {
+      const txt = await res.text();
+      throw new Error(`Server error: ${res.status} - ${txt}`);
+    }
+
+    const json = await res.json();
+    if (!json || !json.enhancedPrompt) {
+      throw new Error("No enhanced prompt in response");
+    }
+
+    return json.enhancedPrompt as string;
+  } catch (error) {
+    console.error("Error enhancing prompt:", error);
+    throw error;
+  }
+};

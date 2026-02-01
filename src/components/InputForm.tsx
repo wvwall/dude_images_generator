@@ -2,6 +2,7 @@ import { AlertCircle, CheckCircle, Info } from "lucide-react";
 import React from "react";
 import { AspectRatio, VideoResolution, VideoDuration } from "../types";
 import { useFileHandling } from "../hooks/useFileHandling";
+import { usePromptEnhancement } from "../hooks/usePromptEnhancement";
 import AspectRatioSelector from "./AspectRatioSelector/AspectRatioSelector";
 import ImageUploadArea from "./ImageUploadArea/ImageUploadArea";
 import ModelSelectorDropdown from "./ModelSelectorDropdown/ModelSelectorDropdown";
@@ -62,6 +63,8 @@ const InputForm: React.FC<InputFormProps> = ({
     handleDrop,
   } = files;
 
+  const promptEnhancement = usePromptEnhancement();
+
   const LIMITS: Record<Mode, number> = {
     image: 3,
     video: 1,
@@ -115,6 +118,14 @@ const InputForm: React.FC<InputFormProps> = ({
         prompt={prompt}
         setPrompt={setPrompt}
         isGenerating={isGenerating}
+        onEnhance={() => promptEnhancement.enhance(prompt)}
+        isEnhancing={promptEnhancement.isEnhancing}
+        enhancedPrompt={promptEnhancement.enhancedPrompt}
+        showEnhancePanel={promptEnhancement.showPanel}
+        onEnhancedPromptChange={promptEnhancement.setEnhancedPrompt}
+        onApplyEnhanced={() => promptEnhancement.apply(setPrompt)}
+        onCancelEnhanced={promptEnhancement.cancel}
+        enhanceError={promptEnhancement.error}
       />
 
       {(mode === "text" || mode === "image") && (
