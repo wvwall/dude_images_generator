@@ -1,8 +1,8 @@
 import { GeneratedImage } from "@/types";
-import { Camera, Download, Edit2, Eye, Trash2 } from "lucide-react";
+import { Camera, Download, Edit2, Maximize2, Trash2 } from "lucide-react";
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { getImageUrl } from "@/utils/imageUtils";
+import Lightbox from "../Lightbox/Lightbox";
 
 interface ImageCardProps {
   image: GeneratedImage;
@@ -11,12 +11,17 @@ interface ImageCardProps {
 }
 
 const ImageCard: React.FC<ImageCardProps> = ({ image, onDelete, onEdit }) => {
-  const navigate = useNavigate();
   const imageUrl = getImageUrl(image);
   const [isOverlayVisible, setIsOverlayVisible] = useState(false);
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
 
   const handleTap = () => {
     setIsOverlayVisible((prev) => !prev);
+  };
+
+  const openLightbox = () => {
+    setIsLightboxOpen(true);
+    setIsOverlayVisible(false);
   };
 
   const handleDownload = async (img: GeneratedImage) => {
@@ -37,10 +42,6 @@ const ImageCard: React.FC<ImageCardProps> = ({ image, onDelete, onEdit }) => {
     }
   };
 
-  const goToDetails = (img: GeneratedImage) => {
-    navigate(`/image/${img.id}`);
-  };
-
   return (
     <div
       key={image.id}
@@ -57,16 +58,16 @@ const ImageCard: React.FC<ImageCardProps> = ({ image, onDelete, onEdit }) => {
 
         <div
           className={`absolute *:mb-3 *:mr-3 inset-0 flex items-end justify-end transition-opacity duration-300 bg-black/40 ${isOverlayVisible ? "opacity-100" : "opacity-0"} [@media(hover:hover)]:group-hover:opacity-100`}>
-          {/* Bottone centrale */}
+          {/* Bottone centrale - Expand */}
           <button
             className="absolute p-3 hover:cursor-pointer transition-colors -translate-x-1/2 -translate-y-1/2 rounded-full top-1/2 left-1/2 bg-white/20 hover:bg-white/30"
             onClick={(e) => {
               e.stopPropagation();
-              goToDetails(image);
+              openLightbox();
             }}
-            aria-label="View details"
-            title="View">
-            <Eye size={25} className="text-white" />
+            aria-label="Expand image"
+            title="Expand">
+            <Maximize2 size={25} className="text-white" />
           </button>
 
           <button
@@ -118,6 +119,13 @@ const ImageCard: React.FC<ImageCardProps> = ({ image, onDelete, onEdit }) => {
           </span>
         </div>
       </div>
+
+      <Lightbox
+        isOpen={isLightboxOpen}
+        onClose={() => setIsLightboxOpen(false)}
+        imageUrl={imageUrl}
+        alt={image.prompt}
+      />
     </div>
   );
 };

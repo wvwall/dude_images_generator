@@ -1,7 +1,8 @@
 import { GeneratedVideo } from "@/types";
-import { Download, Play, Pause, Trash2, Video } from "lucide-react";
+import { Download, Maximize2, Trash2, Video } from "lucide-react";
 import React, { useState, useRef } from "react";
 import { getVideoUrl } from "@/utils/videoUtils";
+import VideoLightbox from "../VideoLightbox/VideoLightbox";
 
 interface VideoCardProps {
   video: GeneratedVideo;
@@ -12,21 +13,18 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, onDelete }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const videoUrl = getVideoUrl(video);
   const [isOverlayVisible, setIsOverlayVisible] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
 
   const handleTap = () => {
     setIsOverlayVisible((prev) => !prev);
   };
 
-  const handlePlayPause = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const openLightbox = () => {
+    setIsLightboxOpen(true);
+    setIsOverlayVisible(false);
+    // Pause the card video when opening lightbox
     if (videoRef.current) {
-      if (isPlaying) {
-        videoRef.current.pause();
-      } else {
-        videoRef.current.play();
-      }
-      setIsPlaying(!isPlaying);
+      videoRef.current.pause();
     }
   };
 
@@ -58,7 +56,6 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, onDelete }) => {
           ref={videoRef}
           src={videoUrl}
           className="object-cover w-full h-full"
-          onEnded={() => setIsPlaying(false)}
           muted
           playsInline
         />
@@ -71,16 +68,16 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, onDelete }) => {
 
         <div
           className={`absolute inset-0 flex items-center justify-center transition-opacity duration-300 bg-black/40 ${isOverlayVisible ? "opacity-100" : "opacity-0"} [@media(hover:hover)]:group-hover:opacity-100`}>
-          {/* Play/Pause button */}
+          {/* Expand button - opens lightbox */}
           <button
-            className="p-4 hover:cursor-pointer transition-colors rounded-full bg-white/20 hover:bg-white/30"
-            onClick={handlePlayPause}
-            aria-label={isPlaying ? "Pause" : "Play"}>
-            {isPlaying ? (
-              <Pause size={30} className="text-white" fill="white" />
-            ) : (
-              <Play size={30} className="text-white" fill="white" />
-            )}
+            className="absolute p-3 hover:cursor-pointer transition-colors -translate-x-1/2 -translate-y-1/2 rounded-full top-1/2 left-1/2 bg-white/20 hover:bg-white/30"
+            onClick={(e) => {
+              e.stopPropagation();
+              openLightbox();
+            }}
+            aria-label="Expand video"
+            title="Expand">
+            <Maximize2 size={25} className="text-white" />
           </button>
 
           {/* Action buttons */}
@@ -124,6 +121,12 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, onDelete }) => {
           </span>
         </div>
       </div>
+
+      <VideoLightbox
+        isOpen={isLightboxOpen}
+        onClose={() => setIsLightboxOpen(false)}
+        videoUrl={videoUrl}
+      />
     </div>
   );
 };
