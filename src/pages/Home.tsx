@@ -12,7 +12,10 @@ import ModeSelector from "../components/ModeSelector/ModeSelector";
 import PreviewPanel from "../components/PreviewPanel";
 import { useGenerationStore } from "../store/useGenerationStore";
 import { useImagesQuery } from "../hooks/useImagesQuery";
-import { useVideosQuery, useDeleteVideoMutation } from "../hooks/useVideosQuery";
+import {
+  useVideosQuery,
+  useDeleteVideoMutation,
+} from "../hooks/useVideosQuery";
 import { useFileHandling } from "../hooks/useFileHandling";
 import { useVideoGeneration } from "../hooks/useVideoGeneration";
 import { useGenerationActions } from "../hooks/useGenerationActions";
@@ -22,16 +25,22 @@ const Home: React.FC = () => {
 
   // State — subscribe only to what's rendered
   const {
-    prompt, setPrompt,
-    aspectRatio, setAspectRatio,
-    mode, setMode,
-    model, setModel,
+    prompt,
+    setPrompt,
+    aspectRatio,
+    setAspectRatio,
+    mode,
+    setMode,
+    model,
+    setModel,
     isGenerating,
     currentImage,
     error,
     success,
-    videoResolution, setVideoResolution,
-    videoDuration, setVideoDuration,
+    videoResolution,
+    setVideoResolution,
+    videoDuration,
+    setVideoDuration,
   } = useGenerationStore(
     useShallow((s) => ({
       prompt: s.prompt,
@@ -54,7 +63,8 @@ const Home: React.FC = () => {
   );
 
   const { data: history = [], isLoading: isLoadingHistory } = useImagesQuery();
-  const { data: videoHistory = [], isLoading: isLoadingVideos } = useVideosQuery();
+  const { data: videoHistory = [], isLoading: isLoadingVideos } =
+    useVideosQuery();
   const deleteVideoMutation = useDeleteVideoMutation();
   const files = useFileHandling();
   const video = useVideoGeneration();
@@ -65,13 +75,16 @@ const Home: React.FC = () => {
   const { handleGenerate, handleDelete, handleEdit, handleDownloadCurrent } =
     useGenerationActions(files.fileToBase64);
 
-  const handleDeleteVideo = useCallback(async (id: string) => {
-    try {
-      await deleteVideoMutation.mutateAsync(id);
-    } catch (err) {
-      console.warn("Failed to delete video from backend", err);
-    }
-  }, [deleteVideoMutation]);
+  const handleDeleteVideo = useCallback(
+    async (id: string) => {
+      try {
+        await deleteVideoMutation.mutateAsync(id);
+      } catch (err) {
+        console.warn("Failed to delete video from backend", err);
+      }
+    },
+    [deleteVideoMutation],
+  );
 
   useEffect(() => {
     const tourSeen = localStorage.getItem("tourSeen");
@@ -117,7 +130,10 @@ const Home: React.FC = () => {
             mode={mode}
           />
         </div>
-        {(isLoadingHistory || isLoadingVideos || history.length > 0 || videoHistory.length > 0) && (
+        {(isLoadingHistory ||
+          isLoadingVideos ||
+          history.length > 0 ||
+          videoHistory.length > 0) && (
           <div className="mt-8">
             <MediaTabs
               imagesCount={history.length}
@@ -130,38 +146,53 @@ const Home: React.FC = () => {
             <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
               {activeTab === "images" ? (
                 isLoadingHistory ? (
-                  Array.from({ length: 3 }).map((_, i) => <SkeletonCard key={i} />)
-                ) : (
-                  history.slice(0, 3).map((image) => (
-                    <ImageCard
-                      key={image.id}
-                      image={image}
-                      onDelete={handleDelete}
-                      onEdit={handleEdit}
-                    />
+                  Array.from({ length: 3 }).map((_, i) => (
+                    <SkeletonCard key={i} />
                   ))
+                ) : history.length > 0 ? (
+                  history
+                    .slice(0, 3)
+                    .map((image) => (
+                      <ImageCard
+                        key={image.id}
+                        image={image}
+                        onDelete={handleDelete}
+                        onEdit={handleEdit}
+                      />
+                    ))
+                ) : (
+                  <div className="col-span-full py-20 text-center bg-white dark:bg-dark-surface border-2 border-gray-300 dark:border-dark-border border-dashed rounded-2xl">
+                    <p className="text-xl text-gray-400 font-hand">
+                      No images yet...
+                    </p>
+                    <p className="mt-2 text-sm text-gray-400">
+                      Try generating something new!
+                    </p>
+                  </div>
                 )
-              ) : (
-                isLoadingVideos ? (
-                  Array.from({ length: 3 }).map((_, i) => <SkeletonCard key={i} />)
-                ) : videoHistory.length > 0 ? (
-                  videoHistory.slice(0, 3).map((videoItem) => (
+              ) : isLoadingVideos ? (
+                Array.from({ length: 3 }).map((_, i) => (
+                  <SkeletonCard key={i} />
+                ))
+              ) : videoHistory.length > 0 ? (
+                videoHistory
+                  .slice(0, 3)
+                  .map((videoItem) => (
                     <VideoCard
                       key={videoItem.id}
                       video={videoItem}
                       onDelete={handleDeleteVideo}
                     />
                   ))
-                ) : (
-                  <div className="col-span-full py-20 text-center bg-white dark:bg-dark-surface border-2 border-gray-300 dark:border-dark-border border-dashed rounded-2xl">
-                    <p className="text-xl text-gray-400 font-hand">
-                      No videos yet...
-                    </p>
-                    <p className="mt-2 text-sm text-gray-400">
-                      Select Video mode to create something!
-                    </p>
-                  </div>
-                )
+              ) : (
+                <div className="col-span-full py-20 text-center bg-white dark:bg-dark-surface border-2 border-gray-300 dark:border-dark-border border-dashed rounded-2xl">
+                  <p className="text-xl text-gray-400 font-hand">
+                    No videos yet...
+                  </p>
+                  <p className="mt-2 text-sm text-gray-400">
+                    Select Video mode to create something!
+                  </p>
+                </div>
               )}
             </div>
           </div>
