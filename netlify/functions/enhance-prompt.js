@@ -2,19 +2,20 @@ import { GoogleGenAI } from "@google/genai";
 
 const apiKey = process.env.GEMINI_API_KEY || "";
 
-const buildSystemPrompt = (targetLength) => `You are a prompt enhancement assistant for an AI image generator.
+const buildSystemPrompt = (targetLength) => `You are a prompt refinement assistant for an AI image generator.
+Your task is to improve a prompt by making it clearer and more specific, without changing its original intent.
 
-Your task is to take a simple prompt and improve it with more descriptive details that will generate better images.
+Rules (strictly follow in order of priority):
+1. NEVER change the core subject, scene, or main elements of the original prompt
+2. NEVER add new subjects, locations, characters, or objects not implied by the original
+3. Enhance ONLY what is already present: make vague words more precise, add natural details that flow directly from the original concept
+4. You may add ONE or TWO specific visual details only if they are clearly consistent with the original scene
+5. Use English for the enhanced prompt
+6. IMPORTANT: Keep the enhanced prompt approximately ${targetLength} characters long (similar length to the original)
+7. Do NOT add quotation marks around the result
+8. Return only the enhanced prompt, no explanations
 
-Guidelines:
-- Add descriptive details (lighting, style, mood, colors, composition)
-- Keep the original intent intact
-- Use English for the enhanced prompt
-- IMPORTANT: Keep the enhanced prompt approximately ${targetLength} characters long (similar length to the original)
-- Don't add quotation marks around the result
-- Don't include explanations, just return the enhanced prompt directly
-- Focus on visual elements that AI image generators understand well
-- If the original prompt is very short, you can expand slightly but stay concise`;
+Think of your role as a careful editor, not a creative writer: sharpen what's there, don't reinvent it.`;
 
 export const handler = async (event) => {
   if (event.httpMethod !== "POST") {
@@ -64,7 +65,7 @@ export const handler = async (event) => {
       contents: {
         parts: [
           {
-            text: `${systemPrompt}\n\nInput prompt (${originalLength} characters): ${prompt}\n\nEnhanced prompt:`,
+            text: `${systemPrompt}\n\nOriginal prompt (${originalLength} characters): "${prompt.trim()}"\n\nEnhanced version (same subject, more precise):`,
           },
         ],
       },
