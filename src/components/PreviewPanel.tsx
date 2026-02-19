@@ -110,7 +110,7 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({
             </div>
 
             {/* Download Link */}
-            <div className="absolute top-4 right-4 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+            <div className="absolute top-4 right-4 opacity-0 transition-opacity duration-300 group-hover:opacity-100 [@media(hover:none)]:opacity-100">
               <a
                 href={completedVideoUri || ""}
                 download="video_generato_gemini.mp4"
@@ -123,17 +123,17 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({
           </div>
         ) : currentImage ? (
           // Block 3: Generated Static Image
-          <div className="relative w-full h-full bg-gray-50 dark:bg-dark-card group">
-            <div className="overflow-hidden relative w-full h-full rounded-lg border-8 border-white dark:border-dark-surface shadow-lg">
+          <div className="relative w-full min-h-[200px] bg-gray-50 dark:bg-dark-card group">
+            <div className="overflow-hidden relative w-full rounded-lg border-8 border-white dark:border-dark-surface shadow-lg">
               <img
                 loading="lazy"
                 src={getImageUrl(currentImage)}
                 alt="Generated result"
-                className="object-contain w-full h-full bg-gray-200 dark:bg-dark-card"
+                className="object-contain w-full bg-gray-200 dark:bg-dark-card"
               />
             </div>
 
-            <div className="absolute top-6 right-6 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+            <div className="absolute top-6 right-6 opacity-0 transition-opacity duration-300 group-hover:opacity-100 [@media(hover:none)]:opacity-100">
               <button
                 aria-label="Download current image"
                 onClick={onDownload}
