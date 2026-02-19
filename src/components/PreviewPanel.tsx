@@ -110,7 +110,7 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({
             </div>
 
             {/* Download Link */}
-            <div className="absolute top-4 right-4 opacity-0 transition-opacity duration-300 group-hover:opacity-100 [@media(hover:none)]:opacity-100">
+            <div className="absolute top-4 right-4 transition-opacity duration-300 opacity-100 md:opacity-0 md:group-hover:opacity-100">
               <a
                 href={completedVideoUri || ""}
                 download="video_generato_gemini.mp4"
@@ -133,7 +133,7 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({
               />
             </div>
 
-            <div className="absolute top-6 right-6 opacity-0 transition-opacity duration-300 group-hover:opacity-100 [@media(hover:none)]:opacity-100">
+            <div className="absolute top-6 right-6 transition-opacity duration-300 opacity-100 md:opacity-0 md:group-hover:opacity-100">
               <button
                 aria-label="Download current image"
                 onClick={onDownload}
