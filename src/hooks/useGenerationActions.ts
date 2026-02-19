@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { useGenerationStore } from "../store/useGenerationStore";
@@ -30,6 +30,10 @@ export const useGenerationActions = (
   const { scheduleDelete } = useToast();
   const queryClient = useQueryClient();
 
+  // Tracks whether the page was hidden (screen locked / app backgrounded)
+  // during an in-flight image generation request, so we can auto-retry.
+  const wasHiddenDuringGenRef = useRef(false);
+
   const handleGenerate = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault();
@@ -49,20 +53,61 @@ export const useGenerationActions = (
         s.setError(null);
         s.setCurrentImage(null);
 
-        try {
+        // Track visibility changes for this generation attempt
+        wasHiddenDuringGenRef.current = false;
+        const onVisChange = () => {
+          if (document.hidden) wasHiddenDuringGenRef.current = true;
+        };
+        document.addEventListener("visibilitychange", onVisChange);
+
+        const doGenerate = async () => {
+          const store = useGenerationStore.getState();
           let referenceImagesBase64: string[] = [];
-          if (s.mode === "image" && s.selectedFiles.length > 0) {
+          if (store.mode === "image" && store.selectedFiles.length > 0) {
             referenceImagesBase64 = await Promise.all(
-              s.selectedFiles.map((f) => fileToBase64(f)),
+              store.selectedFiles.map((f) => fileToBase64(f)),
             );
           }
-
-          const newImage = await generateMutation.mutateAsync({
-            prompt: s.prompt,
-            aspectRatio: s.aspectRatio,
+          return generateMutation.mutateAsync({
+            prompt: store.prompt,
+            aspectRatio: store.aspectRatio,
             referenceImagesBase64,
-            model: s.model,
+            model: store.model,
           });
+        };
+
+        try {
+          let newImage;
+          try {
+            newImage = await doGenerate();
+          } catch (firstErr: any) {
+            // If the page was hidden during the request (screen locked / app
+            // backgrounded), iOS may have aborted the fetch. Wait for the app
+            // to return to the foreground, then retry once automatically.
+            if (wasHiddenDuringGenRef.current) {
+              useGenerationStore
+                .getState()
+                .setError("Schermo bloccato, riprendo la generazione...");
+
+              if (document.hidden) {
+                await new Promise<void>((resolve) => {
+                  const h = () => {
+                    if (!document.hidden) {
+                      document.removeEventListener("visibilitychange", h);
+                      resolve();
+                    }
+                  };
+                  document.addEventListener("visibilitychange", h);
+                });
+              }
+
+              useGenerationStore.getState().setError(null);
+              wasHiddenDuringGenRef.current = false;
+              newImage = await doGenerate();
+            } else {
+              throw firstErr;
+            }
+          }
 
           useGenerationStore.getState().setCurrentImage(newImage);
           useGenerationStore
@@ -78,6 +123,7 @@ export const useGenerationActions = (
                 "Could not generate image. Please check API Key and Billing status.",
             );
         } finally {
+          document.removeEventListener("visibilitychange", onVisChange);
           useGenerationStore.getState().setIsGenerating(false);
           setTimeout(
             () => useGenerationStore.getState().setSuccess(null),
