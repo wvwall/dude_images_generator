@@ -13,8 +13,8 @@ const Toast: React.FC<ToastProps> = ({ pendingDelete }) => {
   const label = type === "video" ? "Video eliminato" : "Immagine eliminata";
 
   return (
-    <div className="relative overflow-hidden flex items-center gap-3 min-w-72 max-w-sm bg-gray-900 dark:bg-dark-surface text-white px-4 py-3 rounded-xl shadow-2xl border border-gray-700 dark:border-dark-border">
-      <div className="flex items-center justify-center w-8 h-8 rounded-full bg-friends-red/20 shrink-0">
+    <div className="relative overflow-hidden flex items-center gap-3 min-w-72 max-w-sm bg-white dark:bg-dark-surface text-gray-800 dark:text-white px-4 py-3 rounded-xl shadow-2xl border border-gray-200 dark:border-dark-border">
+      <div className="flex items-center justify-center w-8 h-8 rounded-full bg-friends-red/10 dark:bg-friends-red/20 shrink-0">
         <Trash2 size={16} className="text-friends-red" />
       </div>
 
@@ -22,7 +22,7 @@ const Toast: React.FC<ToastProps> = ({ pendingDelete }) => {
 
       <button
         onClick={() => undoDelete(id)}
-        className="flex items-center gap-1.5 shrink-0 text-friends-yellow font-semibold text-sm hover:text-yellow-300 transition-colors hover:cursor-pointer"
+        className="flex items-center gap-1.5 shrink-0 text-friends-purple dark:text-friends-yellow font-semibold text-sm hover:opacity-75 transition-opacity hover:cursor-pointer"
         aria-label="Annulla eliminazione">
         <Undo2 size={14} />
         Annulla
