@@ -5,6 +5,7 @@ import { checkVideoStatus, generateVideo } from "../services/geminiService";
 import { useGenerationStore } from "../store/useGenerationStore";
 import { uploadVideo } from "../services/uploadService";
 import { VideoResolution, VideoDuration } from "../types";
+import { sendVideoNotification } from "../services/notificationService";
 
 export const useVideoGeneration = () => {
   const queryClient = useQueryClient();
@@ -65,9 +66,11 @@ export const useVideoGeneration = () => {
               // Invalidate videos query to refetch the list
               queryClient.invalidateQueries({ queryKey: ["videos"] });
               s.setSuccess("Video saved to your gallery!");
+              sendVideoNotification(params.prompt);
             } catch (uploadError) {
               console.error("Failed to upload video to backend:", uploadError);
               s.setSuccess("Video generated! (Failed to save to gallery)");
+              sendVideoNotification(params.prompt);
             }
           } else {
             s.setSuccess("Video generated successfully!");

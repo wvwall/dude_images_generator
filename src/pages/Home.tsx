@@ -22,6 +22,7 @@ import { useVideoGeneration } from "../hooks/useVideoGeneration";
 import { useGenerationActions } from "../hooks/useGenerationActions";
 import { useToast } from "../context/ToastContext";
 import { GeneratedVideo } from "../types";
+import { useNotifications } from "../hooks/useNotifications";
 
 const Home: React.FC = () => {
   const { setIsOpen } = useTour();
@@ -75,6 +76,10 @@ const Home: React.FC = () => {
   const queryClient = useQueryClient();
 
   const [activeTab, setActiveTab] = useState<"images" | "videos">("images");
+  const [notifBannerDismissed, setNotifBannerDismissed] = useState(false);
+
+  const { isSupported: notifSupported, permission, requestPermission } = useNotifications();
+  const showNotifBanner = notifSupported && permission === "default" && !notifBannerDismissed;
 
   // Pass fileToBase64 to avoid duplicating useFileHandling inside actions
   const { handleGenerate, handleDelete, handleEdit, handleDownloadCurrent } =
@@ -107,6 +112,32 @@ const Home: React.FC = () => {
     <section className="min-h-screen pb-24 font-sans bg-friends-purple-light dark:bg-dark-bg">
       <main className="px-4 pt-12 mx-auto max-w-7xl md:pt-16">
         <InputHeader />
+
+        {showNotifBanner && (
+          <div className="flex items-center gap-3 px-4 py-3 mt-6 text-sm bg-friends-purple text-white rounded-2xl shadow-md">
+            <span className="text-lg">🔔</span>
+            <p className="flex-1">
+              Abilita le notifiche per sapere quando la tua generazione è pronta!
+            </p>
+            <button
+              onClick={async () => {
+                const result = await requestPermission();
+                if (result !== "default") setNotifBannerDismissed(true);
+              }}
+              className="shrink-0 px-3 py-1 font-semibold bg-friends-yellow text-friends-purple rounded-lg hover:brightness-105 transition-all"
+            >
+              Abilita
+            </button>
+            <button
+              onClick={() => setNotifBannerDismissed(true)}
+              aria-label="Chiudi"
+              className="shrink-0 p-1 rounded-lg hover:bg-white/20 transition-colors"
+            >
+              ✕
+            </button>
+          </div>
+        )}
+
         <div className="flex flex-col gap-8 mt-12 lg:items-start lg:flex-row">
           <InputPanel>
             <ModeSelector mode={mode} setMode={setMode} />

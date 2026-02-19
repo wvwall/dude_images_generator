@@ -11,6 +11,7 @@ import { useVideoGeneration } from "./useVideoGeneration";
 import { getImageUrl } from "../utils/imageUtils";
 import { useToast } from "../context/ToastContext";
 import { GeneratedImage } from "../types";
+import { sendImageNotification } from "../services/notificationService";
 
 /**
  * Orchestration-only hook — no subscriptions to UI state.
@@ -67,6 +68,7 @@ export const useGenerationActions = (
           useGenerationStore
             .getState()
             .setSuccess("Image generated successfully!");
+          sendImageNotification(newImage.id, s.prompt);
         } catch (err: any) {
           console.error(err);
           useGenerationStore
