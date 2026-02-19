@@ -1,6 +1,7 @@
 import { useTour } from "@reactour/tour";
 import React, { useCallback, useEffect, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
+import { useQueryClient } from "@tanstack/react-query";
 import ImageCard from "../components/ImageCard/ImageCard";
 import VideoCard from "../components/VideoCard/VideoCard";
 import MediaTabs from "../components/MediaTabs/MediaTabs";
@@ -19,6 +20,8 @@ import {
 import { useFileHandling } from "../hooks/useFileHandling";
 import { useVideoGeneration } from "../hooks/useVideoGeneration";
 import { useGenerationActions } from "../hooks/useGenerationActions";
+import { useToast } from "../context/ToastContext";
+import { GeneratedVideo } from "../types";
 
 const Home: React.FC = () => {
   const { setIsOpen } = useTour();
@@ -68,6 +71,8 @@ const Home: React.FC = () => {
   const deleteVideoMutation = useDeleteVideoMutation();
   const files = useFileHandling();
   const video = useVideoGeneration();
+  const { scheduleDelete } = useToast();
+  const queryClient = useQueryClient();
 
   const [activeTab, setActiveTab] = useState<"images" | "videos">("images");
 
@@ -76,14 +81,19 @@ const Home: React.FC = () => {
     useGenerationActions(files.fileToBase64);
 
   const handleDeleteVideo = useCallback(
-    async (id: string) => {
-      try {
-        await deleteVideoMutation.mutateAsync(id);
-      } catch (err) {
-        console.warn("Failed to delete video from backend", err);
-      }
+    (id: string) => {
+      queryClient.setQueryData<GeneratedVideo[]>(["videos"], (prev) =>
+        prev ? prev.filter((v) => v.id !== id) : [],
+      );
+      scheduleDelete({
+        id,
+        type: "video",
+        onExecute: () => deleteVideoMutation.mutateAsync(id),
+        onUndo: () =>
+          queryClient.invalidateQueries({ queryKey: ["videos"] }),
+      });
     },
-    [deleteVideoMutation],
+    [deleteVideoMutation, scheduleDelete, queryClient],
   );
 
   useEffect(() => {

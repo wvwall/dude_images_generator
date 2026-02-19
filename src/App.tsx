@@ -9,8 +9,10 @@ import {
 } from "react-router-dom";
 import BottomBar from "./components/BottomBar/BottomBar";
 import Header from "./components/Header/Header";
+import ToastContainer from "./components/Toast/ToastContainer";
 import { AuthProvider } from "./context/AuthContext";
 import { ThemeProvider } from "./context/ThemeContext";
+import { ToastProvider } from "./context/ToastContext";
 import Auth from "./pages/Auth";
 import Gallery from "./pages/Gallery";
 import Home from "./pages/Home";
@@ -82,7 +84,10 @@ const App: React.FC = () => {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <AuthProvider>
-          <AppContent />
+          <ToastProvider>
+            <AppContent />
+            <ToastContainer />
+          </ToastProvider>
         </AuthProvider>
       </ThemeProvider>
     </QueryClientProvider>
