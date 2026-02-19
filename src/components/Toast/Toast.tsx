@@ -10,7 +10,7 @@ const Toast: React.FC<ToastProps> = ({ pendingDelete }) => {
   const { undoDelete } = useToast();
   const { id, type, duration } = pendingDelete;
 
-  const label = type === "video" ? "Video eliminato" : "Immagine eliminata";
+  const label = "Deleting . . .";
 
   return (
     <div className="relative overflow-hidden flex items-center gap-3 min-w-72 max-w-sm bg-white dark:bg-dark-surface text-gray-800 dark:text-white px-4 py-3 rounded-xl shadow-2xl border border-gray-200 dark:border-dark-border">
@@ -25,7 +25,7 @@ const Toast: React.FC<ToastProps> = ({ pendingDelete }) => {
         className="flex items-center gap-1.5 shrink-0 text-friends-purple dark:text-friends-yellow font-semibold text-sm hover:opacity-75 transition-opacity hover:cursor-pointer"
         aria-label="Annulla eliminazione">
         <Undo2 size={14} />
-        Annulla
+        Undo
       </button>
 
       {/* Progress bar */}

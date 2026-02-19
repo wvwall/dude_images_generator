@@ -86,7 +86,7 @@ const Header: React.FC = () => {
                 <span className="text-[7px] font-bold tracking-widest uppercase text-friends-purple dark:text-friends-purple-light sm:text-[10px]">
                   Central Perk Studio
                 </span>
-                <span className="text-[8px] text-gray-500 dark:text-gray-400 font-hand">
+                <span className="text-[6px] text-gray-500 dark:text-gray-400 font-hand">
                   v{process.env.VITE_APP_VERSION}
                 </span>
               </div>
