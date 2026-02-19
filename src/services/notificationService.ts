@@ -34,14 +34,11 @@ export const sendNotification = (
   };
 };
 
-export const sendImageNotification = (
-  imageId: string,
-  prompt: string,
-): void => {
+export const sendImageNotification = (prompt: string): void => {
   sendNotification(
     "Dude - Immagine pronta! 🎨",
     prompt.length > 80 ? prompt.slice(0, 77) + "..." : prompt,
-    `/image/${imageId}`,
+    "/gallery?tab=images",
   );
 };
 
@@ -49,6 +46,6 @@ export const sendVideoNotification = (prompt: string): void => {
   sendNotification(
     "Dude - Video pronto! 🎬",
     prompt.length > 80 ? prompt.slice(0, 77) + "..." : prompt,
-    "/gallery",
+    "/gallery?tab=videos",
   );
 };

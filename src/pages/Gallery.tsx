@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import ImageCard from "../components/ImageCard/ImageCard";
 import VideoCard from "../components/VideoCard/VideoCard";
@@ -22,7 +22,9 @@ const Gallery: React.FC = () => {
   const deleteVideoMutation = useDeleteVideoMutation();
   const { scheduleDelete } = useToast();
 
-  const [activeTab, setActiveTab] = useState<"images" | "videos">("images");
+  const [searchParams] = useSearchParams();
+  const initialTab = searchParams.get("tab") === "videos" ? "videos" : "images";
+  const [activeTab, setActiveTab] = useState<"images" | "videos">(initialTab);
 
   const handleDelete = useCallback(
     (id: string) => {

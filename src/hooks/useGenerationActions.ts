@@ -68,7 +68,7 @@ export const useGenerationActions = (
           useGenerationStore
             .getState()
             .setSuccess("Image generated successfully!");
-          sendImageNotification(newImage.id, s.prompt);
+          sendImageNotification(s.prompt);
         } catch (err: any) {
           console.error(err);
           useGenerationStore
