@@ -81,6 +81,11 @@
   font-display: block;
 }
 
+@keyframes shrink-progress {
+  from { transform: scaleX(1); }
+  to { transform: scaleX(0); }
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",

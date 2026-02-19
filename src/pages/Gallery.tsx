@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import ImageCard from "../components/ImageCard/ImageCard";
 import VideoCard from "../components/VideoCard/VideoCard";
 import MediaTabs from "../components/MediaTabs/MediaTabs";
@@ -9,36 +10,50 @@ import {
   useVideosQuery,
   useDeleteVideoMutation,
 } from "../hooks/useVideosQuery";
+import { useToast } from "../context/ToastContext";
+import { GeneratedImage, GeneratedVideo } from "../types";
 
 const Gallery: React.FC = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { data: images = [], isPending: isLoadingImages } = useImagesQuery();
   const { data: videos = [], isPending: isLoadingVideos } = useVideosQuery();
   const deleteMutation = useDeleteMutation();
   const deleteVideoMutation = useDeleteVideoMutation();
+  const { scheduleDelete } = useToast();
 
   const [activeTab, setActiveTab] = useState<"images" | "videos">("images");
 
   const handleDelete = useCallback(
-    async (id: string) => {
-      try {
-        await deleteMutation.mutateAsync(id);
-      } catch (err) {
-        console.warn("Failed to delete image from backend", err);
-      }
+    (id: string) => {
+      queryClient.setQueryData<GeneratedImage[]>(["images"], (prev) =>
+        prev ? prev.filter((img) => img.id !== id) : [],
+      );
+      scheduleDelete({
+        id,
+        type: "image",
+        onExecute: () => deleteMutation.mutateAsync(id),
+        onUndo: () =>
+          queryClient.invalidateQueries({ queryKey: ["images"] }),
+      });
     },
-    [deleteMutation],
+    [deleteMutation, scheduleDelete, queryClient],
   );
 
   const handleDeleteVideo = useCallback(
-    async (id: string) => {
-      try {
-        await deleteVideoMutation.mutateAsync(id);
-      } catch (err) {
-        console.warn("Failed to delete video from backend", err);
-      }
+    (id: string) => {
+      queryClient.setQueryData<GeneratedVideo[]>(["videos"], (prev) =>
+        prev ? prev.filter((v) => v.id !== id) : [],
+      );
+      scheduleDelete({
+        id,
+        type: "video",
+        onExecute: () => deleteVideoMutation.mutateAsync(id),
+        onUndo: () =>
+          queryClient.invalidateQueries({ queryKey: ["videos"] }),
+      });
     },
-    [deleteVideoMutation],
+    [deleteVideoMutation, scheduleDelete, queryClient],
   );
 
   const handleEdit = useCallback(

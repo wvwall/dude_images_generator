@@ -1,10 +1,12 @@
 import { Camera, Download, Edit2, Maximize2, Trash2 } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import { GeneratedImage } from "../types";
 import { getImageUrl } from "../utils/imageUtils";
 import { useImageByIdQuery, useDeleteMutation } from "../hooks/useImagesQuery";
 import Lightbox from "../components/Lightbox/Lightbox";
+import { useToast } from "../context/ToastContext";
 
 const ImageView: React.FC = () => {
   const navigate = useNavigate();
@@ -12,6 +14,8 @@ const ImageView: React.FC = () => {
 
   const { data: image, isPending: isLoading } = useImageByIdQuery(id);
   const deleteMutation = useDeleteMutation();
+  const { scheduleDelete } = useToast();
+  const queryClient = useQueryClient();
 
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [isOverlayVisible, setIsOverlayVisible] = useState(false);
@@ -50,15 +54,21 @@ const ImageView: React.FC = () => {
   };
 
   const handleDelete = useCallback(
-    async (imageId: string) => {
-      try {
-        await deleteMutation.mutateAsync(imageId);
-        navigate("/");
-      } catch (err) {
-        console.warn("Failed to delete image from backend", err);
-      }
+    (imageId: string) => {
+      // Optimistic: remove from list cache and navigate away immediately
+      queryClient.setQueryData<GeneratedImage[]>(["images"], (prev) =>
+        prev ? prev.filter((img) => img.id !== imageId) : [],
+      );
+      navigate("/");
+      scheduleDelete({
+        id: imageId,
+        type: "image",
+        onExecute: () => deleteMutation.mutateAsync(imageId),
+        onUndo: () =>
+          queryClient.invalidateQueries({ queryKey: ["images"] }),
+      });
     },
-    [deleteMutation, navigate],
+    [deleteMutation, scheduleDelete, queryClient, navigate],
   );
 
   const showSkeleton = isLoading || !isImageLoaded;

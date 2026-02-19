@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import { useGenerationStore } from "../store/useGenerationStore";
 import {
   useImagesQuery,
@@ -8,6 +9,8 @@ import {
 } from "./useImagesQuery";
 import { useVideoGeneration } from "./useVideoGeneration";
 import { getImageUrl } from "../utils/imageUtils";
+import { useToast } from "../context/ToastContext";
+import { GeneratedImage } from "../types";
 
 /**
  * Orchestration-only hook — no subscriptions to UI state.
@@ -23,6 +26,8 @@ export const useGenerationActions = (
   const generateMutation = useGenerateMutation();
   const deleteMutation = useDeleteMutation();
   const video = useVideoGeneration();
+  const { scheduleDelete } = useToast();
+  const queryClient = useQueryClient();
 
   const handleGenerate = useCallback(
     async (e: React.FormEvent) => {
@@ -83,18 +88,26 @@ export const useGenerationActions = (
   );
 
   const handleDelete = useCallback(
-    async (id: string) => {
-      try {
-        await deleteMutation.mutateAsync(id);
-      } catch (err) {
-        console.warn("Failed to delete image from backend", err);
-      }
+    (id: string) => {
+      // Optimistic: remove from cache immediately
+      queryClient.setQueryData<GeneratedImage[]>(["images"], (prev) =>
+        prev ? prev.filter((img) => img.id !== id) : [],
+      );
+      // Clear preview if it's the deleted image
       const { currentImage, setCurrentImage } = useGenerationStore.getState();
       if (currentImage?.id === id) {
         setCurrentImage(null);
       }
+
+      scheduleDelete({
+        id,
+        type: "image",
+        onExecute: () => deleteMutation.mutateAsync(id),
+        onUndo: () =>
+          queryClient.invalidateQueries({ queryKey: ["images"] }),
+      });
     },
-    [deleteMutation],
+    [deleteMutation, scheduleDelete, queryClient],
   );
 
   const handleEdit = useCallback(
