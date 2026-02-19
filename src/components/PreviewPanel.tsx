@@ -123,10 +123,9 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({
           </div>
         ) : currentImage ? (
           // Block 3: Generated Static Image
-          <div className="relative w-full min-h-[200px] bg-gray-50 dark:bg-dark-card group">
+          <div className="relative w-full min-h-50 bg-gray-50 dark:bg-dark-card group">
             <div className="overflow-hidden relative w-full rounded-lg border-8 border-white dark:border-dark-surface shadow-lg">
               <img
-                loading="lazy"
                 src={getImageUrl(currentImage)}
                 alt="Generated result"
                 className="object-contain w-full bg-gray-200 dark:bg-dark-card"
