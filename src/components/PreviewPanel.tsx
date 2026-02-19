@@ -1,5 +1,5 @@
 import { Armchair, Download, Image, Loader2, Video } from "lucide-react";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { GeneratedImage, AUDIO_MAP, AudioType } from "../types";
 import AudioPlayer from "./AudioPlayer/AudioPlayer";
 import { getImageUrl } from "../utils/imageUtils";
@@ -28,6 +28,11 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({
   const isGeneratingVideo = videoStatus && videoStatus !== "Video ready!";
   const isGeneratingImage = isGenerating && mode !== "video";
   const isVideoReady = !!completedVideoUri;
+
+  const [isImgLoaded, setIsImgLoaded] = useState(false);
+  useEffect(() => {
+    setIsImgLoaded(false);
+  }, [currentImage?.id]);
 
   return (
     <div
@@ -124,23 +129,31 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({
         ) : currentImage ? (
           // Block 3: Generated Static Image
           <div className="relative w-full min-h-[200px] bg-gray-50 dark:bg-dark-card group">
+            {/* Skeleton shown while image is loading from network */}
+            {!isImgLoaded && (
+              <div className="absolute inset-0 rounded-lg animate-pulse bg-gray-200 dark:bg-dark-card" />
+            )}
+
             <div className="overflow-hidden relative w-full rounded-lg border-8 border-white dark:border-dark-surface shadow-lg">
               <img
                 loading="lazy"
                 src={getImageUrl(currentImage)}
                 alt="Generated result"
-                className="object-contain w-full bg-gray-200 dark:bg-dark-card"
+                onLoad={() => setIsImgLoaded(true)}
+                className={`object-contain w-full bg-gray-200 dark:bg-dark-card transition-opacity duration-300 ${isImgLoaded ? "opacity-100" : "opacity-0"}`}
               />
             </div>
 
-            <div className="absolute top-6 right-6 transition-opacity duration-300 opacity-100 md:opacity-0 md:group-hover:opacity-100">
-              <button
-                aria-label="Download current image"
-                onClick={onDownload}
-                className="hover:cursor-pointer flex gap-2 items-center px-2 py-2 text-sm font-bold text-black rounded-full border-2 border-black shadow-lg transition-colors bg-friends-yellow hover:bg-yellow-400 hover:scale-105">
-                <Download size={18} />
-              </button>
-            </div>
+            {isImgLoaded && (
+              <div className="absolute top-6 right-6 transition-opacity duration-300 opacity-100 md:opacity-0 md:group-hover:opacity-100">
+                <button
+                  aria-label="Download current image"
+                  onClick={onDownload}
+                  className="hover:cursor-pointer flex gap-2 items-center px-2 py-2 text-sm font-bold text-black rounded-full border-2 border-black shadow-lg transition-colors bg-friends-yellow hover:bg-yellow-400 hover:scale-105">
+                  <Download size={18} />
+                </button>
+              </div>
+            )}
           </div>
         ) : (
           // Block 4: Initial/Empty State
