@@ -1,5 +1,5 @@
 import React from "react";
-import { Sparkles, Loader2, Check, X } from "lucide-react";
+import { Sparkles, Loader2, Check, X, Trash2 } from "lucide-react";
 
 interface PromptInputProps {
   prompt: string;
@@ -50,7 +50,7 @@ const PromptInput: React.FC<PromptInputProps> = ({
           className="w-full min-h-30 p-4 bg-gray-50 dark:bg-dark-card border-2 border-gray-200 dark:border-dark-border rounded-xl text-gray-800 dark:text-gray-100 focus:border-friends-purple dark:focus:border-friends-yellow focus:bg-white dark:focus:bg-dark-surface focus:ring-0 transition-all outline-hidden resize-none placeholder:text-gray-400 dark:placeholder:text-gray-500"
           disabled={isGenerating || isEnhancing}
         />
-        <div className="absolute -top-5 flex items-center space-x-2 right-2">
+        <div className="flex justify-between mb-2 mt-1">
           {onEnhance && (
             <button
               type="button"
@@ -66,18 +66,20 @@ const PromptInput: React.FC<PromptInputProps> = ({
               {isEnhancing ? "Enhancing..." : "Enhance"}
             </button>
           )}
-          {prompt.length > 0 && !isEnhancing && (
-            <button
-              type="button"
-              onClick={() => setPrompt("")}
-              disabled={isGenerating}
-              className="text-xs hover:cursor-pointer font-bold text-gray-400 hover:text-friends-red focus:outline-hidden disabled:opacity-50 disabled:cursor-not-allowed">
-              Clear
-            </button>
-          )}
-          <span className="text-xs font-bold text-gray-400 group-focus-within:text-friends-purple dark:group-focus-within:text-friends-yellow">
-            {prompt.length} chars
-          </span>
+          <div className="flex gap-2">
+            <span className="text-xs font-bold text-gray-400 group-focus-within:text-friends-purple dark:group-focus-within:text-friends-yellow">
+              {prompt.length} chars
+            </span>
+            {prompt.length > 0 && !isEnhancing && (
+              <button
+                type="button"
+                onClick={() => setPrompt("")}
+                disabled={isGenerating}
+                className="text-xs hover:cursor-pointer font-bold text-gray-400 hover:text-friends-red focus:outline-hidden disabled:opacity-50 disabled:cursor-not-allowed">
+                <Trash2 size={14} className="inline mb-0.5" /> Clear
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
