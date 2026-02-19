@@ -15,6 +15,9 @@ export const useVideoGeneration = () => {
     duration: VideoDuration;
     resolution: VideoResolution;
   } | null>(null);
+  // Persists the active operation name so polling can be resumed when
+  // the app returns to the foreground after being backgrounded on iOS.
+  const operationNameRef = useRef<string | null>(null);
 
   // Only subscribe to the 3 values needed for rendering
   const { videoStatus, videoProgress, completedVideoUri } = useGenerationStore(
@@ -41,6 +44,7 @@ export const useVideoGeneration = () => {
       if (result.status === "completed") {
         s.setVideoStatus("Video ready!");
         s.setIsGenerating(false);
+        operationNameRef.current = null;
         stopPolling();
 
         if (result.videoBuffer) {
@@ -123,6 +127,8 @@ export const useVideoGeneration = () => {
           resolution,
         );
 
+        operationNameRef.current = operationName;
+
         pollingIntervalRef.current = setInterval(() => {
           pollVideoStatus(operationName);
         }, 10000);
@@ -130,6 +136,7 @@ export const useVideoGeneration = () => {
         await pollVideoStatus(operationName);
       } catch (err: any) {
         console.error(err);
+        operationNameRef.current = null;
         const store = useGenerationStore.getState();
         store.setError(
           err.message ||
@@ -141,6 +148,29 @@ export const useVideoGeneration = () => {
     },
     [pollVideoStatus],
   );
+
+  // On iOS, locking the screen or switching apps suspends JS execution and
+  // aborts in-flight network requests. When the user returns to the app,
+  // resume polling if a video generation was still in progress.
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.hidden) return;
+      const s = useGenerationStore.getState();
+      if (!s.isGenerating || !operationNameRef.current) return;
+
+      // Restart the polling interval (it may have been cleared or stalled)
+      stopPolling();
+      const op = operationNameRef.current;
+      pollVideoStatus(op);
+      pollingIntervalRef.current = setInterval(() => {
+        pollVideoStatus(op);
+      }, 10000);
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () =>
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+  }, [stopPolling, pollVideoStatus]);
 
   // Cleanup on unmount
   useEffect(() => {
