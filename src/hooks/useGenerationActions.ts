@@ -87,7 +87,7 @@ export const useGenerationActions = (
             if (wasHiddenDuringGenRef.current) {
               useGenerationStore
                 .getState()
-                .setError("Schermo bloccato, riprendo la generazione...");
+                .setError("Generazione in pausa, riprendo...");
 
               if (document.hidden) {
                 await new Promise<void>((resolve) => {
