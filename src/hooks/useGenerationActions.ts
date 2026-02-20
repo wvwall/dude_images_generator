@@ -82,13 +82,19 @@ export const useGenerationActions = (
             newImage = await doGenerate();
           } catch (firstErr: any) {
             // If the page was hidden during the request (screen locked / app
-            // backgrounded), iOS may have aborted the fetch. Wait for the app
-            // to return to the foreground, then retry once automatically.
-            if (wasHiddenDuringGenRef.current) {
+            // backgrounded), iOS may have aborted the fetch. Also retry on
+            // generic network errors (TypeError / AbortError) in case
+            // visibilitychange fired late or not at all.
+            const isNetworkError =
+              firstErr instanceof TypeError ||
+              firstErr.name === "AbortError";
+
+            if (wasHiddenDuringGenRef.current || isNetworkError) {
               useGenerationStore
                 .getState()
                 .setError("Generation paused, resuming...");
 
+              // Wait for the app to return to the foreground first
               if (document.hidden) {
                 await new Promise<void>((resolve) => {
                   const h = () => {
@@ -100,6 +106,10 @@ export const useGenerationActions = (
                   document.addEventListener("visibilitychange", h);
                 });
               }
+
+              // Give iOS a moment to re-establish network connectivity
+              // before retrying — the stack is not always ready immediately.
+              await new Promise((resolve) => setTimeout(resolve, 1500));
 
               useGenerationStore.getState().setError(null);
               wasHiddenDuringGenRef.current = false;
