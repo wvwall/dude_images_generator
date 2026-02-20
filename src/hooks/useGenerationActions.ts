@@ -89,6 +89,7 @@ export const useGenerationActions = (
                 .getState()
                 .setError("Generation paused, resuming...");
 
+              // Wait for the app to return to the foreground first
               if (document.hidden) {
                 await new Promise<void>((resolve) => {
                   const h = () => {
@@ -100,6 +101,10 @@ export const useGenerationActions = (
                   document.addEventListener("visibilitychange", h);
                 });
               }
+
+              // Give iOS a moment to re-establish network connectivity
+              // before retrying — the stack is not always ready immediately.
+              await new Promise((resolve) => setTimeout(resolve, 1500));
 
               useGenerationStore.getState().setError(null);
               wasHiddenDuringGenRef.current = false;
