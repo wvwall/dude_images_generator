@@ -29,3 +29,14 @@ dist-ssr
 
 # Local Netlify folder
 .netlify
+
+# Xcode / iOS
+ios/**/xcuserdata/
+ios/**/DerivedData/
+ios/**/*.xcworkspace/xcuserdata/
+ios/**/*.pbxuser
+ios/**/*.mode1v3
+ios/**/*.mode2v3
+ios/**/*.perspectivev3
+ios/**/*.moved-aside
+ios/**/build/
