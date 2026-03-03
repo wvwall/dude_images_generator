@@ -34,11 +34,24 @@ export const handler = async (event) => {
     };
   }
 
+  const VALID_MODELS = [
+    "gemini-3.1-flash-image-preview",
+    "gemini-3-pro-image-preview",
+  ];
+  if (!model || !VALID_MODELS.includes(model)) {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ error: "Invalid or missing model" }),
+    };
+  }
+
   const ai = new GoogleGenAI({ apiKey });
 
   try {
-    // Using Nano Banana (gemini-2.5-flash-image).
-    // It supports multimodal input (Text + Image) to generate new content.
+    // Supported models:
+    //   gemini-3.1-flash-image-preview  → Nano Banana 2 (default, fastest, up to 14 ref images)
+    //   gemini-3-pro-image-preview      → Nano Banana Pro (highest quality)
+    // All support multimodal input (Text + Image) to generate new content.
     const finalPrompt = `Generate an image based on this description: ${prompt}. The image must have an aspect ratio of ${aspectRatio.replace(
       ":",
       " to "

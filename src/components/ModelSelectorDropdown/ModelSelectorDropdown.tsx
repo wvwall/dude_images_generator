@@ -1,9 +1,9 @@
 import React from "react";
 
 interface ModelSelectorDropdownProps {
-  model: "gemini-2.5-flash-image" | "gemini-3-pro-image-preview";
+  model: "gemini-3.1-flash-image-preview" | "gemini-3-pro-image-preview";
   setModel: (
-    model: "gemini-2.5-flash-image" | "gemini-3-pro-image-preview"
+    model: "gemini-3.1-flash-image-preview" | "gemini-3-pro-image-preview"
   ) => void;
   mode: "text" | "image" | "video";
 }
@@ -14,8 +14,8 @@ const ModelSelectorDropdown: React.FC<ModelSelectorDropdownProps> = ({
   mode,
 }) => {
   const models = [
-    { id: "gemini-2.5-flash-image", name: "Flash Generation", icon: "⚡" },
-    { id: "gemini-3-pro-image-preview", name: "Pro Generation ", icon: "🚀" },
+    { id: "gemini-3.1-flash-image-preview", name: "Flash Generation", icon: "⚡" },
+    { id: "gemini-3-pro-image-preview", name: "Pro Generation", icon: "🚀" },
   ];
 
   if (mode === "video") {
@@ -30,7 +30,7 @@ const ModelSelectorDropdown: React.FC<ModelSelectorDropdownProps> = ({
         onChange={(e) =>
           setModel(
             e.target.value as
-              | "gemini-2.5-flash-image"
+              | "gemini-3.1-flash-image-preview"
               | "gemini-3-pro-image-preview"
           )
         }
