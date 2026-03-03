@@ -58,8 +58,14 @@ export const handler = async (event) => {
   const ai = new GoogleGenAI({ apiKey });
 
   try {
-    const finalPrompt = `Generate a video based on this description: ${prompt}.`;
+    const ANCHOR_PREFIX = [
+      "Animate this exact image.",
+      "Strictly preserve the subject's appearance, identity, colors, and style from the reference image.",
+      "Apply motion only, do not alter or reinterpret the subject.",
+      "Motion:",
+    ].join(" ");
 
+    const finalPrompt = `${ANCHOR_PREFIX} ${prompt}`;
     console.debug("🚀 ~ Starting video generation with prompt:", finalPrompt);
 
     const base64StringImg = image?.includes("base64,")
