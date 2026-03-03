@@ -4,7 +4,7 @@ import type {} from "@redux-devtools/extension";
 import { AspectRatio, GeneratedImage, VideoResolution, VideoDuration } from "../types";
 
 export type Mode = "text" | "image" | "video";
-export type Model = "gemini-2.5-flash-image" | "gemini-3-pro-image-preview";
+export type Model = "gemini-3.1-flash-image-preview" | "gemini-3-pro-image-preview";
 
 interface GenerationState {
   // Form
@@ -64,7 +64,7 @@ export const useGenerationStore = create<GenerationStore>()(
       prompt: "",
       aspectRatio: "1:1",
       mode: "text",
-      model: "gemini-2.5-flash-image",
+      model: "gemini-3.1-flash-image-preview",
 
       // Files
       selectedFiles: [],
